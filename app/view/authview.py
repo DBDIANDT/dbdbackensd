@@ -256,8 +256,7 @@ class InterpreterRegistrationStep3View(FormView):
            contract.save()
            logger.info(f"Contract created for interpreter: {interpreter.id}, token: {contract.token}")
            
-           # Envoi de l'email avec le contrat
-           self.send_contract_email(user, interpreter, contract)
+          
            
            del self.request.session['dbdint:interpreter_registration_step1']
            del self.request.session['dbdint:interpreter_registration_step2']
