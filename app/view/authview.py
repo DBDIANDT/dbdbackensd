@@ -271,62 +271,7 @@ class InterpreterRegistrationStep3View(FormView):
            messages.error(self.request, 'An error occurred while creating your account.')
            return redirect('dbdint:interpreter_registration_step1')
 
-   def send_contract_email(self, user, interpreter, contract):
-        """Sends the contract email to the interpreter with anti-spam optimization."""
-        try:
-            # Création d'un identifiant unique pour ce message
-            message_id = f"<contract-{contract.id}-{uuid.uuid4()}@{socket.gethostname()}>"
-            
-            # Construction de l'URL absolue pour le lien de vérification
-            verification_url = self.request.build_absolute_uri(
-                reverse('dbdint:contract_verification', kwargs={'token': contract.token})
-            )
-            
-            # Préparation des données pour le template
-            context = {
-                'interpreter_name': f"{user.first_name} {user.last_name}",
-                'token': contract.token,
-                'otp_code': contract.otp_code,
-                'verification_url': verification_url,
-                'email': user.email
-            }
-            
-            # Rendu du template HTML
-            html_message = render_to_string('notifmail/esign_notif.html', context)
-            plain_message = strip_tags(html_message)
-            
-            # Création de l'email avec du texte brut comme corps principal
-            email = EmailMultiAlternatives(
-                subject=settings.EMAIL_SUBJECTS['CONTRACT_SIGNATURE'],
-                body=plain_message,
-                from_email=settings.CONTRACTS_FROM_EMAIL,
-                to=[user.email],
-                reply_to=[settings.SUPPORT_EMAIL]
-            )
-            
-            # Ajout de la version HTML comme alternative
-            email.attach_alternative(html_message, "text/html")
-            
-            # En-têtes optimisés pour la délivrabilité
-            email.extra_headers = {
-                'Message-ID': message_id,
-                'X-Entity-Ref-ID': str(contract.token),
-                'X-Mailer': settings.MAILER_CONFIG['NAME'],
-                'X-Contact-ID': str(user.id),
-                'List-Unsubscribe': settings.UNSUBSCRIBE_CONFIG['URL_TEMPLATE'].format(email=user.email),
-                'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-                'Precedence': 'bulk',
-                'Auto-Submitted': 'auto-generated',
-                'Feedback-ID': f'contract-{contract.id}:{user.id}:{settings.MAILER_CONFIG["FEEDBACK_ID_PREFIX"]}:{int(time.time())}'
-            }
-            
-            # Envoi de l'email
-            email.send(fail_silently=False)
-            
-            logger.info(f"Contract agreement email sent to: {user.email} with Message-ID: {message_id}")
-            
-        except Exception as e:
-            logger.error(f"Error sending contract email: {str(e)}", exc_info=True)
+
 
    def form_invalid(self, form):
        logger.warning(f"Form validation failed: {form.errors}")
