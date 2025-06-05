@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     :root {
-        --primary-blue: #1e3a8a;        /* Bleu principal plus profond */
-        --secondary-blue: #1e40af;      /* Bleu secondaire */
-        --accent-blue: #3b82f6;         /* Bleu accent moderne */
-        --light-blue: #60a5fa;          /* Bleu clair */
-        --dark-blue: #1e293b;           /* Bleu très foncé */
-        --blue-gradient-start: #0f172a; /* Début du dégradé */
-        --blue-gradient-end: #1e40af;   /* Fin du dégradé */
+        --primary-blue: #1e3a8a;
+        --secondary-blue: #1e40af;
+        --accent-blue: #3b82f6;
+        --light-blue: #60a5fa;
+        --dark-blue: #1e293b;
+        --blue-gradient-start: #0f172a;
+        --blue-gradient-end: #1e40af;
         --white-text: #ffffff;
         --gray-text: #cbd5e1;
         --error-red: #ef4444;
@@ -40,7 +40,7 @@
         overflow: hidden;
     }
 
-    /* Animation du fond améliorée */
+    /* Animation du fond */
     .bg-animation {
         position: fixed;
         top: 0;
@@ -85,14 +85,14 @@
         100% { transform: translateX(100%); }
     }
 
-    /* Login container avec taille réduite */
+    /* Container login significativement réduit */
     .login-container {
         width: 100%;
-        max-width: 380px; /* Réduit de 440px */
+        max-width: 340px; /* Réduit encore plus de 380px à 340px */
         background: rgba(15, 23, 42, 0.85);
         backdrop-filter: blur(20px);
-        border-radius: 16px; /* Légèrement réduit */
-        padding: 2.5rem 2rem; /* Réduit */
+        border-radius: 14px; /* Plus arrondi */
+        padding: 2rem 1.75rem; /* Réduit davantage */
         box-shadow: 
             0 20px 25px -5px rgba(0, 0, 0, 0.4),
             0 10px 10px -5px rgba(0, 0, 0, 0.2),
@@ -110,30 +110,24 @@
         right: 0;
         height: 1px;
         background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
-        border-radius: 16px 16px 0 0;
+        border-radius: 14px 14px 0 0;
     }
 
     @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
+        from { opacity: 0; transform: translateY(30px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Ajustements pour les éléments internes */
+    /* Espacement amélioré pour les éléments internes */
     .login-header {
         text-align: center;
-        margin-bottom: 2rem; /* Réduit */
+        margin-bottom: 1.75rem; /* Réduit mais garde un bon espacement */
     }
 
     .login-logo {
-        width: 180px; /* Réduit */
+        width: 150px; /* Réduit davantage */
         height: auto;
-        margin: 0 auto 1.5rem; /* Réduit */
+        margin: 0 auto 1.25rem; /* Meilleur espacement */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -150,9 +144,9 @@
 
     .login-title {
         color: var(--white-text);
-        font-size: 1.5rem; /* Réduit */
+        font-size: 1.4rem; /* Plus petit */
         font-weight: 700;
-        margin-bottom: 0.5rem; /* Réduit */
+        margin-bottom: 0.4rem; /* Légèrement réduit */
         background: linear-gradient(135deg, var(--white-text) 0%, var(--light-blue) 100%);
         background-clip: text;
         -webkit-background-clip: text;
@@ -161,20 +155,25 @@
 
     .login-subtitle {
         color: var(--gray-text);
-        font-size: 0.95rem;
+        font-size: 0.9rem; /* Plus petit */
         font-weight: 400;
     }
 
+    /* Meilleur espacement des champs de formulaire */
     .form-group {
-        margin-bottom: 1.5rem; /* Réduit */
+        margin-bottom: 1.5rem;
         position: relative;
+    }
+
+    .form-group:last-of-type {
+        margin-bottom: 1.75rem; /* Espacement avant le bouton */
     }
 
     .form-group label {
         display: block;
         color: var(--gray-text);
-        margin-bottom: 0.75rem;
-        font-size: 0.9rem;
+        margin-bottom: 0.5rem; /* Réduit */
+        font-size: 0.85rem; /* Plus petit */
         font-weight: 500;
     }
 
@@ -185,22 +184,23 @@
 
     .input-icon {
         position: absolute;
-        left: 1.25rem;
+        left: 1rem; /* Repositionné */
         top: 50%;
         transform: translateY(-50%);
         color: var(--gray-text);
         transition: all 0.3s ease;
         z-index: 2;
+        font-size: 0.9rem; /* Plus petit */
     }
 
     .form-control {
         width: 100%;
-        padding: 1rem 1.25rem 1rem 3rem;
+        padding: 0.9rem 1rem 0.9rem 2.5rem; /* Optimisé */
         background: rgba(30, 58, 138, 0.1);
         border: 1.5px solid rgba(59, 130, 246, 0.2);
-        border-radius: 12px;
+        border-radius: 10px; /* Plus petit */
         color: var(--white-text);
-        font-size: 1rem;
+        font-size: 0.95rem; /* Plus petit */
         font-weight: 400;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         backdrop-filter: blur(10px);
@@ -225,37 +225,32 @@
 
     .error-message {
         color: var(--error-red);
-        font-size: 0.875rem;
-        margin-top: 0.75rem;
+        font-size: 0.8rem; /* Plus petit */
+        margin-top: 0.6rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
         animation: slideInError 0.3s ease-out;
         background: rgba(239, 68, 68, 0.1);
-        padding: 0.5rem 0.75rem;
-        border-radius: 8px;
+        padding: 0.4rem 0.6rem; /* Plus compact */
+        border-radius: 6px; /* Plus petit */
         border-left: 3px solid var(--error-red);
     }
 
     @keyframes slideInError {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Bouton plus compact */
     .login-button {
         width: 100%;
-        padding: 1.25rem;
+        padding: 1rem; /* Plus petit */
         background: linear-gradient(135deg, var(--accent-blue) 0%, var(--secondary-blue) 100%);
         color: var(--white-text);
         border: none;
-        border-radius: 12px;
-        font-size: 1rem;
+        border-radius: 10px; /* Plus petit */
+        font-size: 0.95rem; /* Plus petit */
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -292,15 +287,15 @@
     .footer-links {
         display: flex;
         justify-content: space-between;
-        margin-top: 2rem;
-        font-size: 0.9rem;
+        margin-top: 1.5rem; /* Réduit */
+        font-size: 0.85rem; /* Plus petit */
     }
 
     .footer-link {
         color: var(--gray-text);
         text-decoration: none;
         transition: all 0.3s ease;
-        padding: 0.5rem;
+        padding: 0.4rem; /* Plus petit */
         border-radius: 6px;
     }
 
@@ -309,22 +304,22 @@
         background: rgba(59, 130, 246, 0.1);
     }
 
-    /* Messages améliorés */
+    /* Messages */
     .messages {
         position: fixed;
-        top: 2rem;
+        top: 1.5rem;
         left: 50%;
         transform: translateX(-50%);
         z-index: 1000;
-        min-width: 320px;
+        min-width: 300px; /* Plus petit */
         max-width: 90%;
     }
 
     .message {
         background: linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%);
         color: white;
-        padding: 1.25rem;
-        border-radius: 12px;
+        padding: 1rem; /* Plus petit */
+        border-radius: 10px; /* Plus petit */
         margin-bottom: 0.75rem;
         backdrop-filter: blur(15px);
         display: flex;
@@ -333,27 +328,27 @@
         animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.9rem; /* Plus petit */
     }
 
     @keyframes slideDown {
-        from { 
-            transform: translateY(-30px); 
-            opacity: 0;
-            scale: 0.95;
-        }
-        to { 
-            transform: translateY(0); 
-            opacity: 1;
-            scale: 1;
-        }
+        from { transform: translateY(-30px); opacity: 0; scale: 0.95; }
+        to { transform: translateY(0); opacity: 1; scale: 1; }
     }
 
-    /* Responsive Design Amélioré */
+    /* Responsive Design Optimisé */
+    
+    /* Desktop */
+    @media (min-width: 1025px) {
+        .login-container {
+            max-width: 340px; /* Taille fixe même sur grands écrans */
+        }
+    }
     
     /* Tablettes et petits écrans desktop */
     @media (max-width: 1024px) {
         .login-container {
-            max-width: 360px; /* Réduit */
+            max-width: 330px;
         }
     }
 
@@ -364,52 +359,36 @@
         }
         
         .login-container {
-            max-width: 340px; /* Réduit */
-            padding: 2.25rem 1.75rem; /* Ajusté */
+            max-width: 320px;
+            padding: 2rem 1.5rem;
         }
         
         .login-logo {
-            width: 160px; /* Réduit */
-            margin-bottom: 1.25rem; /* Réduit */
-        }
-        
-        .login-title {
-            font-size: 1.4rem; /* Réduit */
+            width: 140px;
         }
     }
 
     /* Mobiles landscape */
     @media (max-width: 640px) {
         .login-container {
-            max-width: 320px; /* Réduit */
-            padding: 1.75rem 1.5rem; /* Ajusté */
+            max-width: 300px;
+            padding: 1.75rem 1.5rem;
         }
         
         .login-logo {
-            width: 140px; /* Réduit */
-            margin-bottom: 1.25rem; /* Réduit */
+            width: 130px;
         }
         
         .login-title {
-            font-size: 1.35rem; /* Réduit */
+            font-size: 1.3rem;
         }
         
         .form-group {
-            margin-bottom: 1.25rem; /* Réduit */
+            margin-bottom: 1.25rem;
         }
         
-        .form-control {
-            padding: 0.8rem 1rem 0.8rem 2.6rem; /* Légèrement réduit */
-            font-size: 0.95rem;
-        }
-        
-        .input-icon {
-            left: 1rem;
-        }
-        
-        .login-button {
-            padding: 1rem;
-            font-size: 0.95rem;
+        .form-group:last-of-type {
+            margin-bottom: 1.5rem;
         }
     }
 
@@ -420,130 +399,77 @@
         }
         
         .login-container {
-            max-width: 300px; /* Valeur fixe au lieu de 100% */
-            margin: 0 auto; /* Centrer le conteneur */
+            max-width: 280px;
             padding: 1.5rem 1.25rem;
-            border-radius: 14px; /* Réduit */
+            border-radius: 12px;
         }
         
         .login-header {
-            margin-bottom: 1.75rem; /* Réduit */
+            margin-bottom: 1.5rem;
         }
         
         .login-logo {
-            width: 130px; /* Réduit */
-            margin-bottom: 1.1rem; /* Réduit */
+            width: 120px;
+            margin-bottom: 1rem;
         }
         
         .login-subtitle {
-            font-size: 0.8rem; /* Réduit */
+            font-size: 0.8rem;
         }
         
         .form-group {
             margin-bottom: 1.25rem;
         }
         
-        .form-group label {
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-control {
-            padding: 0.75rem 0.875rem 0.75rem 2.5rem;
-            font-size: 0.95rem;
-        }
-        
-        .input-icon {
-            left: 0.875rem;
-            font-size: 0.9rem;
-        }
-        
-        .error-message {
-            font-size: 0.8rem;
-            padding: 0.375rem 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .login-button {
-            padding: 0.875rem;
-            font-size: 0.9rem;
-        }
-        
         .footer-links {
             flex-direction: column;
             gap: 0.75rem;
             text-align: center;
-            margin-top: 1.25rem; /* Réduit */
-            font-size: 0.85rem;
+            margin-top: 1.25rem;
         }
         
         .footer-link {
-            padding: 0.75rem 0.5rem;
-        }
-        
-        .messages {
-            min-width: 90%;
-            max-width: 95%;
-            top: 1rem;
-        }
-        
-        .message {
-            padding: 1rem;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            padding: 0.6rem 0.5rem;
         }
     }
 
     /* Très petits mobiles */
     @media (max-width: 360px) {
         .login-container {
-            max-width: 280px;
+            max-width: 260px;
             padding: 1.25rem 1rem;
         }
         
         .login-logo {
-            width: 110px; /* Réduit */
+            width: 100px;
         }
         
         .login-title {
-            font-size: 1.2rem; /* Réduit */
+            font-size: 1.2rem;
         }
         
-        .login-subtitle {
-            font-size: 0.75rem; /* Réduit */
+        .form-group {
+            margin-bottom: 1rem;
         }
         
-        .form-group label {
-            font-size: 0.8rem;
-            margin-bottom: 0.4rem;
+        .form-group:last-of-type {
+            margin-bottom: 1.25rem;
         }
         
         .form-control {
-            padding: 0.6rem 0.75rem 0.6rem 2.25rem;
-            font-size: 0.9rem;
-        }
-        
-        .login-button {
-            padding: 0.7rem;
-            font-size: 0.85rem;
-        }
-        
-        .footer-links {
-            gap: 0.5rem;
-            margin-top: 1rem;
-            font-size: 0.8rem;
+            padding: 0.75rem 0.75rem 0.75rem 2.2rem;
         }
     }
 
     /* Ajout d'un nouveau breakpoint pour les appareils très étroits */
     @media (max-width: 320px) {
         .login-container {
-            max-width: 260px;
+            max-width: 240px;
             padding: 1.1rem 0.9rem;
         }
         
         .login-logo {
-            width: 100px;
+            width: 90px;
         }
         
         .login-title {
@@ -555,7 +481,7 @@
         }
         
         .form-control {
-            padding: 0.5rem 0.6rem 0.5rem 2rem;
+            padding: 0.7rem 0.6rem 0.7rem 2rem;
             font-size: 0.85rem;
         }
         
@@ -568,29 +494,29 @@
     /* Mode paysage mobile optimisé */
     @media (max-height: 600px) and (orientation: landscape) {
         .login-container {
-            padding: 1.25rem;
-            max-width: 360px; /* Réduit */
+            padding: 1.25rem 1.5rem;
+            max-width: 340px;
         }
         
         .login-header {
-            margin-bottom: 1.25rem; /* Réduit */
+            margin-bottom: 1rem;
         }
         
         .login-logo {
-            width: 100px; /* Réduit */
-            margin-bottom: 0.75rem; /* Réduit */
+            width: 90px;
+            margin-bottom: 0.75rem;
         }
         
         .form-group {
-            margin-bottom: 0.75rem; /* Réduit */
+            margin-bottom: 0.75rem;
+        }
+        
+        .form-group:last-of-type {
+            margin-bottom: 1rem;
         }
         
         .footer-links {
-            margin-top: 1rem;
-        }
-        
-        .messages {
-            top: 0.5rem;
+            margin-top: 0.75rem;
         }
     }
 
