@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #E5E7EB;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1f2937 0%, #164e63 100%);
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #1e293b;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #1e293b;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #4CAF50;
+        }
+        .logo {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 30px;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+        }
+        .details-card {
+            background-color: #2d3748;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .info-item {
+            padding: 15px;
+            background-color: #1e293b;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+            color: #F3F4F6;
+        }
+        .info-item:hover {
+            transform: translateY(-2px);
+            background-color: #2d3748;
+        }
+        .info-item strong {
+            color: #6EE7B7;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .button-container {
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+            background: rgba(45, 55, 72, 0.5);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            display: inline-block;
+            padding: 16px 40px;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: none;
+            letter-spacing: 1px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .accept-button {
+            background: #4CAF50;
+            color: white !important;
+            border: 2px solid #4CAF50;
+        }
+        .accept-button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.2);
+        }
+        .decline-button {
+            background: transparent;
+            color: #E5E7EB !important;
+            border: 2px solid #E5E7EB;
+            margin-left: 20px;
+        }
+        .decline-button:hover {
+            background: rgba(229, 231, 235, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .response-deadline {
+            text-align: center;
+            color: #6EE7B7;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .notice-box {
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1px solid #4CAF50;
+            color: #F3F4F6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        .emergency-contact {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #F3F4F6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #4CAF50;
+        }
+        .emergency-contact strong {
+            color: #6EE7B7;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .emergency-contact a {
+            color: #6EE7B7;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer {
+            background-color: #1e293b;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #D1D5DB;
+            border-top: 1px solid #2d3748;
+        }
+        h2, h3 {
+            color: #6EE7B7;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        p {
+            color: #F3F4F6;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                margin: 0;
+            }
+            .content {
+                padding: 20px;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .button {
+                display: block;
+                margin: 15px 0;
+            }
+            .decline-button {
+                margin-left: 0;
+            }
+            .button-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="logo">
+            <h2 style="color: #fff;">New Interpretation Appointment</h2>
+        </div>
+
+        <div class="content">
+            <div class="notice-box">
+                <h2>🎉 New Interpretation Request</h2>
+                <p>We have a new interpretation appointment available for you. Please review the details below.</p>
+            </div>
+
+            <p>Hello {{ interpreter_name }},</p>
+
+            <div class="details-card">
+                <h3>📅 Appointment Details</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Client Name</strong>
+                        {{ client_name }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Client Phone</strong>
+                        {{ client_phone }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Date & Time</strong>
+                        {{ start_time|date:"m/d/Y h:i A" }} - {{ end_time|date:"h:i A" }} EDT
+                    </div>
+                    <div class="info-item">
+                        <strong>Location</strong>
+                        {{ location }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Languages</strong>
+                        {{ source_language }} → {{ target_language }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Service Type</strong>
+                        {{ service_type }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Rate</strong>
+                        ${{ rate }}/hour
+                    </div>
+                </div>
+
+                {% if special_requirements != "None" %}
+                <div class="notice-box">
+                    <strong>📋 Special Requirements</strong>
+                    {{ special_requirements }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="button-container">
+                <h3 style="margin-bottom: 25px;">Would you like to accept this appointment?</h3>
+                <a href="{{ accept_url }}" class="button accept-button">Accept Appointment</a>
+                <a href="{{ decline_url }}" class="button decline-button">Decline</a>
+                <p class="response-deadline">Please respond within 24 hours</p>
+            </div>
+
+            <div class="notice-box">
+                <strong>ℹ️ What happens next?</strong>
+                <p>After accepting:</p>
+                <ul style="color: #F3F4F6;">
+                    <li>You'll receive a confirmation email with calendar invitation</li>
+                    <li>The appointment will be added to your schedule</li>
+                    <li>Please arrive 15 minutes before the start time</li>
+                </ul>
+            </div>
+
+            <div class="emergency-contact">
+                <strong>📞 Questions?</strong>
+                <p>If you have any questions, please contact us:<br>
+                <a href="tel:7742238771">(774) 223-8771</a></p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>This is an automated message from {{ COMPANY_NAME }}.<br>
+            Please do not reply to this email.</p>
+            <p>© {% now "Y" %} {{ COMPANY_NAME }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

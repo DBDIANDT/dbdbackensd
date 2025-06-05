@@ -1,0 +1,20 @@
+<!-- templates/emails/quote_request_processing.html -->
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+    <h1>{{ COMPANY_NAME }}</h1>
+    <p>Your Quote Request is Being Processed</p>
+</div>
+<div class="content">
+    <h2>Good news, {{ client_name }}!</h2>
+    <p>Our team is currently working on your quote request. We are matching your requirements with our best interpreters to ensure the highest quality service.</p>
+    
+    <div class="request-details">
+        <p><strong>Request ID:</strong> #{{ request_id }}</p>
+        <p><strong>Service Type:</strong> {{ service_type }}</p>
+        <p><strong>Date Requested:</strong> {{ requested_date|date:"F j, Y, P" }}</p>
+    </div>
+    
+    <p>You will receive another email shortly with your detailed quote.</p>
+</div>
+{% endblock %}

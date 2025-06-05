@@ -1,0 +1,141 @@
+{% extends 'intbase.html' %}
+
+{% block title %}Error - {{ COMPANY_NAME }} Interpreter Portal{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-card">
+        {% if message == 'Access denied. Interpreter profile required.' %}
+            <div class="error-icon">
+                <i class="fas fa-user-lock"></i>
+            </div>
+            <h1 class="error-title">Access Restricted</h1>
+            <p class="error-message">
+                This area is reserved for interpreters only. If you are an interpreter and seeing this message, 
+                please contact support for assistance.
+            </p>
+        {% else %}
+            <div class="error-icon">
+                <i class="fas fa-tools"></i>
+            </div>
+            <h1 class="error-title">System Maintenance</h1>
+            <p class="error-message">
+                Our system is currently undergoing maintenance to serve you better. 
+                We'll be back shortly. Don't worry, all your assignments are safe.
+            </p>
+
+        {% endif %}
+
+        <div class="error-actions">
+            <a href="{% url 'dbdint:login' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i>
+                Return to Login
+            </a>
+            <a href="mailto:support@{{ COMPANY_NAME }}.com" class="btn btn-outline">
+                <i class="fas fa-envelope"></i>
+                Contact Support
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .error-container {
+        min-height: calc(100vh - 130px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .error-card {
+        background: rgba(27, 31, 43, 0.95);
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+    }
+
+    .error-icon {
+        font-size: 4rem;
+        color: var(--warning);
+        margin-bottom: 1.5rem;
+    }
+
+    .error-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--white);
+        margin-bottom: 1rem;
+    }
+
+    .error-message {
+        color: var(--gray-200);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .error-time {
+        color: var(--primary-green);
+        font-weight: 500;
+        margin-bottom: 2rem;
+    }
+
+    .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn i {
+        font-size: 1.1rem;
+    }
+
+    .btn-primary {
+        background: var(--primary-green);
+        color: var(--white);
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-green-dark);
+    }
+
+    .btn-outline {
+        border: 2px solid var(--primary-green);
+        color: var(--primary-green);
+        text-decoration: none;
+    }
+
+    .btn-outline:hover {
+        background: var(--primary-green);
+        color: var(--white);
+    }
+
+    @media (max-width: 640px) {
+        .error-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}

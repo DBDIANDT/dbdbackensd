@@ -1,0 +1,384 @@
+{% extends 'base_trad.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.2s;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: var(--accent-blue);
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        opacity: 0.8;
+    }
+
+    /* Performance Metrics */
+    .performance-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .performance-metric {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .metric-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .progress-bar {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--accent-blue);
+        border-radius: 3px;
+        transition: width 1s ease-in-out;
+    }
+
+    /* Assignments Section */
+    .assignments-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .assignment-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        transition: transform 0.2s;
+    }
+
+    .assignment-card:hover {
+        transform: translateX(5px);
+    }
+
+    .assignment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .assignment-time {
+        font-size: 0.875rem;
+        opacity: 0.8;
+    }
+
+    .assignment-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-confirmed {
+        background: rgba(72, 187, 120, 0.2);
+        color: #48bb78;
+    }
+
+    .status-in-progress {
+        background: rgba(66, 153, 225, 0.2);
+        color: #4299e1;
+    }
+
+    .status-pending {
+        background: rgba(236, 201, 75, 0.2);
+        color: #ecc94b;
+    }
+
+    /* Payments Section */
+    .payment-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .payment-amount {
+        font-weight: 600;
+        color: #48bb78;
+    }
+
+    /* Responsive Grid Layout */
+    .dashboard-grid {
+        display: grid;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+        .dashboard-grid {
+            grid-template-columns: 2fr 1fr;
+        }
+    }
+
+    /* Notification Animation */
+    @keyframes slideIn {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .notification-item {
+        animation: slideIn 0.3s ease-out;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Overview -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <i class="fas fa-clock stat-icon"></i>
+        <div class="stat-value">{{ stats.pending_assignments }}</div>
+        <div class="stat-label">Pending Assignments</div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-calendar-check stat-icon"></i>
+        <div class="stat-value">{{ stats.upcoming_assignments }}</div>
+        <div class="stat-label">Upcoming Assignments</div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-check-circle stat-icon"></i>
+        <div class="stat-value">{{ stats.completed_assignments }}</div>
+        <div class="stat-label">Completed (30 days)</div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-dollar-sign stat-icon"></i>
+        <div class="stat-value">${{ stats.total_earnings|floatformat:2 }}</div>
+        <div class="stat-label">Earnings (30 days)</div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="main-content">
+        <!-- Today's Assignments -->
+        {% if today_assignments %}
+        <div class="assignments-section">
+            <h2 class="section-title">
+                <i class="fas fa-sun"></i>
+                Today's Assignments
+            </h2>
+            {% for assignment in today_assignments %}
+            <div class="assignment-card">
+                <div class="assignment-header">
+                    <span class="assignment-time">
+                        {{ assignment.start_time|time:"g:i A" }} - {{ assignment.end_time|time:"g:i A" }}
+                    </span>
+                    <span class="assignment-status status-{{ assignment.status|lower }}">
+                        {{ assignment.status|title }}
+                    </span>
+                </div>
+                <div>{{ assignment.client.full_name }}</div>
+                <div style="opacity: 0.8; font-size: 0.875rem;">
+                    {{ assignment.languages }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Upcoming Assignments -->
+        <div class="assignments-section">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                Upcoming Assignments
+            </h2>
+            {% for assignment in upcoming_assignments %}
+            <div class="assignment-card">
+                <div class="assignment-header">
+                    <span class="assignment-time">
+                        {{ assignment.start_time|date:"M d, Y" }} at {{ assignment.start_time|time:"g:i A" }}
+                    </span>
+                    <span class="assignment-status status-confirmed">
+                        Confirmed
+                    </span>
+                </div>
+                <div>{{ assignment.client.full_name }}</div>
+                <div style="opacity: 0.8; font-size: 0.875rem;">
+                    {{ assignment.languages }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <!-- Performance Metrics -->
+        <div class="performance-card">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line"></i>
+                Performance
+            </h2>
+            
+            <div class="performance-metric">
+                <div class="metric-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div style="flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Average Rating</span>
+                        <span>{{ performance.average_rating|floatformat:1 }}/5.0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {% widthratio performance.average_rating 5 100 %}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="performance-metric">
+                <div class="metric-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div style="flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Completion Rate</span>
+                        <span>{{ performance.completion_rate|floatformat:1 }}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ performance.completion_rate }}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="performance-metric">
+                <div class="metric-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div style="flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Total Hours</span>
+                        <span>{{ performance.total_hours|floatformat:1 }}h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Payments -->
+        <div class="assignments-section">
+            <h2 class="section-title">
+                <i class="fas fa-money-bill-wave"></i>
+                Recent Payments
+            </h2>
+            {% for payment in recent_payments %}
+            <div class="payment-item">
+                <div>
+                    <div>{{ payment.assignment.client.full_name }}</div>
+                    <div style="font-size: 0.875rem; opacity: 0.8;">
+                        {{ payment.payment_date|date:"M d, Y" }}
+                    </div>
+                </div>
+                <div class="payment-amount">${{ payment.amount|floatformat:2 }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Notifications -->
+        <div class="assignments-section">
+            <h2 class="section-title">
+                <i class="fas fa-bell"></i>
+                Notifications
+            </h2>
+            {% for notification in unread_notifications %}
+            <div class="notification-item">
+                <div>{{ notification.message }}</div>
+                <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 0.5rem;">
+                    {{ notification.created_at|timesince }} ago
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+</script>
+{% endblock %}

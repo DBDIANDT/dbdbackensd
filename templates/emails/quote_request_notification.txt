@@ -1,0 +1,56 @@
+NEW QUOTE REQUEST NOTIFICATION
+===============================
+
+REQUEST DETAILS:
+---------------
+Request ID: #{{ quote_request.id }}
+Submission Time: {{ quote_request.created_at|date:"F j, Y, g:i a" }}
+{% if quote_request.requested_date|date:"Y-m-d" == now|date:"Y-m-d" %}
+!!! URGENT - SAME DAY REQUEST !!!
+{% endif %}
+
+CLIENT INFORMATION:
+-----------------
+Name: {{ quote_request.full_name }}
+Company: {{ quote_request.company_name }}
+Email: {{ quote_request.email }}
+Phone: {{ quote_request.phone }}
+
+SERVICE DETAILS:
+--------------
+Service Type: {{ quote_request.service_type }}
+Source Language: {{ quote_request.source_language }}
+Target Language: {{ quote_request.target_language }}
+Date Needed: {{ quote_request.requested_date|date:"F j, Y, g:i a" }}
+Duration: {{ quote_request.duration }} minutes
+
+LOCATION:
+--------
+Address: {{ quote_request.location }}
+City: {{ quote_request.city }}
+State: {{ quote_request.state }}
+ZIP: {{ quote_request.zip_code }}
+
+{% if quote_request.special_requirements %}
+SPECIAL REQUIREMENTS:
+-------------------
+{{ quote_request.special_requirements }}
+{% endif %}
+
+ACTIONS REQUIRED:
+---------------
+1. Review request details
+2. Prepare quote within 24 hours
+3. Contact client for any clarifications
+4. Assign appropriate interpreter/translator
+
+View in Admin Panel: {{ admin_url }}
+
+REMINDER:
+--------
+Please respond to this request within 24 hours.
+Contact the client immediately for same-day requests.
+
+=================================
+{{ COMPANY_NAME }} Quote Request System
+Internal Use Only

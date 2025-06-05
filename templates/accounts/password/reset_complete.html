@@ -1,0 +1,276 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset Complete - {{ COMPANY_NAME }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <style>
+        :root {
+            --primary-blue: #012A4B;
+            --accent-green: #47D7AC;
+            --success-color: #00C853;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: linear-gradient(135deg, #012A4B, #013A5C);
+            color: var(--white);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+            padding: 2rem;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+
+        .logo {
+            height: 60px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .success-icon {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .success-icon svg {
+            width: 80px;
+            height: 80px;
+            animation: successPop 0.5s ease-out;
+        }
+
+        .success-icon circle {
+            stroke: var(--accent-green);
+        }
+
+        .success-icon path {
+            stroke: var(--accent-green);
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--white);
+            animation: fadeIn 0.5s ease-out 0.2s both;
+        }
+
+        .success-message {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease-out 0.4s both;
+        }
+
+        .security-notice {
+            background: rgba(71, 215, 172, 0.15);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid rgba(71, 215, 172, 0.3);
+            transition: transform 0.3s ease;
+            animation: fadeIn 0.5s ease-out 0.6s both;
+        }
+
+        .security-notice:hover {
+            transform: translateY(-2px);
+        }
+
+        .notice-icon {
+            flex-shrink: 0;
+        }
+
+        .notice-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .notice-icon path {
+            stroke: var(--accent-green);
+        }
+
+        .notice-text {
+            margin: 0;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+
+        .action-buttons {
+            text-align: center;
+            animation: fadeIn 0.5s ease-out 0.8s both;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            min-width: 250px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-green), #3AC7A4);
+            color: var(--primary-blue);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(71, 215, 172, 0.3);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1.5rem;
+            }
+
+            .auth-container {
+                padding: 2rem;
+            }
+
+            .auth-title {
+                font-size: 1.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .auth-container {
+                padding: 1.5rem;
+                border-radius: 16px;
+            }
+
+            .security-notice {
+                padding: 1rem;
+            }
+
+            .success-icon svg {
+                width: 64px;
+                height: 64px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header class="auth-header">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="logo">
+        </header>
+
+        <div class="auth-container">
+            <div class="auth-content">
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <path d="M8 12L11 15L16 9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <h1 class="auth-title">Password Reset Complete</h1>
+                <p class="success-message">Your password has been successfully reset. You can now use your new password to login to your account.</p>
+
+                <div class="security-notice">
+                    <div class="notice-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3L4 7V12C4 16.4183 7.58172 20 12 20C16.4183 20 20 16.4183 20 12V7L12 3Z" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <p class="notice-text">
+                        For your security, you will be logged out of all other devices. Please login again with your new password.
+                    </p>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{% url 'dbdint:login' %}" class="btn btn-primary">Login Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

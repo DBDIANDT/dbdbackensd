@@ -1,0 +1,244 @@
+/* Reset complet pour éviter les conflits */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Variables de base avec !important pour forcer l'application */
+:root {
+    --bg-dark: #1E2127 !important;
+    --card-bg: #282C34 !important;
+    --text-color: #FFFFFF !important;
+    --text-secondary: rgba(255, 255, 255, 0.7) !important;
+    --primary-green: #67B246 !important;
+    --border-color: rgba(255, 255, 255, 0.1) !important;
+    --input-bg: rgba(255, 255, 255, 0.05) !important;
+    --gradient-start: #1E2127 !important;
+    --gradient-end: #23272E !important;
+    --error-red: #ef4444 !important;
+}
+
+/* Style de base du body */
+body {
+    min-height: 100vh !important;
+    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%) !important;
+    color: var(--text-color) !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Container principal */
+.main-container {
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 2rem !important;
+}
+
+/* En-tête avec logo */
+.auth-header {
+    width: 100% !important;
+    max-width: 420px !important;
+    text-align: center !important;
+    margin-bottom: 2rem !important;
+}
+
+.auth-logo {
+    width: 180px !important;
+    height: auto !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* Container principal du formulaire */
+.auth-container {
+    width: 100% !important;
+    max-width: 800px !important;
+    background: var(--card-bg) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+    padding: 2rem !important;
+    margin-bottom: 2rem !important;
+}
+
+/* Titres */
+.auth-title {
+    font-size: 1.75rem !important;
+    color: var(--text-color) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    text-align: center !important;
+}
+
+.auth-subtitle {
+    color: var(--text-secondary) !important;
+    text-align: center !important;
+    margin-bottom: 2rem !important;
+    font-size: 0.875rem !important;
+}
+
+/* Sections du formulaire */
+.form-section {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.section-title {
+    color: var(--text-color) !important;
+    font-size: 1.25rem !important;
+    margin-bottom: 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+/* Grille de formulaire */
+.form-grid {
+    display: grid !important;
+    gap: 1.5rem !important;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+}
+
+/* Groupes de formulaire */
+.form-group {
+    margin-bottom: 1.5rem !important;
+}
+
+.form-label {
+    display: block !important;
+    color: var(--text-color) !important;
+    margin-bottom: 0.5rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+}
+
+/* Style des inputs */
+.form-control,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"] {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    background: var(--input-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    color: var(--text-color) !important;
+    font-size: 0.875rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-control:focus,
+input:focus {
+    outline: none !important;
+    border-color: var(--primary-green) !important;
+    box-shadow: 0 0 0 2px rgba(103, 178, 70, 0.2) !important;
+}
+
+/* Messages d'erreur */
+.error-message {
+    color: var(--error-red) !important;
+    font-size: 0.75rem !important;
+    margin-top: 0.25rem !important;
+    display: block !important;
+}
+
+/* Bouton principal */
+.btn-primary {
+    width: 100% !important;
+    padding: 0.75rem 1.5rem !important;
+    background: var(--primary-green) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover {
+    background: #75C454 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Footer */
+.auth-footer {
+    text-align: center !important;
+    margin-top: 2rem !important;
+    color: var(--text-secondary) !important;
+}
+
+.text-accent {
+    color: var(--primary-green) !important;
+    text-decoration: none !important;
+}
+
+/* Gestion des erreurs et notifications */
+.notification {
+    padding: 1rem !important;
+    border-radius: 8px !important;
+    margin-bottom: 1.5rem !important;
+    background: var(--input-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+}
+
+.notification-error {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: var(--error-red) !important;
+}
+
+/* Progress bar */
+.progress-container {
+    margin: 2rem 0 !important;
+}
+
+.progress-line,
+.progress-line-active {
+    height: 2px !important;
+    background: var(--border-color) !important;
+}
+
+.progress-line-active {
+    background: var(--primary-green) !important;
+}
+
+.step-number {
+    width: 32px !important;
+    height: 32px !important;
+    background: var(--input-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: var(--text-color) !important;
+}
+
+.step.active .step-number {
+    background: var(--primary-green) !important;
+    border-color: var(--primary-green) !important;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .auth-container {
+        padding: 1.5rem !important;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+}

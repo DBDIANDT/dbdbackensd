@@ -1,0 +1,454 @@
+/* new-register.css - Style Bleu DBD I&T */
+:root {
+    --navy-deep: #1a365d;
+    --navy-medium: #2c5282;
+    --navy-light: #4a5568;
+    --navy-card: #2d3748;
+    --teal-primary: #38d9a9;
+    --teal-light: #4de6b8;
+    --white: #ffffff;
+    --gray-light: #a0aec0;
+    --gray-dark: #718096;
+    --red-error: #ff4444;
+    --blue-shadow: rgba(26, 54, 93, 0.3);
+    --white-glass: rgba(255, 255, 255, 0.05);
+    --white-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-medium) 50%, var(--navy-card) 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.main-container {
+    width: 100%;
+    max-width: 700px;
+    animation: slideUp 0.8s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Progress Steps */
+.progress-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3rem;
+    gap: 3rem;
+    position: relative;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.step-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--white-glass);
+    border: 2px solid var(--white-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--gray-light);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.step.active .step-circle {
+    background: var(--teal-primary);
+    border-color: var(--teal-primary);
+    color: var(--navy-deep);
+    box-shadow: 0 0 25px rgba(56, 217, 169, 0.4);
+}
+
+.step-text {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--gray-light);
+    font-weight: 500;
+}
+
+.step.active .step-text {
+    color: var(--teal-primary);
+}
+
+.progress-line {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 2px;
+    background: var(--white-border);
+}
+
+/* Logo Section */
+.logo-section {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo-wrapper {
+    display: inline-block;
+    padding: 1.5rem;
+    background: var(--white-glass);
+    border-radius: 20px;
+    border: 1px solid var(--white-border);
+    backdrop-filter: blur(15px);
+    transition: all 0.3s ease;
+    animation: logoFloat 0.8s ease-out 0.2s forwards;
+    opacity: 0;
+}
+
+@keyframes logoFloat {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.logo-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px var(--blue-shadow);
+    border-color: rgba(56, 217, 169, 0.3);
+}
+
+.logo-wrapper img {
+    height: 70px;
+    width: auto;
+    filter: drop-shadow(0 5px 15px var(--blue-shadow));
+}
+
+/* Header Text */
+.header-section {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.main-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+    animation: textSlide 0.8s ease-out 0.4s forwards;
+    opacity: 0;
+}
+
+.main-subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-light);
+    font-weight: 400;
+    line-height: 1.5;
+    animation: textSlide 0.8s ease-out 0.6s forwards;
+    opacity: 0;
+}
+
+@keyframes textSlide {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Card */
+.form-card {
+    background: var(--navy-card);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px var(--blue-shadow);
+    border: 1px solid var(--white-border);
+    backdrop-filter: blur(10px);
+    animation: cardSlide 0.8s ease-out 0.8s forwards;
+    opacity: 0;
+}
+
+@keyframes cardSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.field-label {
+    color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.form-input {
+    width: 100%;
+    height: 55px;
+    padding: 0 1rem 0 3.5rem;
+    background: var(--navy-light);
+    border: 2px solid transparent;
+    border-radius: 15px;
+    color: var(--white);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input::placeholder {
+    color: var(--gray-dark);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--teal-primary);
+    background: var(--navy-medium);
+    box-shadow: 0 0 0 4px rgba(56, 217, 169, 0.1);
+}
+
+.form-input:focus + .input-icon {
+    color: var(--teal-primary);
+}
+
+.input-icon {
+    position: absolute;
+    left: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-light);
+    width: 20px;
+    height: 20px;
+    transition: all 0.3s ease;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-light);
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    transition: all 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: var(--teal-primary);
+}
+
+/* Password Strength */
+.password-strength {
+    margin-top: 0.75rem;
+    height: 4px;
+    background: var(--white-glass);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0;
+    transition: all 0.3s ease;
+    background: var(--red-error);
+}
+
+.strength-bar.medium {
+    background: #ffa500;
+}
+
+.strength-bar.strong {
+    background: var(--teal-primary);
+}
+
+.password-hints {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+    color: var(--gray-light);
+    transition: all 0.3s ease;
+}
+
+.hint-item.valid {
+    color: var(--teal-primary);
+}
+
+.hint-icon {
+    width: 14px;
+    height: 14px;
+}
+
+/* Submit Button */
+.submit-button {
+    width: 100%;
+    height: 55px;
+    background: linear-gradient(135deg, var(--teal-primary) 0%, var(--teal-light) 100%);
+    border: none;
+    border-radius: 15px;
+    color: var(--navy-deep);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 20px rgba(56, 217, 169, 0.25);
+}
+
+.submit-button:hover {
+    background: linear-gradient(135deg, var(--teal-light) 0%, var(--teal-primary) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(56, 217, 169, 0.35);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+.button-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Login Link */
+.login-section {
+    text-align: center;
+    color: var(--gray-light);
+    font-size: 0.95rem;
+}
+
+.login-link {
+    color: var(--teal-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.login-link:hover {
+    color: var(--teal-light);
+    text-decoration: underline;
+}
+
+/* Error Messages */
+.error-message {
+    color: var(--red-error);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .form-card {
+        padding: 2rem;
+    }
+    
+    .main-title {
+        font-size: 1.6rem;
+    }
+    
+    .main-subtitle {
+        font-size: 1rem;
+    }
+    
+    .progress-section {
+        gap: 2rem;
+    }
+    
+    .progress-line {
+        width: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        padding: 1rem 0.5rem;
+    }
+    
+    .form-card {
+        padding: 1.5rem;
+        border-radius: 15px;
+    }
+    
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .logo-wrapper {
+        padding: 1rem;
+    }
+    
+    .logo-wrapper img {
+        height: 55px;
+    }
+    
+    .main-title {
+        font-size: 1.4rem;
+    }
+}

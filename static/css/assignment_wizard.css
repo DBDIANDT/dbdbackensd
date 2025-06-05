@@ -1,0 +1,192 @@
+/* Structure principale du wizard */
+.wizard-container {
+    max-width: 950px;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+/* Barre de progression */
+.step-progress {
+    display: flex;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid #eee;
+}
+
+.step-item {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    padding: 10px 0;
+}
+
+.step-item.active {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.step-item.completed {
+    color: #16a34a;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    margin: 0 auto 8px;
+}
+
+.step-item.active .step-number {
+    background: #2563eb;
+    color: white;
+}
+
+.step-item.completed .step-number {
+    background: #16a34a;
+    color: white;
+}
+
+/* Conteneur du formulaire */
+.form-container {
+    padding: 25px;
+}
+
+/* Groupes de champs */
+.field-group {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.field-group h3 {
+    margin: 0 0 15px 0;
+    color: #1e293b;
+    font-size: 1.1em;
+}
+
+/* Style des champs */
+.field-row {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 15px;
+}
+
+.field-col {
+    flex: 1;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="datetime-local"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: white;
+    font-size: 14px;
+}
+
+input[type="text"]:focus,
+input[type="datetime-local"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+/* Boutons de navigation */
+.wizard-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #eee;
+    border-radius: 0 0 8px 8px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-previous {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.btn-next {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-submit {
+    background: #16a34a;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Messages d'erreur */
+.error-message {
+    color: #dc2626;
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+
+/* Aide contextuelle */
+.help-text {
+    color: #6b7280;
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+
+/* États de validation */
+.field-valid {
+    border-color: #16a34a !important;
+}
+
+.field-invalid {
+    border-color: #dc2626 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wizard-container {
+        margin: 10px;
+    }
+
+    .field-row {
+        flex-direction: column;
+    }
+
+    .step-progress {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .step-item {
+        margin-bottom: 10px;
+    }
+}

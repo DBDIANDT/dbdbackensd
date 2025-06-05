@@ -1,0 +1,25 @@
+<!-- templates/emails/quote_sent.html -->
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+    <h1>{{ COMPANY_NAME }}</h1>
+    <p>Your Quote is Ready</p>
+</div>
+<div class="content">
+    <h2>Dear {{ client_name }},</h2>
+    <p>Your quote is ready for review. Here are the details:</p>
+
+    <div class="quote-details">
+        <p><strong>Reference Number:</strong> {{ reference_number }}</p>
+        <p><strong>Service:</strong> {{ service_type }}</p>
+        <p><strong>Date:</strong> {{ start_date|date:"F j, Y, P" }}</p>
+        <p><strong>Location:</strong> {{ location }}</p>
+        <p><strong>Amount:</strong> ${{ amount|floatformat:2 }}</p>
+        <p><strong>Tax:</strong> ${{ tax_amount|floatformat:2 }}</p>
+        <p><strong>Total Amount:</strong> ${{ total_amount|floatformat:2 }}</p>
+        <p><strong>Valid Until:</strong> {{ valid_until|date:"F j, Y" }}</p>
+    </div>
+
+    <a href="{{ login_url }}" class="button">Review and Accept Quote</a>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+<!-- quotes/partials/_timeline.html -->
+{% comment %}
+Usage: {% include 'client/partials/_timeline.html' with events=timeline_events %}
+{% endcomment %}
+<div class="timeline">
+    {% for event in events %}
+    <div class="timeline-event {% if event.status == current_status %}current{% endif %} {% if event.completed %}completed{% endif %}">
+        <div class="event-marker"></div>
+        <div class="event-content">
+            <div class="event-title">{{ event.description }}</div>
+            <div class="event-date">{{ event.date|date:"F j, Y - g:i A" }}</div>
+            {% if event.additional_info %}
+            <div class="event-description">{{ event.additional_info }}</div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>

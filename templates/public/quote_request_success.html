@@ -1,0 +1,85 @@
+<!-- templates/public/quote_request_success.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Request Submitted - {{ COMPANY_NAME }}</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="success-container">
+            <div class="success-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="40" 
+                     height="40" 
+                     viewBox="0 0 24 24" 
+                     fill="none" 
+                     stroke="currentColor" 
+                     stroke-width="2" 
+                     stroke-linecap="round" 
+                     stroke-linejoin="round"
+                     class="success-check">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+
+            <h1 class="success-title">Quote Request Submitted!</h1>
+
+            <div class="success-details">
+                <div class="success-message">
+                    <p>Thank you for your interest in our interpretation services.</p>
+                    <p>Our team will carefully review your requirements and provide you with a detailed quote within 24 hours.</p>
+                </div>
+
+                <div class="success-info">
+                    <div class="info-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                             width="20" 
+                             height="20" 
+                             viewBox="0 0 24 24" 
+                             fill="none" 
+                             stroke="currentColor" 
+                             stroke-width="2" 
+                             stroke-linecap="round" 
+                             stroke-linejoin="round">
+                            <path d="M22 2L11 13"></path>
+                            <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+                        </svg>
+                        <span>Confirmation email sent</span>
+                    </div>
+                    <div class="info-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                             width="20" 
+                             height="20" 
+                             viewBox="0 0 24 24" 
+                             fill="none" 
+                             stroke="currentColor" 
+                             stroke-width="2" 
+                             stroke-linecap="round" 
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Response within 24 hours</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="success-actions">
+                <a href="https://dbdiandt.co" class="return-home">Return to Homepage</a>
+                <a href="#" class="new-quote">Submit Another Quote</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Important Update About Your Application - {{ COMPANY_NAME }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+        }
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #1b1f2b 0%, #2c3e50 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://{{ COMPANY_NAME }}translation.com/assets/pattern-bg.png');
+            background-size: cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        .logo-container {
+            position: relative;
+            z-index: 2;
+        }
+        .logo {
+            max-width: 200px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            margin: 15px 0 5px;
+            font-weight: 700;
+            font-size: 32px;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        .header-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-top: 5px;
+            position: relative;
+            z-index: 1;
+        }
+        .content {
+            padding: 40px;
+            color: #1b1f2b;
+            background: linear-gradient(180deg, #ffffff 0%, #f9fafc 100%);
+        }
+        .greeting {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #1b1f2b;
+            border-bottom: 2px solid #e6eaef;
+            padding-bottom: 15px;
+        }
+        .message {
+            margin-bottom: 28px;
+            font-size: 16px;
+            color: #455066;
+            line-height: 1.8;
+        }
+        .message i {
+            color: #2c3e50;
+            margin-right: 8px;
+        }
+        .action-button {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 36px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            box-shadow: 0 6px 15px rgba(44, 62, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(44, 62, 80, 0.4);
+        }
+        .btn:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+            transform: translateX(-100%);
+        }
+        .btn:hover:after {
+            transform: translateX(0);
+        }
+        .note {
+            background: linear-gradient(120deg, #f0f7ff 0%, #edf6ff 100%);
+            border-left: 6px solid #2c3e50;
+            padding: 22px;
+            margin: 32px 0;
+            font-size: 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .note-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #1b1f2b;
+        }
+        .note-title i {
+            margin-right: 10px;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        .opportunities {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .opportunity-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        .opportunity-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+        }
+        .opportunity-icon {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .opportunity-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #1b1f2b;
+        }
+        .opportunity-text {
+            color: #5d6778;
+            font-size: 14px;
+        }
+        .social-section {
+            background: linear-gradient(120deg, #f5f7fa 0%, #eef1f5 100%);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .social-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .social-icon-link {
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2c3e50;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .social-icon-link:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            color: #34495e;
+        }
+        .footer {
+            background: linear-gradient(135deg, #1b1f2b 0%, #2c3e50 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        .footer:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://{{ COMPANY_NAME }}translation.com/assets/pattern-bg.png');
+            background-size: cover;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .footer-content {
+            position: relative;
+            z-index: 1;
+        }
+        .footer-logo {
+            max-width: 120px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+        }
+        .contact-item i {
+            color: #34495e;
+            margin-right: 8px;
+        }
+        @media (max-width: 650px) {
+            .content {
+                padding: 30px 20px;
+            }
+            .opportunities {
+                grid-template-columns: 1fr;
+            }
+            .greeting {
+                font-size: 22px;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="logo">
+                <h1>Application Update</h1>
+                <p class="header-subtitle">Thank You for Your Interest</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">Hello [Interpreter's Name],</div>
+            
+            <div class="message">
+                <i class="fas fa-envelope-open"></i> Thank you for your interest in joining our team of professional interpreters at {{ COMPANY_NAME }}. We appreciate the time and effort you've put into your application.
+            </div>
+            
+            <div class="message">
+                <i class="fas fa-info-circle"></i> After careful review of your application, we regret to inform you that we are unable to proceed with your candidacy at this time. Our current needs and requirements have led us to make this difficult decision.
+            </div>
+            
+            <div class="message">
+                <i class="fas fa-handshake"></i> However, we were impressed with your skills and experience. {{ COMPANY_NAME }} is constantly growing, and new opportunities regularly become available. We would like to keep your information on file and may contact you in the future when suitable positions open up.
+            </div>
+            
+            <div class="opportunities">
+                <div class="opportunity-item">
+                    <div class="opportunity-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="opportunity-title">Future Openings</div>
+                    <div class="opportunity-text">We regularly expand our team and will reach out when new positions match your profile.</div>
+                </div>
+                
+                <div class="opportunity-item">
+                    <div class="opportunity-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="opportunity-title">Project-Based Work</div>
+                    <div class="opportunity-text">Short-term projects and special assignments frequently arise.</div>
+                </div>
+                
+                <div class="opportunity-item">
+                    <div class="opportunity-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="opportunity-title">Professional Development</div>
+                    <div class="opportunity-text">Follow us for news about workshops and training opportunities.</div>
+                </div>
+                
+                <div class="opportunity-item">
+                    <div class="opportunity-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="opportunity-title">Industry Updates</div>
+                    <div class="opportunity-text">Stay connected for the latest in translation industry news.</div>
+                </div>
+            </div>
+            
+            <div class="note">
+                <div class="note-title">
+                    <i class="fas fa-lightbulb"></i> Stay Connected
+                </div>
+                We encourage you to follow our social media channels to stay updated on future opportunities. We also welcome you to reapply in the future as our needs evolve.
+            </div>
+            
+            <div class="social-section">
+                <div class="social-title">Follow Us on Social Media</div>
+                <p>We'd love to stay connected with you! Follow us for updates on new opportunities and industry news.</p>
+                
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=61562327876350&mibextid=ZbWKwL" class="social-icon-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/{{ COMPANY_NAME }}182726" class="social-icon-link"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.linkedin.com/in/jh-bridge-685490318/" class="social-icon-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.instagram.com/{{ COMPANY_NAME }}translation" class="social-icon-link"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            
+            <div class="action-button">
+                <a href="https://{{ COMPANY_NAME }}.com/contact" class="btn">
+                    <i class="fas fa-paper-plane"></i> Contact Us
+                </a>
+            </div>
+            
+            <div class="message" style="margin-top: 40px; font-style: italic;">
+                We wish you the best in your professional endeavors and hope to connect with you again.<br>
+                <strong>The {{ COMPANY_NAME }} Team</strong>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-content">
+                <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="footer-logo">
+                <div>{{ COMPANY_NAME }} Translation Services</div>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i> +1 774-223-8771
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i> {{ COMPANY_MAIL }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

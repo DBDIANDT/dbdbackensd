@@ -1,0 +1,540 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ COMPANY_NAME }} - Payment Statement</title>
+    <link rel="stylesheet" href="{% static 'css/template.css' %}">
+    {% csrf_token %}
+    
+    <!-- Scripts nécessaires -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <style>
+        /* Style général de la page */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .payroll-template {
+            background-color: white;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 40px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Style du bouton de téléchargement */
+        .pdf-download-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+
+        .pdf-download-btn:hover {
+            background: #f8f8f8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        /* Style pour l'entête */
+        .template-header {
+            position: relative;
+            background: linear-gradient(135deg, #003B71 0%, #0056a4 100%);
+            padding: 30px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 40px;
+        }
+
+        .logo-container {
+            text-align: center;
+        }
+
+        .company-logo {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .wave-shape {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        /* Style pour les informations du document */
+        .document-info {
+            margin-bottom: 40px;
+        }
+
+        .document-title {
+            color: #003B71;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .document-meta {
+            display: flex;
+            gap: 20px;
+            color: #666;
+        }
+
+        /* Style pour les sections d'adresse */
+        .address-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .address-block {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .contact-details {
+            margin-top: 15px;
+        }
+
+        .contact-info {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Style pour le tableau des services */
+        .services-table-container {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .services-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .services-table th,
+        .services-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .services-table th {
+            background-color: #f8f9fa;
+            color: #003B71;
+        }
+
+        /* Style pour la section total */
+        .total-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .total-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .subtotal-row,
+        .total-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2em;
+            color: #003B71;
+        }
+
+        /* Style pour le pied de page */
+        .document-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #666;
+        }
+
+        /* Style pour l'impression */
+        @media print {
+            .pdf-download-btn {
+                display: none !important;
+            }
+            
+            body {
+                background-color: white;
+            }
+            
+            .payroll-template {
+                margin: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payroll-template">
+        <!-- Bouton de téléchargement -->
+        <button onclick="downloadAsPdf()" class="pdf-download-btn" id="downloadButton">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            PDF
+        </button>
+
+        <!-- Enhanced Header with Gradient Wave -->
+        <div class="template-header">
+            <div class="logo-container">
+                <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo" class="company-logo">
+            </div>
+            <!-- Added decorative wave pattern -->
+            <div class="wave-shape">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+                    <path fill="#ffffff" fill-opacity="1" d="M0,32L48,37.3C96,43,192,53,288,48C384,43,480,21,576,16C672,11,768,21,864,37.3C960,53,1056,75,1152,74.7C1248,75,1344,53,1392,42.7L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Document Information with Enhanced Design -->
+        <div class="document-info">
+            <div class="document-title-section">
+                <h1 class="document-title">Payment Statement</h1>
+                <div class="document-meta">
+                    <div class="document-number">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                        No: {{ payroll.document_number }}
+                    </div>
+                    <div class="document-date">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        {{ payroll.document_date|date:"F d, Y" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Address Section with Modern Grid -->
+        <div class="address-section">
+            <!-- Company Info -->
+            <div class="address-block company-info">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    From
+                </h3>
+                <div class="contact-details">
+                    <div class="contact-info company-name">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="12" rx="2" ry="2"></rect>
+                            <line x1="7" y1="3" x2="7" y2="15"></line>
+                            <line x1="11" y1="3" x2="11" y2="15"></line>
+                            <line x1="15" y1="3" x2="15" y2="15"></line>
+                            <path d="M3 21v-2a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        {{ COMPANY_FULL_NAME }}
+                    </div>
+                    <div class="contact-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        {{ payroll.company_address }}
+                    </div>
+                    <div class="contact-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        {{ payroll.company_phone }}
+                    </div>
+                    <div class="contact-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        {{ payroll.company_email }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interpreter Info -->
+            <div class="address-block interpreter-info">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    To
+                </h3>
+                <div class="contact-details">
+                    <div class="contact-info interpreter-name">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        {{ payroll.interpreter_name }}
+                    </div>
+                    <div class="contact-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        {{ payroll.interpreter_address }}
+                    </div>
+                    <div class="contact-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        {{ payroll.interpreter_phone }}
+                    </div>
+                    <div class="contact-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        {{ payroll.interpreter_email }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Services Table -->
+        <div class="services-section">
+            <h3 class="services-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                Services Provided
+            </h3>
+            <div class="services-table-container">
+                <table class="services-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Languages</th>
+                            <th>Duration</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service in services %}
+                        <tr>
+                            <td>{{ service.date|date:"M d, Y" }}</td>
+                            <td>{{ service.source_language }} > {{ service.target_language }}</td>
+                            <td>{{ service.duration|default:"0" }} hrs</td>
+                            <td>${{ service.rate|default:"0" }}</td>
+                            <td>${% if service.amount|floatformat:"2" == service.amount|floatformat:"0" %}{{ service.amount|floatformat:"0" }}{% else %}{{ service.amount|floatformat:"2" }}{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reimbursements Section - Only shown if reimbursements exist -->
+        {% if reimbursements %}
+        <div class="services-section">
+            <h3 class="services-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                Reimbursements
+            </h3>
+            <div class="services-table-container">
+                <table class="services-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reimbursement in reimbursements %}
+                        <tr>
+                            <td>{{ reimbursement.date|date:"M d, Y" }}</td>
+                            <td>{{ reimbursement.get_reimbursement_type_display }}</td>
+                            <td>{{ reimbursement.description }}</td>
+                            <td>${% if reimbursement.amount|floatformat:"2" == reimbursement.amount|floatformat:"0" %}{{ reimbursement.amount|floatformat:"0" }}{% else %}{{ reimbursement.amount|floatformat:"2" }}{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Deductions Section - Only shown if deductions exist -->
+        {% if deductions %}
+        <div class="services-section">
+            <h3 class="services-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Deductions
+            </h3>
+            <div class="services-table-container">
+                <table class="services-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for deduction in deductions %}
+                        <tr>
+                            <td>{{ deduction.date|date:"M d, Y" }}</td>
+                            <td>{{ deduction.get_deduction_type_display }}</td>
+                            <td>{{ deduction.description }}</td>
+                            <td>${% if deduction.amount|floatformat:"2" == deduction.amount|floatformat:"0" %}{{ deduction.amount|floatformat:"0" }}{% else %}{{ deduction.amount|floatformat:"2" }}{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Enhanced Total Section with calculations including reimbursements and deductions -->
+        <div class="total-section">
+            <div class="total-details">
+                <div class="subtotal-row">
+                    <span>Total Duration:</span>
+                    <span>{{ total_duration|default:"0" }} hrs</span>
+                </div>
+                <div class="subtotal-row">
+                    <span>Total Services:</span>
+                    <span>${{ total_service_amount|default:"0" }}</span>
+                </div>
+                
+                {% if reimbursements %}
+                <div class="subtotal-row">
+                    <span>Total Reimbursements:</span>
+                    <span>${{ total_reimbursement_amount|default:"0" }}</span>
+                </div>
+                {% endif %}
+                
+                {% if deductions %}
+                <div class="subtotal-row">
+                    <span>Total Deductions:</span>
+                    <span>-${{ total_deduction_amount|default:"0" }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="total-row">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span class="total-label">Final Amount:</span>
+                    <span class="total-amount">${{ final_amount|default:"0" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer with Generation Date -->
+        <div class="document-footer">
+            <div class="generation-info">
+                Generated on {{ generation_date|date:"F d, Y" }}
+            </div>
+            <div class="copyright">
+                © {% now "Y" %} {{ COMPANY_NAME }} Translation. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function downloadAsPdf() {
+            // Cacher temporairement le bouton
+            const button = document.getElementById('downloadButton');
+            button.style.display = 'none';
+            
+            // Capturer la page
+            html2canvas(document.querySelector('.payroll-template'), {
+                scale: 2, // Meilleure qualité
+                useCORS: true, // Pour les images externes
+                logging: false, // Désactiver les logs
+                onclone: function(clonedDoc) {
+                    // S'assurer que le bouton est caché dans le clone
+                    const clonedButton = clonedDoc.getElementById('downloadButton');
+                    if (clonedButton) {
+                        clonedButton.remove();
+                    }
+                }
+            }).then(canvas => {
+                // Réafficher le bouton
+                button.style.display = 'flex';
+                
+                // Convertir et envoyer au serveur
+                const imgData = canvas.toDataURL('image/png');
+                
+                fetch('/generate-pdf/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({
+                        imageData: imgData
+                    })
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `payment-statement-${Date.now()}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la génération du PDF:', error);
+                    alert('Une erreur est survenue lors de la génération du PDF. Veuillez réessayer.');
+                    button.style.display = 'flex';
+                });
+            });
+        }
+    </script>
+</body>
+</html>

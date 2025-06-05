@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Interpreter Registration - Step 1</title>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="{% static 'css/etape1.css' %}">
+   <style>
+       .form-control {
+           width: 100%;
+           padding: 1rem;
+           background: rgba(255, 255, 255, 0.05);
+           border: 1px solid rgba(255, 255, 255, 0.1);
+           border-radius: 12px;
+           color: white;
+           font-size: 1rem;
+       }
+       
+       .form-control:focus {
+           outline: none;
+           border-color: #0088FF;
+           background: rgba(255, 255, 255, 0.1);
+       }
+   </style>
+</head>
+<body>
+   <div class="registration-container">
+       <div class="steps-progress">
+           <div class="step active">
+               1
+               <span class="step-label">Basic Info</span>
+           </div>
+           <div class="step">
+               2
+               <span class="step-label">Languages</span>
+           </div>
+           <div class="step">
+               3
+               <span class="step-label">Location</span>
+           </div>
+       </div>
+
+       <div class="form-section">
+           <h1 class="form-title">Create Your Interpreter Account</h1>
+           <p class="form-subtitle">Let's start with your basic information</p>
+
+           {% if messages %}
+           <div class="messages">
+               {% for message in messages %}
+               <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                   {{ message }}
+               </div>
+               {% endfor %}
+           </div>
+           {% endif %}
+
+           <form method="post" novalidate>
+               {% csrf_token %}
+               
+               <!-- Username Field -->
+               <div class="form-group">
+                   <label for="{{ form.username.id_for_label }}">Username</label>
+                   {{ form.username }}
+                   {% if form.username.errors %}
+                   <div class="error-message">{{ form.username.errors.0 }}</div>
+                   {% endif %}
+               </div>
+
+               <!-- Email Field -->
+               <div class="form-group">
+                   <label for="{{ form.email.id_for_label }}">Email Address</label>
+                   {{ form.email }}
+                   {% if form.email.errors %}
+                   <div class="error-message">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                           <circle cx="12" cy="12" r="10"></circle>
+                           <line x1="12" y1="8" x2="12" y2="12"></line>
+                           <line x1="12" y1="16" x2="12" y2="16"></line>
+                       </svg>
+                       {{ form.email.errors.0 }}
+                   </div>
+                   {% endif %}
+               </div>
+
+               <div class="form-grid">
+                   <div class="form-group">
+                       <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                       {{ form.first_name }}
+                       {% if form.first_name.errors %}
+                       <div class="error-message">{{ form.first_name.errors.0 }}</div>
+                       {% endif %}
+                   </div>
+
+                   <div class="form-group">
+                       <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                       {{ form.last_name }}
+                       {% if form.last_name.errors %}
+                       <div class="error-message">{{ form.last_name.errors.0 }}</div>
+                       {% endif %}
+                   </div>
+               </div>
+
+               <div class="form-group">
+                   <label for="{{ form.phone.id_for_label }}">Phone Number</label>
+                   {{ form.phone }}
+                   {% if form.phone.errors %}
+                   <div class="error-message">{{ form.phone.errors.0 }}</div>
+                   {% endif %}
+               </div>
+
+               <div class="form-group">
+                   <label for="{{ form.password1.id_for_label }}">Password</label>
+                   {{ form.password1 }}
+                   {% if form.password1.errors %}
+                   <div class="error-message">{{ form.password1.errors.0 }}</div>
+                   {% endif %}
+               </div>
+
+               <div class="form-group">
+                   <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                   {{ form.password2 }}
+                   {% if form.password2.errors %}
+                   <div class="error-message">{{ form.password2.errors.0 }}</div>
+                   {% endif %}
+               </div>
+
+               <div class="button-group">
+                   <a href="{% url 'dbdint:choose_registration' %}" class="btn btn-previous">Back</a>
+                   <button type="submit" class="btn btn-next">Continue to Step 2</button>
+               </div>
+           </form>
+       </div>
+   </div>
+
+   <script>
+       document.addEventListener('DOMContentLoaded', function() {
+           const form = document.querySelector('form');
+           const inputs = form.querySelectorAll('input');
+
+           inputs.forEach(input => {
+               input.addEventListener('focus', function() {
+                   this.parentElement.classList.add('focused');
+               });
+
+               input.addEventListener('blur', function() {
+                   if (!this.value) {
+                       this.parentElement.classList.remove('focused');
+                   }
+               });
+           });
+       });
+   </script>
+</body>
+</html>

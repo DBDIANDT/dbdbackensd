@@ -1,0 +1,14 @@
+<!-- templates/emails/quote_request_quoted.html -->
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+    <h1>{{ COMPANY_NAME }}</h1>
+    <p>Your Quote is Ready</p>
+</div>
+<div class="content">
+    <h2>Your quote is ready, {{ client_name }}!</h2>
+    <p>We have prepared a detailed quote for your interpretation service request. Please log in to your account to review the quote and proceed with booking.</p>
+    
+    <a href="{{ login_url }}" class="button">View Your Quote</a>
+</div>
+{% endblock %}

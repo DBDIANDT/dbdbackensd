@@ -1,0 +1,410 @@
+{% extends 'base_trad.html' %}
+{% load static %}
+
+{% block title %}Assignment Details{% endblock %}
+{% block header_title %}Assignment Details{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+
+    /* Status Banner */
+    .status-banner {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .status-badge {
+        padding: 0.5rem 1.5rem;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .status-pending { background: rgba(236, 201, 75, 0.2); color: #ECC94B; }
+    .status-confirmed { background: rgba(72, 187, 120, 0.2); color: #48BB78; }
+    .status-in-progress { background: rgba(66, 153, 225, 0.2); color: #4299E1; }
+    .status-completed { background: rgba(160, 174, 192, 0.2); color: #A0AEC0; }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .action-button {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        color: white;
+    }
+
+    .action-button:hover {
+        transform: translateY(-2px);
+    }
+
+    .accept-button { background: #48BB78; }
+    .accept-button:hover { background: #38A169; }
+    .reject-button { background: #F56565; }
+    .reject-button:hover { background: #E53E3E; }
+    .complete-button { background: var(--accent-blue); }
+    .complete-button:hover { background: var(--secondary-blue); }
+
+    /* Client Info Card */
+    .client-info {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .client-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .client-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .client-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Detail Grid */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .detail-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-title i {
+        color: var(--accent-blue);
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        opacity: 0.7;
+    }
+
+    .detail-value {
+        font-weight: 500;
+    }
+
+    /* Map Container */
+    .map-container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        height: 300px;
+    }
+
+    /* Special Requirements & Notes */
+    .special-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .warning-text {
+        color: #F6E05E;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .detail-container {
+            padding: 1rem;
+        }
+
+        .status-banner {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .action-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .client-header {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    /* Animation for status changes */
+    @keyframes statusChange {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .status-changed {
+        animation: statusChange 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <!-- Status Banner -->
+    <div class="status-banner">
+        <div>
+            <span class="status-badge status-{{ assignment.status|lower }}">
+                {{ assignment.get_status_display }}
+            </span>
+        </div>
+        <div class="action-buttons">
+            {% if assignment.status == 'PENDING' %}
+                <button class="action-button accept-button" onclick="handleAccept()">
+                    <i class="fas fa-check"></i> Accept Assignment
+                </button>
+                <button class="action-button reject-button" onclick="handleReject()">
+                    <i class="fas fa-times"></i> Reject Assignment
+                </button>
+            {% elif assignment.status == 'IN_PROGRESS' %}
+                <button class="action-button complete-button" onclick="handleComplete()">
+                    <i class="fas fa-check-circle"></i> Mark as Completed
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Client Information -->
+    <div class="client-info">
+        <div class="client-header">
+            <img src="{{ assignment.client.profile_image.url|default:'/static/images/default-avatar.png' }}" 
+                 alt="Client" class="client-avatar">
+            <div>
+                <div class="client-name">{{ assignment.client.full_name }}</div>
+                <div>{{ assignment.client.email }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Details Grid -->
+    <div class="detail-grid">
+        <!-- Assignment Details -->
+        <div class="detail-card">
+            <h3 class="detail-title">
+                <i class="fas fa-info-circle"></i>
+                Assignment Details
+            </h3>
+            <div class="detail-item">
+                <span class="detail-label">Service Type</span>
+                <span class="detail-value">{{ assignment.service_type.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Languages</span>
+                <span class="detail-value">{{ assignment.source_language.name }} → {{ assignment.target_language.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Duration</span>
+                <span class="detail-value">{{ assignment.end_time|timeuntil:assignment.start_time }}</span>
+            </div>
+        </div>
+
+        <!-- Time & Location -->
+        <div class="detail-card">
+            <h3 class="detail-title">
+                <i class="fas fa-clock"></i>
+                Time & Location
+            </h3>
+            <div class="detail-item">
+                <span class="detail-label">Date</span>
+                <span class="detail-value">{{ assignment.start_time|date:"l, F j, Y" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Time</span>
+                <span class="detail-value">
+                    {{ assignment.start_time|time:"g:i A" }} - {{ assignment.end_time|time:"g:i A" }}
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Location</span>
+                <span class="detail-value">{{ assignment.location }}</span>
+            </div>
+        </div>
+
+        <!-- Payment Information -->
+        <div class="detail-card">
+            <h3 class="detail-title">
+                <i class="fas fa-dollar-sign"></i>
+                Payment Information
+            </h3>
+            <div class="detail-item">
+                <span class="detail-label">Rate</span>
+                <span class="detail-value">${{ assignment.interpreter_rate }}/hour</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Minimum Hours</span>
+                <span class="detail-value">{{ assignment.minimum_hours }} hours</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Estimated Total</span>
+                <span class="detail-value">${{ estimated_total|floatformat:2 }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% if assignment.special_requirements %}
+    <!-- Special Requirements -->
+    <div class="special-section">
+        <h3 class="detail-title">
+            <i class="fas fa-exclamation-triangle"></i>
+            Special Requirements
+        </h3>
+        <p class="warning-text">{{ assignment.special_requirements }}</p>
+    </div>
+    {% endif %}
+
+    {% if assignment.notes %}
+    <!-- Notes -->
+    <div class="special-section">
+        <h3 class="detail-title">
+            <i class="fas fa-sticky-note"></i>
+            Notes
+        </h3>
+        <p>{{ assignment.notes }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function handleAccept() {
+    if (!confirm('Are you sure you want to accept this assignment?')) return;
+    
+    try {
+        const response = await fetch('{% url "dbdint:accept_assignment" assignment.id %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        });
+
+        if (response.ok) {
+            location.reload();
+        } else {
+            throw new Error('Failed to accept assignment');
+        }
+    } catch (error) {
+        alert('Error accepting assignment');
+    }
+}
+
+async function handleReject() {
+    if (!confirm('Are you sure you want to reject this assignment?')) return;
+    
+    try {
+        const response = await fetch('{% url "dbdint:reject_assignment" assignment.id %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        });
+
+        if (response.ok) {
+            window.location.href = '{% url "dbdint:interpreter_assignments" %}';
+        } else {
+            throw new Error('Failed to reject assignment');
+        }
+    } catch (error) {
+        alert('Error rejecting assignment');
+    }
+}
+
+async function handleComplete() {
+    if (!confirm('Are you sure you want to mark this assignment as completed?')) return;
+    
+    try {
+        const response = await fetch('{% url "dbdint:complete_assignment" assignment.id %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        });
+
+        if (response.ok) {
+            location.reload();
+        } else {
+            throw new Error('Failed to complete assignment');
+        }
+    } catch (error) {
+        alert('Error completing assignment');
+    }
+}
+</script>
+{% endblock %}

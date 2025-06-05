@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Already Processed - {{ COMPANY_NAME }}</title>
+    <style>
+        :root {
+            --primary-dark: #0F172A;
+            --secondary-dark: #1E293B;
+            --accent-green: #48BB78;
+            --text-light: #E2E8F0;
+            --text-muted: #CBD5E1;
+            --background-dark: #0A101E;
+            --warning-yellow: #D69E2E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: var(--secondary-dark);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid rgba(72, 187, 120, 0.2);
+        }
+
+        .logo {
+            display: block;
+            max-width: 180px;
+            margin: 0 auto 30px;
+        }
+
+        h2 {
+            color: var(--warning-yellow);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .message {
+            background-color: rgba(30, 41, 59, 0.6);
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning-yellow);
+            margin-bottom: 25px;
+        }
+
+        .message p {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+            list-style-type: none;
+        }
+
+        ul li {
+            position: relative;
+            margin-bottom: 12px;
+            padding-left: 25px;
+        }
+
+        ul li:before {
+            content: '•';
+            color: var(--warning-yellow);
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+            line-height: 1;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background-color: var(--accent-green);
+            color: var(--primary-dark);
+            padding: 15px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #38A169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .contact-info {
+            background-color: rgba(72, 187, 120, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-green);
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .contact-heading {
+            color: var(--accent-green);
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .phone-number {
+            color: var(--accent-green);
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 15px 0;
+            display: block;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                margin: 20px;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo" class="logo">
+        
+        <h2>Assignment Already Processed</h2>
+        
+        <div class="message">
+            <p>Dear interpreter,</p>
+            
+            <p>It appears this assignment has already been processed. This means:</p>
+            <ul>
+                <li>You may have already accepted or declined this assignment</li>
+                <li>Another action has been taken on this assignment</li>
+                <li>The assignment status has been updated</li>
+            </ul>
+
+            <p>To check the current status of your assignments, you can:</p>
+            <ul>
+                <li>Log in to your interpreter account</li>
+                <li>Check your email for the most recent communication about this assignment</li>
+            </ul>
+
+            <div class="contact-info">
+                <p class="contact-heading">Have questions or concerns?</p>
+                <p>Please don't hesitate to contact {{ COMPANY_NAME }} Support</p>
+                <a href="tel:7742238771" class="phone-number">(774) 223-8771</a>
+                <p>We value your services and are here to assist you!</p>
+            </div>
+
+            <a href="https://{{ COMPANY_NAME }}s.up.railway.app/" class="btn">Access Your Account</a>
+        </div>
+    </div>
+</body>
+</html>

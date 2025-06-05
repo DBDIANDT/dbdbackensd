@@ -1,0 +1,16 @@
+<!-- templates/emails/quote_request_rejected.html -->
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+    <h1>{{ COMPANY_NAME }}</h1>
+    <p>Quote Request Status Update</p>
+</div>
+<div class="content">
+    <h2>Dear {{ client_name }},</h2>
+    <p>Unfortunately, we are unable to proceed with your quote request at this time. This might be due to interpreter availability or scheduling conflicts.</p>
+    
+    <p>We encourage you to submit a new request with alternative dates or contact our support team for assistance.</p>
+    
+    <a href="{{ contact_url }}" class="button">Contact Support</a>
+</div>
+{% endblock %}

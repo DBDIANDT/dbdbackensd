@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #E5E7EB;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1f2937 0%, #164e63 100%);
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #1e293b;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: {% if action == 'accepted' %}#4CAF50{% else %}#ef4444{% endif %};
+            padding: 20px;
+            text-align: center;
+        }
+        .logo {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 30px;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+        }
+        .details-card {
+            background-color: #2d3748;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid {% if action == 'accepted' %}#4CAF50{% else %}#ef4444{% endif %};
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .detail-row {
+            padding: 12px;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-row strong {
+            color: #6EE7B7;
+            font-weight: bold;
+        }
+        .notice-box {
+            background-color: {% if action == 'accepted' %}rgba(76, 175, 80, 0.1){% else %}rgba(239, 68, 68, 0.1){% endif %};
+            border: 1px solid {% if action == 'accepted' %}#4CAF50{% else %}#ef4444{% endif %};
+            color: #F3F4F6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        .next-steps {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: rgba(45, 55, 72, 0.5);
+            border-radius: 8px;
+        }
+        .next-steps h3 {
+            margin-top: 0;
+            color: #6EE7B7;
+        }
+        .next-steps ul {
+            color: #F3F4F6;
+            margin: 0;
+            padding-left: 20px;
+        }
+        .next-steps li {
+            margin-bottom: 10px;
+        }
+        .action-button {
+            display: inline-block;
+            background-color: {% if action == 'accepted' %}#4CAF50{% else %}#ef4444{% endif %};
+            color: white !important;
+            padding: 14px 32px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 15px;
+            text-align: center;
+        }
+        .action-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px {% if action == 'accepted' %}rgba(76, 175, 80, 0.2){% else %}rgba(239, 68, 68, 0.2){% endif %};
+        }
+        .footer {
+            background-color: #1e293b;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #D1D5DB;
+            border-top: 1px solid #2d3748;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                margin: 0;
+            }
+            .content {
+                padding: 20px;
+            }
+            .action-button {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="logo">
+            <h2 style="color: #fff;">Assignment {{ action|title }} by Interpreter</h2>
+        </div>
+
+        <div class="content">
+            <div class="details-card">
+                <div class="detail-row">
+                    <strong>Interpreter:</strong> {{ interpreter_name }}
+                </div>
+                <div class="detail-row">
+                    <strong>Client:</strong> {{ assignment.client.company_name }}
+                </div>
+                <div class="detail-row">
+                    <strong>Service:</strong> {{ assignment.service_type.name }}
+                </div>
+                <div class="detail-row">
+                    <strong>Date:</strong> {{ assignment.start_time|date:"m/d/Y" }}
+                </div>
+                <div class="detail-row">
+                    <strong>Time:</strong> {{ assignment.start_time|time:"g:i A" }} - {{ assignment.end_time|time:"g:i A" }}
+                </div>
+                <div class="detail-row">
+                    <strong>Location:</strong> {{ assignment.location }}, {{ assignment.city }}, {{ assignment.state }}
+                </div>
+                <div class="detail-row">
+                    <strong>Languages:</strong> {{ assignment.source_language.name }} → {{ assignment.target_language.name }}
+                </div>
+            </div>
+
+            {% if action == 'accepted' %}
+                <div class="next-steps">
+                    <h3>Next Steps:</h3>
+                    <ul>
+                        <li>The interpreter has been automatically notified with assignment details</li>
+                        <li>Calendar invitation has been sent</li>
+                        <li>Assignment status has been updated to CONFIRMED</li>
+                    </ul>
+                </div>
+                <div style="text-align: center;">
+                    <a href="{{ admin_url }}" class="action-button">View Assignment Details</a>
+                </div>
+            {% else %}
+                <div class="notice-box">
+                    <h3>⚠️ Urgent Action Required</h3>
+                    <p>This assignment needs to be reassigned to a new interpreter.</p>
+                </div>
+                <div class="next-steps">
+                    <h3>Next Steps:</h3>
+                    <ul>
+                        <li>Assignment status has been automatically set to CANCELLED</li>
+                        <li>Previous interpreter has been removed from the assignment</li>
+                        <li>Click below to reassign this assignment to a new interpreter</li>
+                    </ul>
+                </div>
+                <div style="text-align: center;">
+                    <a href="{{ admin_url }}" class="action-button">Reassign Assignment</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="footer">
+            <p>This is an automated message from {{ COMPANY_NAME }} Assignment System.<br>
+            No reply is needed.</p>
+        </div>
+    </div>
+</body>
+</html>

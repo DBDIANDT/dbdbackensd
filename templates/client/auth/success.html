@@ -1,0 +1,484 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Success - {{ COMPANY_NAME }}</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --navy-deep: #1a365d;
+            --navy-medium: #2c5282;
+            --navy-light: #4a5568;
+            --navy-card: #2d3748;
+            --teal-primary: #38d9a9;
+            --teal-light: #4de6b8;
+            --white: #ffffff;
+            --gray-light: #a0aec0;
+            --gray-dark: #718096;
+            --blue-shadow: rgba(26, 54, 93, 0.3);
+            --white-glass: rgba(255, 255, 255, 0.05);
+            --white-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-medium) 50%, var(--navy-card) 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 650px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo-wrapper {
+            display: inline-block;
+            padding: 1.5rem;
+            background: var(--white-glass);
+            border-radius: 20px;
+            border: 1px solid var(--white-border);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            animation: logoFloat 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+
+        @keyframes logoFloat {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .logo-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px var(--blue-shadow);
+            border-color: rgba(56, 217, 169, 0.3);
+        }
+
+        .logo-wrapper img {
+            height: 60px;
+            width: auto;
+            filter: drop-shadow(0 5px 15px var(--blue-shadow));
+        }
+
+        /* Success Card */
+        .success-card {
+            background: var(--navy-card);
+            border-radius: 24px;
+            padding: 3.5rem;
+            box-shadow: 0 20px 60px var(--blue-shadow);
+            border: 1px solid var(--white-border);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            animation: cardSlide 0.8s ease-out 0.4s forwards;
+            opacity: 0;
+        }
+
+        @keyframes cardSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Success Icon */
+        .success-icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--teal-light) 100%);
+            border-radius: 50%;
+            margin-bottom: 2rem;
+            animation: iconBounce 0.8s ease-out 0.6s forwards;
+            opacity: 0;
+            box-shadow: 0 10px 30px rgba(56, 217, 169, 0.3);
+        }
+
+        @keyframes iconBounce {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .success-icon {
+            width: 48px;
+            height: 48px;
+            color: var(--navy-deep);
+        }
+
+        /* Text Content */
+        .success-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 1rem;
+            animation: textSlide 0.8s ease-out 0.8s forwards;
+            opacity: 0;
+        }
+
+        .success-message {
+            font-size: 1.1rem;
+            color: var(--gray-light);
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            animation: textSlide 0.8s ease-out 1s forwards;
+            opacity: 0;
+        }
+
+        @keyframes textSlide {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Next Steps Section */
+        .next-steps {
+            background: var(--white-glass);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--white-border);
+            backdrop-filter: blur(10px);
+            text-align: left;
+            animation: sectionSlide 0.8s ease-out 1.2s forwards;
+            opacity: 0;
+        }
+
+        @keyframes sectionSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .next-steps-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            padding: 0.75rem;
+            border-radius: 12px;
+        }
+
+        .step-item:hover {
+            background: rgba(56, 217, 169, 0.1);
+            transform: translateX(5px);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--teal-light) 100%);
+            color: var(--navy-deep);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(56, 217, 169, 0.3);
+        }
+
+        .step-text {
+            color: var(--white);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* Action Button */
+        .action-section {
+            animation: buttonSlide 0.8s ease-out 1.4s forwards;
+            opacity: 0;
+        }
+
+        @keyframes buttonSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--teal-light) 100%);
+            color: var(--navy-deep);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 1rem 2.5rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(56, 217, 169, 0.25);
+            min-width: 220px;
+        }
+
+        .dashboard-button:hover {
+            background: linear-gradient(135deg, var(--teal-light) 0%, var(--teal-primary) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(56, 217, 169, 0.35);
+        }
+
+        .dashboard-button:active {
+            transform: translateY(0);
+        }
+
+        .button-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Additional Info */
+        .additional-info {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(56, 217, 169, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(56, 217, 169, 0.2);
+            animation: infoSlide 0.8s ease-out 1.6s forwards;
+            opacity: 0;
+        }
+
+        @keyframes infoSlide {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-text {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .success-card {
+                padding: 2.5rem;
+            }
+            
+            .success-title {
+                font-size: 1.8rem;
+            }
+            
+            .success-message {
+                font-size: 1rem;
+            }
+            
+            .next-steps {
+                padding: 2rem;
+            }
+            
+            .dashboard-button {
+                min-width: 200px;
+                padding: 0.9rem 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem 0.5rem;
+            }
+            
+            .success-card {
+                padding: 2rem;
+                border-radius: 20px;
+            }
+            
+            .success-icon-wrapper {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .success-icon {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .success-title {
+                font-size: 1.5rem;
+            }
+            
+            .next-steps {
+                padding: 1.5rem;
+            }
+            
+            .logo-wrapper {
+                padding: 1rem;
+            }
+            
+            .logo-wrapper img {
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-wrapper">
+                <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo">
+            </div>
+        </div>
+
+        <!-- Success Card -->
+        <div class="success-card">
+            <!-- Success Icon -->
+            <div class="success-icon-wrapper">
+                <i data-lucide="check" class="success-icon"></i>
+            </div>
+
+            <!-- Success Content -->
+            <h1 class="success-title">Registration Complete!</h1>
+            <p class="success-message">
+                Welcome to {{ COMPANY_NAME }}! Your account has been successfully created and you're now part of our global network of language professionals.
+            </p>
+
+            <!-- Next Steps -->
+            <div class="next-steps">
+                <h2 class="next-steps-title">What's Next?</h2>
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Complete your profile and preferences</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Explore our interpretation services</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Book your first session</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="action-section">
+                <a href="{% url 'dbdint:client_dashboard' %}" class="dashboard-button">
+                    <span>Go to Dashboard</span>
+                    <i data-lucide="arrow-right" class="button-icon"></i>
+                </a>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="additional-info">
+                <p class="info-text">
+                    <i data-lucide="info" style="width: 16px; height: 16px; display: inline; margin-right: 0.5rem;"></i>
+                    Check your email for important account information and next steps.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Add celebration animation on load
+        window.addEventListener('load', function() {
+            // Optional: Add confetti or celebration effect here
+            setTimeout(() => {
+                const successIcon = document.querySelector('.success-icon-wrapper');
+                successIcon.style.animation = 'iconBounce 0.6s ease-out, pulse 2s ease-in-out 2s infinite';
+            }, 1500);
+        });
+
+        // Add pulse animation for the success icon
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

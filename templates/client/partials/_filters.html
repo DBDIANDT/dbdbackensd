@@ -1,0 +1,42 @@
+<!-- quotes/partials/_filters.html -->
+{% comment %}
+Usage: {% include 'client/partials/_filters.html' with form=filter_form %}
+{% endcomment %}
+<div class="filter-section">
+    <div class="filter-header">
+        <h3>Filters</h3>
+        <button type="button" class="filter-toggle" data-target="filterForm">
+            <i class="fas fa-filter"></i>
+        </button>
+    </div>
+
+    <div class="status-chips">
+        <button type="button" class="status-chip active" data-status="">All</button>
+        {% for status, label in status_choices %}
+        <button type="button" class="status-chip" data-status="{{ status }}">{{ label }}</button>
+        {% endfor %}
+    </div>
+
+    <form method="get" id="filterForm" class="filter-form">
+        <div class="form-row">
+            {{ form.status }}
+        </div>
+        <div class="form-row date-range">
+            <div class="form-group">
+                <label>From</label>
+                {{ form.date_from }}
+            </div>
+            <div class="form-group">
+                <label>To</label>
+                {{ form.date_to }}
+            </div>
+        </div>
+        <div class="form-row">
+            {{ form.service_type }}
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="btn-apply">Apply Filters</button>
+            <button type="reset" class="btn-reset">Reset</button>
+        </div>
+    </form>
+</div>

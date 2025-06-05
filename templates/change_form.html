@@ -1,0 +1,180 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'css/assignment_wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Barre de progression -->
+    <div class="step-progress">
+        <div class="step-item {% if not object %}active{% endif %}">
+            <div class="step-number">1</div>
+            <div class="step-label">Service Details</div>
+        </div>
+        <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-label">Schedule</div>
+        </div>
+        <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-label">Client & Location</div>
+        </div>
+        <div class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-label">Interpreter</div>
+        </div>
+    </div>
+
+    <!-- Formulaire principal -->
+    <div class="form-container">
+        <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>
+            {% csrf_token %}
+            
+            <!-- Service Details -->
+            <div class="field-group">
+                <h3>Service Information</h3>
+                <div class="field-row">
+                    {{ adminform.form.service_type.errors }}
+                    <div class="field-col">
+                        <label for="id_service_type">Service Type:</label>
+                        {{ adminform.form.service_type }}
+                    </div>
+                    <div class="field-col">
+                        <label for="id_status">Status:</label>
+                        {{ adminform.form.status }}
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-col">
+                        <label for="id_source_language">Source Language:</label>
+                        {{ adminform.form.source_language }}
+                    </div>
+                    <div class="field-col">
+                        <label for="id_target_language">Target Language:</label>
+                        {{ adminform.form.target_language }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="field-group">
+                <h3>Schedule</h3>
+                <div class="field-row">
+                    <div class="field-col">
+                        <label for="id_start_time">Start Time:</label>
+                        {{ adminform.form.start_time }}
+                    </div>
+                    <div class="field-col">
+                        <label for="id_end_time">End Time:</label>
+                        {{ adminform.form.end_time }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client & Location -->
+            <div class="field-group">
+                <h3>Client Information</h3>
+                <div class="field-row">
+                    <div class="field-col">
+                        <label for="id_client">Existing Client:</label>
+                        {{ adminform.form.client }}
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-col">
+                        <label for="id_client_name">New Client Name:</label>
+                        {{ adminform.form.client_name }}
+                    </div>
+                    <div class="field-col">
+                        <label for="id_client_email">Email:</label>
+                        {{ adminform.form.client_email }}
+                    </div>
+                    <div class="field-col">
+                        <label for="id_client_phone">Phone:</label>
+                        {{ adminform.form.client_phone }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="field-group">
+                <h3>Location</h3>
+                <div class="field-row">
+                    <div class="field-col">
+                        <label for="id_location">Address:</label>
+                        {{ adminform.form.location }}
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-col">
+                        <label for="id_city">City:</label>
+                        {{ adminform.form.city }}
+                    </div>
+                    <div class="field-col">
+                        <label for="id_state">State:</label>
+                        {{ adminform.form.state }}
+                    </div>
+                    <div class="field-col">
+                        <label for="id_zip_code">ZIP Code:</label>
+                        {{ adminform.form.zip_code }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interpreter -->
+            <div class="field-group">
+                <h3>Interpreter Details</h3>
+                <div class="field-row">
+                    <div class="field-col">
+                        <label for="id_interpreter">Interpreter:</label>
+                        {{ adminform.form.interpreter }}
+                    </div>
+                    <div class="field-col">
+                        <label for="id_interpreter_rate">Rate per Hour:</label>
+                        {{ adminform.form.interpreter_rate }}
+                    </div>
+                    <div class="field-col">
+                        <label for="id_minimum_hours">Minimum Hours:</label>
+                        {{ adminform.form.minimum_hours }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="field-group">
+                <h3>Additional Information</h3>
+                <div class="field-row">
+                    <div class="field-col">
+                        <label for="id_special_requirements">Special Requirements:</label>
+                        {{ adminform.form.special_requirements }}
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-col">
+                        <label for="id_notes">Notes:</label>
+                        {{ adminform.form.notes }}
+                    </div>
+                </div>
+            </div>
+
+            {% for hidden in adminform.form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            <!-- Boutons de soumission -->
+            <div class="wizard-buttons">
+                <button type="button" class="btn btn-previous" onclick="history.back()">Previous</button>
+                <button type="submit" class="btn btn-submit">Save Assignment</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script src="{% static 'js/assignment_actions.js' %}"></script>
+{% endblock %}

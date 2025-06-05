@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ COMPANY_NAME }} - Interpreter Payment Information</title>
+    <style>
+        :root {
+            --primary-color: #1a5959;
+            --secondary-color: #2a7a7a;
+            --accent-color: #4bb74b;
+            --text-color: #ffffff;
+            --background-color: #193f3f;
+            --card-background: #214e4e;
+            --border-color: #336666;
+            --input-background: rgba(255, 255, 255, 0.05);
+            --highlight-color: rgba(75, 183, 75, 0.1);
+            --security-color: rgba(75, 183, 75, 0.2);
+            --error-color: #ff6b6b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            height: 40px;
+        }
+        
+        .header-info {
+            font-size: 0.9rem;
+            text-align: right;
+        }
+        
+        main {
+            flex: 1;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .progress-step::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            z-index: 1;
+        }
+        
+        .progress-step:first-child::before {
+            left: 50%;
+        }
+        
+        .progress-step:last-child::before {
+            right: 50%;
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .active .step-number {
+            background-color: var(--accent-color);
+        }
+        
+        .completed .step-number {
+            background-color: var(--accent-color);
+        }
+        
+        .step-label {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .active .step-label {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .agreement-container {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+        
+        .agreement-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .security-banner {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background-color: var(--security-color);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+        
+        .security-icon {
+            font-size: 1.5rem;
+        }
+        
+        .security-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .security-text strong {
+            color: var(--accent-color);
+        }
+        
+        .signature-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dotted var(--border-color);
+        }
+        
+        .signature-box {
+            margin-bottom: 2rem;
+        }
+        
+        .signature-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--secondary-color);
+            border-radius: 4px;
+            background-color: var(--input-background);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .signature-pad {
+            border: 2px dashed var(--secondary-color);
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            height: 120px;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+        
+        .signature-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .signature-hint {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .clear-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.25rem;
+            text-decoration: underline;
+        }
+        
+        .clear-btn:hover {
+            color: var(--text-color);
+        }
+        
+        .date-input {
+            width: 100%;
+        }
+        
+        .payment-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .bank-info {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.5rem;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .radio-option input {
+            width: auto;
+        }
+        
+        .btn-container {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #3da63d;
+        }
+        
+        .btn:disabled {
+            background-color: #808080;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .status-message {
+            margin-top: 1rem;
+            text-align: center;
+            min-height: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .success-message {
+            color: var(--accent-color);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+        }
+        
+        .encryption-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+        }
+        
+        .encryption-indicator::before {
+            content: '🔒';
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo" class="logo">
+        <div class="header-info">
+            <div>Agreement #: <span id="agreement-number">{{ agreement_number }}</span></div>
+            <div>Contract ID: <span id="contract-id">{{ contract.id }}</span></div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="progress-container">
+            <div class="progress-step completed">
+                <div class="step-number">1</div>
+                <div class="step-label">Verification</div>
+            </div>
+            <div class="progress-step completed">
+                <div class="step-number">2</div>
+                <div class="step-label">Review</div>
+            </div>
+            <div class="progress-step active">
+                <div class="step-number">3</div>
+                <div class="step-label">Payment Info</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number">4</div>
+                <div class="step-label">Sign</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number">5</div>
+                <div class="step-label">Confirmation</div>
+            </div>
+        </div>
+        
+        <div class="agreement-container">
+            <div class="agreement-header">
+                <h1>Interpreter Payment Information</h1>
+                <p>Please complete the payment information form</p>
+                
+                <div class="security-banner">
+                    <div class="security-icon">🔒</div>
+                    <div class="security-text">
+                        <strong>Your information is secure.</strong> All data is encrypted for your protection.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-section">
+                <div class="section-title">Interpreter Payment Information Form</div>
+                <p>Please provide your payment details for direct deposit. All information is encrypted and secure.</p>
+                
+                <form id="payment-form" method="post" action="{% url 'dbdint:contract_payment_info' %}">
+                    {% csrf_token %}
+                    
+                    {% if messages %}
+                        <div class="status-message error-message">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="payment-name">Interpreter Name</label>
+                            <input type="text" id="payment-name" name="payment_name" required value="{{ payment_data.payment_name|default:interpreter_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-phone">Phone Number</label>
+                            <input type="tel" id="payment-phone" name="payment_phone" required value="{{ payment_data.payment_phone|default:interpreter_phone }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-address">Address</label>
+                            <input type="text" id="payment-address" name="payment_address" required value="{{ payment_data.payment_address|default:interpreter_address }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-email">Email</label>
+                            <input type="email" id="payment-email" name="payment_email" required value="{{ payment_data.payment_email|default:interpreter_email }}">
+                        </div>
+                    </div>
+                    
+                    <div class="encryption-indicator">All personal information is encrypted</div>
+                    
+                    <div class="bank-info">
+                        <div class="signature-title">Banking Information for Direct Deposit</div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="bank-name">Bank Name</label>
+                                <input type="text" id="bank-name" name="bank_name" required value="{{ payment_data.bank_name|default:'' }}">
+                                <div class="encryption-indicator">Data encrypted</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="bank-address">Bank Address</label>
+                                <input type="text" id="bank-address" name="bank_address" required value="{{ payment_data.bank_address|default:'' }}">
+                                <div class="encryption-indicator">Data encrypted</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="account-holder">Account Holder Name</label>
+                                <input type="text" id="account-holder" name="account_holder" required value="{{ payment_data.account_holder|default:'' }}">
+                                <div class="encryption-indicator">Data encrypted</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="account-number">Account Number</label>
+                                <input type="text" id="account-number" name="account_number" required value="{{ payment_data.account_number|default:'' }}">
+                                <div class="encryption-indicator">Data encrypted</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="routing-number">Routing Number (ABA)</label>
+                                <input type="text" id="routing-number" name="routing_number" required value="{{ payment_data.routing_number|default:'' }}">
+                                <div class="encryption-indicator">Data encrypted</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="swift-code">SWIFT Code (if applicable)</label>
+                                <input type="text" id="swift-code" name="swift_code" value="{{ payment_data.swift_code|default:'' }}">
+                                <div class="encryption-indicator">Data encrypted</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="account-type">Account Type</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="account-checking" name="account_type" value="checking" {% if payment_data.account_type != 'savings' %}checked{% endif %}>
+                                    <label for="account-checking">Checking</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="account-savings" name="account_type" value="savings" {% if payment_data.account_type == 'savings' %}checked{% endif %}>
+                                    <label for="account-savings">Savings</label>
+                                </div>
+                            </div>
+                            <div class="encryption-indicator">Data encrypted</div>
+                        </div>
+                    </div>
+                    
+                    <div class="status-message" id="status-message"></div>
+                    
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-secondary" id="back-btn">Back</button>
+                        <button type="submit" class="btn" id="submit-btn">Submit & Continue</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Éléments
+            const paymentForm = document.getElementById('payment-form');
+            const statusMessage = document.getElementById('status-message');
+            const submitBtn = document.getElementById('submit-btn');
+            const backBtn = document.getElementById('back-btn');
+            
+            // Récupérer tous les champs obligatoires
+            const requiredInputs = document.querySelectorAll('input[required]');
+            
+            // Ajouter des événements pour la validation
+            requiredInputs.forEach(input => {
+                input.addEventListener('input', validateForm);
+            });
+            
+            // Fonction de validation du formulaire
+            function validateForm() {
+                let isValid = true;
+                
+                // Vérifier tous les champs obligatoires
+                requiredInputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                    }
+                });
+                
+                submitBtn.disabled = !isValid;
+                return isValid;
+            }
+            
+            // Bouton retour
+            backBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to go back? Your entered information will be lost.')) {
+                    window.location.href = "{% url 'dbdint:contract_review' %}";
+                }
+            });
+            
+            // Soumission du formulaire
+            paymentForm.addEventListener('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                    statusMessage.textContent = 'Please complete all required fields.';
+                    statusMessage.className = 'status-message error-message';
+                } else {
+                    // Afficher un message de traitement
+                    statusMessage.textContent = 'Processing your information securely...';
+                    statusMessage.className = 'status-message';
+                    
+                    // La soumission se fait normalement via le formulaire HTML
+                }
+            });
+            
+            // Validation initiale
+            validateForm();
+        });
+    </script>
+</body>
+</html>

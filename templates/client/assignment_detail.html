@@ -1,0 +1,348 @@
+{% extends "base_client.html" %}
+
+{% block title %}Assignment #{{ assignment.id }} - {{ COMPANY_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Container Styles */
+    .detail-container {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Status Banner */
+    .status-banner {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Section Card */
+    .info-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Info Grid */
+    .info-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .info-label {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .info-value {
+        font-size: 1rem;
+        color: white;
+        font-weight: 500;
+    }
+
+    /* Interpreter Card */
+    .interpreter-card {
+        background: rgba(0, 136, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        border: 1px solid rgba(0, 136, 255, 0.2);
+    }
+
+    .interpreter-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .interpreter-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    /* Feedback Section */
+    .feedback-section {
+        margin-top: 2rem;
+    }
+
+    .rating-input {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .star-btn {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .star-btn.active {
+        color: #FFD700;
+    }
+
+    /* Countdown Timer */
+    .countdown {
+        background: rgba(255, 170, 0, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .countdown-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #FFB020;
+        margin: 0.5rem 0;
+    }
+
+    .countdown-label {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <!-- Status Banner -->
+    <div class="status-banner">
+        <h2 class="section-title" style="margin: 0;">
+            <i class="fas fa-calendar-check"></i>
+            Assignment #{{ assignment.id }}
+        </h2>
+        {% include 'client/partials/_status_badge.html' with status=assignment.status %}
+    </div>
+
+    <!-- Service Details -->
+    <div class="info-section">
+        <h3 class="section-title">
+            <i class="fas fa-info-circle"></i>
+            Service Information
+        </h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Service Type</div>
+                <div class="info-value">{{ assignment.service_type }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Languages</div>
+                <div class="info-value">{{ assignment.source_language }} → {{ assignment.target_language }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Start Time</div>
+                <div class="info-value">{{ assignment.start_time|date:"F j, Y - g:i A" }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">End Time</div>
+                <div class="info-value">{{ assignment.end_time|date:"F j, Y - g:i A" }}</div>
+            </div>
+        </div>
+
+        {% if assignment.status == 'CONFIRMED' and assignment.start_time > now %}
+        <div class="countdown">
+            <div class="countdown-label">Time until service</div>
+            <div class="countdown-value" id="countdown"></div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Location -->
+    <div class="info-section">
+        <h3 class="section-title">
+            <i class="fas fa-map-marker-alt"></i>
+            Location Details
+        </h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Address</div>
+                <div class="info-value">{{ assignment.location }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">City</div>
+                <div class="info-value">{{ assignment.city }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">State</div>
+                <div class="info-value">{{ assignment.state }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">ZIP Code</div>
+                <div class="info-value">{{ assignment.zip_code }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interpreter Information -->
+    <div class="info-section">
+        <h3 class="section-title">
+            <i class="fas fa-user"></i>
+            Interpreter Information
+        </h3>
+        <div class="interpreter-card">
+            <div class="interpreter-header">
+                <div class="interpreter-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <h4 style="color: white; margin: 0;">{{ assignment.interpreter.user.get_full_name }}</h4>
+                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Professional Interpreter</div>
+                </div>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Languages</div>
+                    <div class="info-value">{{ assignment.source_language }}, {{ assignment.target_language }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Experience</div>
+                    <div class="info-value">{{ assignment.interpreter.years_of_experience }} years</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Special Requirements -->
+    {% if assignment.special_requirements %}
+    <div class="info-section">
+        <h3 class="section-title">
+            <i class="fas fa-clipboard-list"></i>
+            Special Requirements
+        </h3>
+        <div style="color: rgba(255, 255, 255, 0.8);">
+            {{ assignment.special_requirements|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Feedback Section -->
+    {% if assignment.status == 'COMPLETED' and not assignment.assignmentfeedback %}
+    <div class="info-section">
+        <h3 class="section-title">
+            <i class="fas fa-star"></i>
+            Service Feedback
+        </h3>
+        <form method="post" class="feedback-section">
+            {% csrf_token %}
+            <div class="rating-input">
+                <div class="info-label">Rate your experience:</div>
+                <div class="stars">
+                    {% for i in '12345'|make_list %}
+                    <button type="button" class="star-btn" data-value="{{ forloop.counter }}">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="rating" id="ratingInput" required>
+            </div>
+            <div class="form-group">
+                <label class="info-label">Comments (optional):</label>
+                <textarea name="comments" class="form-control" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                Submit Feedback
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Timeline -->
+    <div class="info-section">
+        <h3 class="section-title">
+            <i class="fas fa-history"></i>
+            Assignment Timeline
+        </h3>
+        {% include 'client/partials/_timeline.html' with events=timeline_events current_status=assignment.status %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Countdown Timer
+    function updateCountdown() {
+        const startTime = new Date("{{ assignment.start_time|date:'c' }}").getTime();
+        const now = new Date().getTime();
+        const distance = startTime - now;
+
+        if (distance > 0) {
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+            const countdownEl = document.getElementById('countdown');
+            if (countdownEl) {
+                if (days > 0) {
+                    countdownEl.textContent = `${days}d ${hours}h ${minutes}m`;
+                } else if (hours > 0) {
+                    countdownEl.textContent = `${hours}h ${minutes}m`;
+                } else {
+                    countdownEl.textContent = `${minutes}m`;
+                }
+            }
+        }
+    }
+
+    if (document.getElementById('countdown')) {
+        updateCountdown();
+        setInterval(updateCountdown, 60000); // Update every minute
+    }
+
+    // Star Rating System
+    document.querySelectorAll('.star-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const value = this.dataset.value;
+            document.getElementById('ratingInput').value = value;
+            
+            document.querySelectorAll('.star-btn').forEach(star => {
+                star.classList.toggle('active', star.dataset.value <= value);
+            });
+        });
+    });
+</script>
+{% endblock %}

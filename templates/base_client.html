@@ -1,0 +1,278 @@
+<!-- templates/dashboard/base_dashboard.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} - InterpreterPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+                /* Mobile-first styles with glassmorphism */
+        /* Base styles and variables */
+        :root {
+    /* Couleurs {{ COMPANY_NAME }} */
+    --primary-green: #4CAF50;
+    --primary-blue: #2196F3;
+    --background-white: #FFFFFF;
+    --text-white: #FFFFFF;
+    --nav-bg: #1A1F2F;
+    --card-bg: #FFFFFF;
+    --text-dark: #333333;
+    --text-gray: #666666;
+    --border-color: #E0E0E0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1A1F2F 0%, #2A3F54 100%);
+    font-family: 'Inter', sans-serif;
+    padding-bottom: 70px;
+    color: var(--text-white);
+}
+
+/* Header styles */
+.dashboard-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--nav-bg);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-white);
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Notification badge */
+.notification-badge {
+    position: relative;
+}
+
+.notification-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--primary-green);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--nav-bg);
+    display: flex;
+    justify-content: space-around;
+    padding: 0.75rem 0;
+    z-index: 1000;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-white);
+    font-size: 0.75rem;
+    transition: color 0.3s ease;
+}
+
+.nav-item.active {
+    color: var(--primary-green);
+}
+
+.nav-item i {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Main content area */
+.dashboard-content {
+    margin-top: 70px;
+    padding: 1rem;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Card style */
+.glass-card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: var(--text-dark);
+}
+
+/* Alert messages */
+.alert {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem;
+    border-radius: 4px;
+    background: var(--primary-green);
+    color: white;
+    max-width: 90%;
+    z-index: 1001;
+    animation: slideDown 0.3s ease-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Boutons */
+button, 
+.button {
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 500;
+}
+
+button:hover,
+.button:hover {
+    background: #45a049;
+}
+
+/* Formulaires */
+input, select, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-family: 'Inter', sans-serif;
+    background: var(--background-white);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-green);
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+    .dashboard-content {
+        max-width: 768px;
+        padding: 2rem;
+    }
+
+    .glass-card {
+        padding: 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .dashboard-content {
+        max-width: 1024px;
+    }
+}
+
+/* Animation pour les alertes */
+@keyframes slideDown {
+    from {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+</style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <h1 class="header-title">{% block header_title %}Dashboard{% endblock %}</h1>
+        <div class="header-actions">
+            
+            <form method="post" action="{% url 'dbdint:logout' %}" class="nav-item" style="margin: 0; padding: 0;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; cursor: pointer; padding: 0;">
+                    <i class="fas fa-sign-out-alt" style="color: white; font-size: 1.25rem;"></i>
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="{% url 'dbdint:client_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dbdint:client_dashboard' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'dbdint:client_quote_list' %}" class="nav-item {% if request.resolver_match.url_name == 'dbdint:client_create_quote' %}active{% endif %}">
+            <i class="fas fa-file-invoice"></i>
+            <span>Quote</span>
+        </a>
+        <a href="{% url 'dbdint:client_profile_edit' %}" class="nav-item {% if request.resolver_match.url_name == 'dbdint:client_profile_edit' %}active{% endif %}">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

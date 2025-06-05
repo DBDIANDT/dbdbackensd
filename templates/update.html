@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ COMPANY_NAME }} - Interpreter Portal{% endblock %}</title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Base CSS -->
+    <link href="{% static 'css/interprete.css' %}" rel="stylesheet">
+    <style>
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(27, 31, 43, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--white);
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo span {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        /* Profile Menu Styles */
+        .profile-menu {
+            position: relative;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--white);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: border-color 0.3s ease;
+        }
+
+        .profile-icon:hover {
+            border-color: var(--white);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--primary-dark);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+            overflow: hidden;
+            min-width: 150px;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 12px 16px;
+            color: var(--white);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: var(--font-size-sm);
+            transition: background var(--transition-fast);
+        }
+
+        .dropdown-item:hover {
+            background: var(--primary-teal);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(27, 31, 43, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--gray-200);
+            font-size: 0.8rem;
+            transition: color 0.3s;
+            padding: 0.5rem;
+            min-width: 60px;
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--primary-green);
+        }
+
+        /* Main Content Adjustment */
+        .main-content {
+            padding-top: 60px;
+            padding-bottom: 70px;
+            min-height: 100vh;
+        }
+
+        .container {
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Fallback for browsers that don't support backdrop-filter */
+        @supports not (backdrop-filter: blur(10px)) {
+            .header, .bottom-nav {
+                background: rgba(27, 31, 43, 0.98);
+            }
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            .nav-item {
+                font-size: 0.75rem;
+            }
+
+            .nav-item i {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="app-container">
+    <!-- Rest of the template remains the same -->
+    <!-- Header -->
+    <header class="header">
+        <a href="{% url 'dbdint:new_interpreter_dashboard' %}" class="logo">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" width="40" height="40" onerror="this.src='/api/placeholder/40/40'">
+            
+        </a>
+        <div class="profile-menu">
+            <div class="profile-icon" id="profileButton">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="dropdown-menu" id="profileDropdown">
+                <form action="{% url 'dbdint:logout' %}" method="POST" style="margin: 0; padding: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="{% url 'dbdint:new_interpreter_dashboard' %}" 
+           class="nav-item {% if request.resolver_match.url_name == 'new_interpreter_dashboard' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" 
+           class="nav-item {% if request.resolver_match.url_name == 'new_interpreter_calendar' %}active{% endif %}">
+            <i class="fas fa-calendar"></i>
+            <span>Schedule</span>
+        </a>
+        <a href="#" 
+           class="nav-item {% if request.resolver_match.url_name == 'new_interpreter_appointments' %}active{% endif %}">
+            <i class="fas fa-list"></i>
+            <span>Missions</span>
+        </a>
+        <a href="#" 
+           class="nav-item {% if request.resolver_match.url_name == 'new_interpreter_stats' %}active{% endif %}">
+            <i class="fas fa-chart-line"></i>
+            <span>Stats</span>
+        </a>
+    </nav>
+
+    <!-- Scripts section remains the same -->
+    <script>
+        const profileButton = document.getElementById('profileButton');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        if (profileButton && profileDropdown) {
+            profileButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('active');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!profileDropdown.contains(e.target) && !profileButton.contains(e.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                if (item.getAttribute('href') === currentPath) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

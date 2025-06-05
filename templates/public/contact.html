@@ -1,0 +1,75 @@
+<!-- templates/public/contact.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact {{ COMPANY_NAME }} - Professional Interpretation Services</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="contact-form-container">
+            <h1 class="contact-title">Get in Touch</h1>
+            <p class="contact-subtitle">For any inquiries about our interpretation services, we're here to help.</p>
+
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="contact-alert {% if message.tags %}contact-alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" class="contact-form">
+                {% csrf_token %}
+
+                <div class="input-group">
+                    <label for="{{ form.name.id_for_label }}">Full Name *</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                    <div class="error-message">{{ form.name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="{{ form.email.id_for_label }}">Email Address *</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="error-message">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="{{ form.subject.id_for_label }}">Subject *</label>
+                    {{ form.subject }}
+                    {% if form.subject.errors %}
+                    <div class="error-message">{{ form.subject.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="{{ form.message.id_for_label }}">Message *</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div class="error-message">{{ form.message.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="contact-submit">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

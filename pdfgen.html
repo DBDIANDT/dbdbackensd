@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ COMPANY_FULL_NAME }} - Interpreter Agreement</title>
+    <!-- Importation de la bibliothèque html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* --- Global Styles --- */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .page-container {
+            width: 8.5in;
+            min-height: 11in;
+            margin: 0 auto;
+            background: white;
+            position: relative;
+            padding: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        
+        /* --- Design Pattern: BEM (Block Element Modifier) --- */
+        
+        /* Header Block */
+        .header {
+            position: relative;
+            width: 100%;
+            background-color: #084b8a;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+        
+        .header__content {
+            display: flex;
+            padding: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header__logo-container {
+            flex: 0 0 250px;
+        }
+        
+        .header__logo {
+            width: 180px;
+            height: auto;
+        }
+        
+        .header__info {
+            flex: 1;
+            color: white;
+            padding-left: 20px;
+        }
+        
+        .header__company {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .header__contact {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header__icon {
+            margin-right: 10px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .header__waves {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        /* Content Block */
+        .content {
+            padding: 0 30px 50px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        
+        .agreement-intro {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        /* Info Block */
+        .info-box {
+            background-color: #1E88E5;
+            color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box__title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .info-box--company {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .info-box--interpreter {
+            width: 40%;
+        }
+        
+        /* Sections Block */
+        .section {
+            margin-bottom: 20px;
+        }
+        
+        .section__title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .section__content {
+            margin-bottom: 10px;
+        }
+        
+        .section__list {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .section__item {
+            margin-bottom: 5px;
+        }
+        
+        /* Signature Block */
+        .signature {
+            margin: 40px 0;
+        }
+        
+        .signature__title {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .signature__group {
+            margin-bottom: 20px;
+        }
+        
+        .signature__line {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .signature__label {
+            width: 100px;
+            font-weight: bold;
+        }
+        
+        .signature__input {
+            flex: 1;
+            border-bottom: 1px solid #333;
+        }
+        
+        /* Form Block */
+        .form {
+            margin-top: 40px;
+        }
+        
+        .form__title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .form__field {
+            margin-bottom: 15px;
+        }
+        
+        .form__label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .form__input {
+            width: 100%;
+            border-bottom: 1px solid #333;
+            height: 25px;
+        }
+        
+        .form__section {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form__checkbox {
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        /* Footer Block */
+        .footer {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+        }
+        
+        .footer__waves {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+        
+        .footer__logo {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            width: 100px;
+            z-index: 3;
+        }
+        
+        /* Download Button Styles */
+        .download-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #1E88E5;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background-color: #1565C0;
+        }
+        
+        .download-btn__icon {
+            margin-right: 8px;
+        }
+        
+        /* Form Panel Styles */
+        .form-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 999;
+            transition: right 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .form-panel--open {
+            right: 0;
+        }
+        
+        .form-panel__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .form-panel__title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #084b8a;
+        }
+        
+        .form-panel__close {
+            color: #666;
+            cursor: pointer;
+            font-size: 20px;
+            background: none;
+            border: none;
+        }
+        
+        .form-panel__section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-panel__section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #084b8a;
+        }
+        
+        .form-panel__field {
+            margin-bottom: 12px;
+        }
+        
+        .form-panel__label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .form-panel__input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Roboto', Arial, sans-serif;
+            font-size: 14px;
+        }
+        
+        .form-panel__input:focus {
+            border-color: #1E88E5;
+            outline: none;
+            box-shadow: 0 0 3px rgba(30, 136, 229, 0.3);
+        }
+        
+        .form-panel__buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .form-panel__button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        
+        .form-panel__button--primary {
+            background-color: #1E88E5;
+            color: white;
+        }
+        
+        .form-panel__button--primary:hover {
+            background-color: #1565C0;
+        }
+        
+        .form-panel__button--secondary {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .form-panel__button--secondary:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .form-toggle {
+            position: fixed;
+            top: 20px;
+            right: 180px;
+            background-color: #084b8a;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-toggle__icon {
+            margin-right: 8px;
+        }
+        
+        /* Editable fields */
+        .editable-field {
+            min-height: 20px;
+            position: relative;
+            display: inline-block;
+            min-width: 100px;
+        }
+        
+        .editable-field--highlight {
+            background-color: rgba(255, 249, 196, 0.5);
+            border-radius: 2px;
+        }
+        
+        @media print {
+            .download-btn, .form-panel, .form-toggle {
+                display: none;
+            }
+        }
+        
+        /* --- Design Pattern: Object-Oriented CSS (OOCSS) --- */
+        
+        /* Structure Objects */
+        .container {
+            width: 100%;
+            position: relative;
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .flex--between {
+            justify-content: space-between;
+        }
+        
+        .flex--center {
+            align-items: center;
+        }
+        
+        /* Appearance Objects */
+        .text-center {
+            text-align: center;
+        }
+        
+        .text-bold {
+            font-weight: bold;
+        }
+        
+        .mb-10 {
+            margin-bottom: 10px;
+        }
+        
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+        
+        .mb-30 {
+            margin-bottom: 30px;
+        }
+        
+        /* Waves SVG styling for header and footer */
+        .wave-svg {
+            width: 100%;
+            height: auto;
+            position: absolute;
+        }
+        
+        .wave-top {
+            top: 0;
+        }
+        
+        .wave-bottom {
+            bottom: 0;
+        }
+        
+        /* Print-specific styles */
+        @media print {
+            .page-container {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton de téléchargement PDF -->
+    <div class="download-btn" id="download-pdf">
+        <span class="download-btn__icon">📥</span>
+        Télécharger PDF
+    </div>
+    
+    <!-- Bouton pour ouvrir le panneau de formulaire -->
+    <div class="form-toggle" id="form-toggle">
+        <span class="form-toggle__icon">📝</span>
+        Remplir le formulaire
+    </div>
+    
+    <!-- Panneau de formulaire -->
+    <div class="form-panel" id="form-panel">
+        <div class="form-panel__header">
+            <div class="form-panel__title">Compléter le contrat</div>
+            <button class="form-panel__close" id="form-close">×</button>
+        </div>
+        
+        <div class="form-panel__section">
+            <div class="form-panel__section-title">Informations du contrat</div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="contract-date">Date du contrat</label>
+                <input class="form-panel__input" type="date" id="contract-date" name="contract-date">
+            </div>
+        </div>
+        
+        <div class="form-panel__section">
+            <div class="form-panel__section-title">Informations de l'interprète</div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="interpreter-name">Nom de l'interprète</label>
+                <input class="form-panel__input" type="text" id="interpreter-name" name="interpreter-name">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="interpreter-address">Adresse</label>
+                <input class="form-panel__input" type="text" id="interpreter-address" name="interpreter-address">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="interpreter-contact">Informations de contact</label>
+                <input class="form-panel__input" type="text" id="interpreter-contact" name="interpreter-contact">
+            </div>
+        </div>
+        
+        <div class="form-panel__section">
+            <div class="form-panel__section-title">Signatures</div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="company-rep-name">Nom du représentant de l'entreprise</label>
+                <input class="form-panel__input" type="text" id="company-rep-name" name="company-rep-name">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="company-sign-date">Date de signature (entreprise)</label>
+                <input class="form-panel__input" type="date" id="company-sign-date" name="company-sign-date">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="interpreter-sign-name">Nom du signataire (interprète)</label>
+                <input class="form-panel__input" type="text" id="interpreter-sign-name" name="interpreter-sign-name">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="interpreter-sign-date">Date de signature (interprète)</label>
+                <input class="form-panel__input" type="date" id="interpreter-sign-date" name="interpreter-sign-date">
+            </div>
+        </div>
+        
+        <div class="form-panel__section">
+            <div class="form-panel__section-title">Informations de paiement</div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="bank-name">Nom de la banque</label>
+                <input class="form-panel__input" type="text" id="bank-name" name="bank-name">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="bank-address">Adresse de la banque</label>
+                <input class="form-panel__input" type="text" id="bank-address" name="bank-address">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="account-holder">Nom du titulaire du compte</label>
+                <input class="form-panel__input" type="text" id="account-holder" name="account-holder">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="account-number">Numéro de compte</label>
+                <input class="form-panel__input" type="text" id="account-number" name="account-number">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="routing-number">Numéro de routage (ABA)</label>
+                <input class="form-panel__input" type="text" id="routing-number" name="routing-number">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label" for="swift-code">Code SWIFT (si applicable)</label>
+                <input class="form-panel__input" type="text" id="swift-code" name="swift-code">
+            </div>
+            <div class="form-panel__field">
+                <label class="form-panel__label">Type de compte</label>
+                <div>
+                    <input type="radio" id="checking" name="account-type" value="checking">
+                    <label for="checking">Compte courant</label>
+                    <input type="radio" id="savings" name="account-type" value="savings" style="margin-left: 15px;">
+                    <label for="savings">Compte d'épargne</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-panel__buttons">
+            <button class="form-panel__button form-panel__button--secondary" id="reset-form">Réinitialiser</button>
+            <button class="form-panel__button form-panel__button--primary" id="apply-form">Appliquer</button>
+        </div>
+    </div>
+    
+    <!-- The main page container -->
+    <div class="page-container" id="contract-content">
+        <!-- Header Component - Using Module Pattern in JavaScript -->
+        <header class="header">
+            <div class="header__content">
+                <div class="header__logo-container">
+                    <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="header__logo">
+                </div>
+                <div class="header__info">
+                    <div class="header__company">{{ COMPANY_FULL_NAME }}</div>
+                    <div class="header__contact">
+                        <span class="header__icon">📱</span>
+                        +1 {{ COMPANY_NUM }}
+                    </div>
+                    <div class="header__contact">
+                        <span class="header__icon">📍</span>
+                        500 GROSSMAN DR, BRAINTREE, MA,02184
+                    </div>
+                    <div class="header__contact">
+                        <span class="header__icon">📧</span>
+                        {{ COMPANY_MAIL }}
+                    </div>
+                </div>
+            </div>
+            <!-- Waves background for header -->
+            <svg class="wave-svg wave-top" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                <path fill="#0099ff" fill-opacity="0.6" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
+                <path fill="#007bff" fill-opacity="0.7" d="M0,96L48,128C96,160,192,224,288,224C384,224,480,160,576,122.7C672,85,768,75,864,96C960,117,1056,171,1152,170.7C1248,171,1344,117,1392,90.7L1440,64L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
+                <path fill="#0056b3" fill-opacity="0.8" d="M0,32L48,69.3C96,107,192,181,288,186.7C384,192,480,128,576,106.7C672,85,768,107,864,133.3C960,160,1056,192,1152,170.7C1248,149,1344,75,1392,37.3L1440,0L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
+            </svg>
+        </header>
+
+        <!-- Main content -->
+        <main class="content">
+            <h1 class="title">Interpreter service agreements</h1>
+            
+            <div class="agreement-intro">
+                This Interpreter Service Agreement ("Agreement") is made and entered into as of <span class="editable-field editable-field--highlight" id="agreement-date">[ ]</span>, by and between:
+            </div>
+            
+            <!-- Company Information Box -->
+            <div class="info-box info-box--company">
+                <div class="info-box__title">Company Name: {{ COMPANY_FULL_NAME }}</div>
+                <div class="info-box__content">Address: 500 GROSSMAN DR, BRAINTREE, MA,02184</div>
+                <div class="info-box__content">Contact information: {{ COMPANY_NUM }} / {{ COMPANY_MAIL }}</div>
+            </div>
+            
+            <div class="text-center mb-20">AND</div>
+            
+            <!-- Interpreter Information Box -->
+            <div class="info-box info-box--interpreter">
+                <div class="info-box__title">Interpreter Name: <span class="editable-field editable-field--highlight" id="interpreter-name-display"></span></div>
+                <div class="info-box__content">Address: <span class="editable-field editable-field--highlight" id="interpreter-address-display"></span></div>
+                <div class="info-box__content">Contact Information: <span class="editable-field editable-field--highlight" id="interpreter-contact-display"></span></div>
+            </div>
+            
+            <!-- Agreement Sections -->
+            <div class="section">
+                <div class="section__title">1. Scope of Services</div>
+                <div class="section__content">
+                    The Interpreter agrees to provide professional interpretation services for the Company, including on site 
+                    Interpretation but not limited to oral interpretation, written translation, and any other language-related 
+                    services as required.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section__title">2. Independent Contractor Relationship</div>
+                <div class="section__content">
+                    The Interpreter acknowledges that they are an independent contractor and not an employee of the 
+                    Company. The Interpreter shall be responsible for their own taxes, insurance, and other expenses.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section__title">3. Compensation</div>
+                <div class="section__content">
+                    The Company agrees to pay the Interpreter at the following rates, payable every two weeks:
+                </div>
+                <ul class="section__list">
+                    <li class="section__item">Portuguese: $35 per hour</li>
+                    <li class="section__item">Spanish: $30 per hour</li>
+                    <li class="section__item">Haitian Creole: $30 per hour</li>
+                    <li class="section__item">Cape Verdean: $30 per hour</li>
+                    <li class="section__item">French: $35 per hour</li>
+                    <li class="section__item">Mandarin: $40 per hour</li>
+                    <li class="section__item">Rare Languages: $45 per hour</li>
+                </ul>
+                <div class="section__content">
+                    Each appointment is scheduled for a minimum of two (2) hours. The Interpreter will be compensated for 
+                    the full two-hour duration even if the appointment ends earlier. Additionally, if the Interpreter is already 
+                    on-site or in route to the location and the appointment results in a no-show, they will still be paid for the 
+                    full two-hour minimum.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section__title">4. Scheduling and Cancellations</div>
+                <div class="section__content">
+                    Interpreters are required to arrive on-site at least fifteen (15) minutes before the scheduled start time of 
+                    their appointment. If the Interpreter needs to cancel an appointment, they must provide at least forty-
+                    eight (48) hours' notice before the appointment date. Failure to provide timely notice may result in 
+                    penalties or impact future assignments.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section__title">5. Confidentiality</div>
+                <div class="section__content">
+                    The Interpreter agrees to maintain the confidentiality of all client and company information and not to 
+                    disclose any proprietary or sensitive information obtained in the course of their services.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section__title">6. Code of Conduct</div>
+                <div class="section__content">
+                    The Interpreter shall uphold professional ethics, including accuracy, impartiality, and neutrality, and 
+                    shall not engage in any conduct that may harm the Company's reputation.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section__title">7. Term and Termination</div>
+                <div class="section__content">
+                    This Agreement shall commence on <span class="editable-field editable-field--highlight" id="term-date"></span> and continue until terminated by either party with 30 
+                    Days written notice. The Company may terminate this Agreement immediately in the event of breach of 
+                    contract or misconduct.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section__title">8. Indemnification</div>
+                <div class="section__content">
+                    The Interpreter agrees to indemnify and hold harmless the Company from any claims, damages, or 
+                    liabilities arising from their interpretation services.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section__title">9. Governing Law</div>
+                <div class="section__content">
+                    This Agreement shall be governed by and construed in accordance with the laws of Massachusetts.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section__title">10. Entire Agreement</div>
+                <div class="section__content">
+                    This Agreement constitutes the entire understanding between the parties and supersedes any prior 
+                    agreements or understandings, whether written or oral.
+                </div>
+            </div>
+            
+            <!-- Signature Section -->
+            <div class="signature">
+                <div class="signature__title">IN WITNESS WHEREOF, the parties hereto have executed this Agreement as of the date first written above.</div>
+                
+                <div class="flex flex--between mb-30">
+                    <div class="signature__group">
+                        <div class="text-bold mb-10">Company Representative:</div>
+                        <div class="signature__line">
+                            <div class="signature__label">Name:</div>
+                            <div class="signature__input"><span class="editable-field editable-field--highlight" id="company-name-display"></span></div>
+                        </div>
+                        <div class="signature__line">
+                            <div class="signature__label">Signature:</div>
+                            <div class="signature__input"></div>
+                        </div>
+                        <div class="signature__line">
+                            <div class="signature__label">Date:</div>
+                            <div class="signature__input"><span class="editable-field editable-field--highlight" id="company-date-display"></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="signature__group">
+                        <div class="text-bold mb-10">Interpreter:</div>
+                        <div class="signature__line">
+                            <div class="signature__label">Name:</div>
+                            <div class="signature__input"><span class="editable-field editable-field--highlight" id="interpreter-sign-name-display"></span></div>
+                        </div>
+                        <div class="signature__line">
+                            <div class="signature__label">Signature:</div>
+                            <div class="signature__input"></div>
+                        </div>
+                        <div class="signature__line">
+                            <div class="signature__label">Date:</div>
+                            <div class="signature__input"><span class="editable-field editable-field--highlight" id="interpreter-sign-date-display"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Information Form -->
+            <div class="form">
+                <div class="form__title">Interpreter Payment Information Form</div>
+                
+                <div class="form__field">
+                    <div class="form__label">Interpreter Name: <span class="editable-field editable-field--highlight" id="payment-name-display"></span></div>
+                    <div class="form__input"></div>
+                </div>
+                
+                <div class="form__field">
+                    <div class="form__label">Address: <span class="editable-field editable-field--highlight" id="payment-address-display"></span></div>
+                    <div class="form__input"></div>
+                </div>
+                
+                <div class="form__field">
+                    <div class="form__label">Phone Number: <span class="editable-field editable-field--highlight" id="payment-phone-display"></span></div>
+                    <div class="form__input"></div>
+                </div>
+                
+                <div class="form__field">
+                    <div class="form__label">Email: <span class="editable-field editable-field--highlight" id="payment-email-display"></span></div>
+                    <div class="form__input"></div>
+                </div>
+                
+                <div class="form__section">
+                    <div class="form__title">Banking Information for Direct Deposit:</div>
+                    
+                    <div class="form__field">
+                        <div class="form__label">• Bank Name: <span class="editable-field editable-field--highlight" id="bank-name-display"></span></div>
+                        <div class="form__input"></div>
+                    </div>
+                    
+                    <div class="form__field">
+                        <div class="form__label">• Bank Address: <span class="editable-field editable-field--highlight" id="bank-address-display"></span></div>
+                        <div class="form__input"></div>
+                    </div>
+                    
+                    <div class="form__field">
+                        <div class="form__label">• Account Holder Name: <span class="editable-field editable-field--highlight" id="account-holder-display"></span></div>
+                        <div class="form__input"></div>
+                    </div>
+                    
+                    <div class="form__field">
+                        <div class="form__label">• Account Number: <span class="editable-field editable-field--highlight" id="account-number-display"></span></div>
+                        <div class="form__input"></div>
+                    </div>
+                    
+                    <div class="form__field">
+                        <div class="form__label">• Routing Number (ABA): <span class="editable-field editable-field--highlight" id="routing-number-display"></span></div>
+                        <div class="form__input"></div>
+                    </div>
+                    
+                    <div class="form__field">
+                        <div class="form__label">• SWIFT Code (if applicable): <span class="editable-field editable-field--highlight" id="swift-code-display"></span></div>
+                        <div class="form__input"></div>
+                    </div>
+                    
+                    <div class="form__field">
+                        <div class="form__label">• Account Type: <span class="editable-field editable-field--highlight" id="account-type-display"></span></div>
+                        <div class="form__checkbox">( ) Checking</div>
+                        <div class="form__checkbox">( ) Savings</div>
+                    </div>
+                </div>
+                
+                <div class="form__section">
+                    <div class="form__title">Authorization:</div>
+                    <div class="section__content">
+                        I hereby authorize {{ COMPANY_FULL_NAME }} to deposit payments directly into my bank 
+                        account as provided above. I understand that it is my responsibility to ensure that the information 
+                        provided is correct. I agree to notify the Company of any changes to my banking details.
+                    </div>
+                    
+                    <div class="signature__line mb-10">
+                        <div class="signature__label">Interpreter Signature:</div>
+                        <div class="signature__input"></div>
+                    </div>
+                    
+                    <div class="signature__line">
+                        <div class="signature__label">Date:</div>
+                        <div class="signature__input"><span class="editable-field editable-field--highlight" id="auth-date-display"></span></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer Component - Using Module Pattern in JavaScript -->
+        <footer class="footer">
+            <!-- Waves background for footer -->
+            <svg class="wave-svg wave-bottom" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                <path fill="#0099ff" fill-opacity="0.6" d="M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,197.3C672,224,768,224,864,213.3C960,203,1056,181,1152,186.7C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                <path fill="#007bff" fill-opacity="0.7" d="M0,256L48,261.3C96,267,192,277,288,261.3C384,245,480,203,576,197.3C672,192,768,224,864,213.3C960,203,1056,149,1152,138.7C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                <path fill="#0056b3" fill-opacity="0.8" d="M0,64L48,80C96,96,192,128,288,122.7C384,117,480,75,576,80C672,85,768,139,864,144C960,149,1056,107,1152,122.7C1248,139,1344,213,1392,250.7L1440,288L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+            
+            <!-- Footer logo -->
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_FULL_NAME }} Logo" class="footer__logo">
+        </footer>
+    </div>
+
+    <script>
+        /**
+         * ===== Design Pattern: Module Pattern =====
+         * Encapsule la logique des composants header et footer
+         */
+        const HeaderComponent = (function() {
+            // Variables privées
+            let headerElement = null;
+            
+            // Méthodes privées
+            const _createWaves = function() {
+                // Logique pour créer l'animation des vagues
+            };
+            
+            const _setupResponsive = function() {
+                // Logique pour adapter l'en-tête aux différentes tailles d'écran
+            };
+            
+            // API publique
+            return {
+                init: function(elementId) {
+                    headerElement = document.querySelector(elementId);
+                    if (headerElement) {
+                        _createWaves();
+                        _setupResponsive();
+                    }
+                    return this;
+                },
+                
+                updateCompanyInfo: function(info) {
+                    // Mise à jour des informations de l'entreprise
+                }
+            };
+        })();
+        
+        const FooterComponent = (function() {
+            // Variables privées
+            let footerElement = null;
+            
+            // Méthodes privées
+            const _createWaves = function() {
+                // Logique pour créer l'animation des vagues
+            };
+            
+            // API publique
+            return {
+                init: function(elementId) {
+                    footerElement = document.querySelector(elementId);
+                    if (footerElement) {
+                        _createWaves();
+                    }
+                    return this;
+                }
+            };
+        })();
+        
+        /**
+         * ===== Design Pattern: Strategy Pattern =====
+         * Permet de changer l'apparence des vagues à l'exécution
+         */
+        const WavesStrategy = (function() {
+            return {
+                // Stratégie pour les vagues bleues standard
+                blueWaves: function(element) {
+                    // Implémentation des vagues bleues
+                },
+                
+                // Stratégie pour les vagues avec dégradé
+                gradientWaves: function(element) {
+                    // Implémentation des vagues avec dégradé
+                },
+                
+                // Stratégie pour les vagues animées
+                animatedWaves: function(element) {
+                    // Implémentation des vagues animées
+                }
+            };
+        })();
+        
+        /**
+         * ===== Design Pattern: Factory Pattern =====
+         * Crée des éléments d'interface utilisateur
+         */
+        const UIFactory = (function() {
+            return {
+                // Crée une section de l'accord
+                createSection: function(title, content) {
+                    const section = document.createElement('div');
+                    section.className = 'section';
+                    
+                    const titleElement = document.createElement('div');
+                    titleElement.className = 'section__title';
+                    titleElement.textContent = title;
+                    
+                    const contentElement = document.createElement('div');
+                    contentElement.className = 'section__content';
+                    contentElement.textContent = content;
+                    
+                    section.appendChild(titleElement);
+                    section.appendChild(contentElement);
+                    
+                    return section;
+                },
+                
+                // Crée un champ de formulaire
+                createFormField: function(label, type = 'text') {
+                    const field = document.createElement('div');
+                    field.className = 'form__field';
+                    
+                    const labelElement = document.createElement('div');
+                    labelElement.className = 'form__label';
+                    labelElement.textContent = label;
+                    
+                    const inputElement = document.createElement('div');
+                    inputElement.className = 'form__input';
+                    
+                    field.appendChild(labelElement);
+                    field.appendChild(inputElement);
+                    
+                    return field;
+                }
+            };
+        })();
+        
+        /**
+         * ===== Design Pattern: Singleton Pattern =====
+         * Garantit qu'une seule instance du générateur PDF existe
+         */
+        const PDFGenerator = (function() {
+            let instance;
+            
+            // Constructeur privé
+            function createInstance() {
+                // Options PDF privées
+                const pdfOptions = {
+                    margin: [0.5, 0.5, 0.5, 0.5],
+                    filename: '{{ COMPANY_NAME }}_Interpreter_Agreement.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        logging: false
+                    },
+                    jsPDF: { 
+                        unit: 'in',
+                        format: 'letter',
+                        orientation: 'portrait'
+                    },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+                
+                return {
+                    generatePDF: function(elementId) {
+                        const element = document.getElementById(elementId);
+                        if (!element) {
+                            console.error(`L'élément avec l'ID "${elementId}" n'existe pas.`);
+                            return;
+                        }
+                        
+                        // Publier l'événement de début de génération
+                        EventManager.publish('pdf:generateStart', { timestamp: new Date() });
+                        
+                        // Générer le PDF
+                        html2pdf()
+                            .set(pdfOptions)
+                            .from(element)
+                            .toPdf()
+                            .get('pdf')
+                            .then(function(pdf) {
+                                // Ajouter les numéros de page
+                                const totalPages = pdf.internal.getNumberOfPages();
+                                
+                                for (let i = 1; i <= totalPages; i++) {
+                                    pdf.setPage(i);
+                                    pdf.setFontSize(10);
+                                    pdf.setTextColor(100);
+                                    pdf.text(`Page ${i} sur ${totalPages}`, 
+                                            pdf.internal.pageSize.getWidth() - 1, 
+                                            pdf.internal.pageSize.getHeight() - 0.3);
+                                }
+                                
+                                // Publier l'événement de fin de génération
+                                EventManager.publish('pdf:generateComplete', { 
+                                    timestamp: new Date(),
+                                    pageCount: totalPages
+                                });
+                            })
+                            .save();
+                    },
+                    
+                    updateOptions: function(newOptions) {
+                        Object.assign(pdfOptions, newOptions);
+                    }
+                };
+            }
+            
+            return {
+                // Obtenir l'instance unique
+                getInstance: function() {
+                    if (!instance) {
+                        instance = createInstance();
+                    }
+                    return instance;
+                }
+            };
+        })();
+        
+        /**
+         * ===== Design Pattern: Observer Pattern =====
+         * Permettrait de notifier les composants des changements de page pour
+         * l'impression et la génération de PDF
+         */
+        const EventManager = (function() {
+            const events = {};
+            
+            return {
+                subscribe: function(event, callback) {
+                    if (!events[event]) {
+                        events[event] = [];
+                    }
+                    events[event].push(callback);
+                },
+                
+                publish: function(event, data = {}) {
+                    if (!events[event]) return;
+                    
+                    events[event].forEach(function(callback) {
+                        callback(data);
+                    });
+                }
+            };
+        })();
+    </script>
+</body>
+</html>

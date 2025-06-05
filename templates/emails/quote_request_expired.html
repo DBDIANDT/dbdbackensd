@@ -1,0 +1,13 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+    <h1>{{ COMPANY_NAME }}</h1>
+    <p>Quote Request Expired</p>
+</div>
+<div class="content">
+    <h2>Dear {{ client_name }},</h2>
+    <p>Your quote request has expired. If you still need interpretation services, please submit a new request or contact our support team for assistance.</p>
+    
+    <a href="{{ quote_url }}" class="button">Submit New Request</a>
+</div>
+{% endblock %}

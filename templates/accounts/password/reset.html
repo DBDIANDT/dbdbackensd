@@ -1,0 +1,265 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Reset Password - {{ COMPANY_NAME }}</title>
+   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+   <style>
+       :root {
+           --primary-blue: #012A4B;
+           --accent-turquoise: #47D7AC;
+           --error-color: #dc3545;
+           --success-color: #28a745;
+           --text-color: #2c3e50;
+           --bg-gradient: linear-gradient(135deg, #012A4B, #47D7AC);
+       }
+
+       * {
+           margin: 0;
+           padding: 0;
+           box-sizing: border-box;
+       }
+
+       body {
+           font-family: 'Poppins', sans-serif;
+           background: var(--bg-gradient);
+           min-height: 100vh;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           padding: 20px;
+           color: var(--text-color);
+       }
+
+       .main-container {
+           width: 100%;
+           max-width: 460px;
+           background: rgba(255, 255, 255, 0.95);
+           backdrop-filter: blur(10px);
+           border-radius: 20px;
+           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+           overflow: hidden;
+           transition: transform 0.3s ease;
+       }
+
+       .main-container:hover {
+           transform: translateY(-5px);
+       }
+
+       .auth-header {
+           padding: 30px;
+           text-align: center;
+           background: white;
+           border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+       }
+
+       .logo {
+           height: 50px;
+           width: auto;
+           transition: transform 0.3s ease;
+       }
+
+       .logo:hover {
+           transform: scale(1.05);
+       }
+
+       .auth-content {
+           padding: 40px 30px;
+       }
+
+       .auth-title {
+           font-size: 28px;
+           font-weight: 600;
+           color: var(--primary-blue);
+           margin-bottom: 10px;
+           text-align: center;
+       }
+
+       .auth-subtitle {
+           color: #666;
+           text-align: center;
+           margin-bottom: 30px;
+           font-size: 15px;
+           line-height: 1.5;
+       }
+
+       .form-group {
+           margin-bottom: 25px;
+           position: relative;
+       }
+
+       .form-group label {
+           display: block;
+           margin-bottom: 8px;
+           font-weight: 500;
+           font-size: 14px;
+           color: var(--primary-blue);
+       }
+
+       .form-control {
+           width: 100%;
+           padding: 15px;
+           background: rgba(255, 255, 255, 0.95);
+           border: 2px solid rgba(1, 42, 75, 0.1);
+           border-radius: 12px;
+           font-size: 15px;
+           color: var(--primary-blue);
+           transition: all 0.3s ease;
+       }
+
+       .form-control:focus {
+           border-color: var(--accent-turquoise);
+           box-shadow: 0 0 0 4px rgba(71, 215, 172, 0.1);
+           outline: none;
+       }
+
+       .form-control::placeholder {
+           color: rgba(1, 42, 75, 0.5);
+       }
+
+       .btn {
+           background: var(--bg-gradient);
+           color: white;
+           padding: 15px 30px;
+           border: none;
+           border-radius: 12px;
+           font-size: 16px;
+           font-weight: 500;
+           cursor: pointer;
+           width: 100%;
+           transition: all 0.3s ease;
+       }
+
+       .btn:hover {
+           opacity: 0.9;
+           transform: translateY(-2px);
+           box-shadow: 0 5px 15px rgba(71, 215, 172, 0.3);
+       }
+
+       .auth-links {
+           text-align: center;
+           margin-top: 25px;
+       }
+
+       .auth-links a {
+           color: var(--primary-blue);
+           text-decoration: none;
+           font-size: 14px;
+           font-weight: 500;
+           transition: color 0.3s ease;
+       }
+
+       .auth-links a:hover {
+           color: var(--accent-turquoise);
+       }
+
+       .alert {
+           padding: 15px;
+           border-radius: 10px;
+           margin-bottom: 20px;
+           font-size: 14px;
+           display: flex;
+           align-items: center;
+           gap: 10px;
+       }
+
+       .alert-success {
+           background: #d4edda;
+           color: #155724;
+           border: 1px solid #c3e6cb;
+       }
+
+       .alert-error {
+           background: #f8d7da;
+           color: #721c24;
+           border: 1px solid #f5c6cb;
+       }
+
+       .error-message {
+           color: var(--error-color);
+           font-size: 13px;
+           margin-top: 5px;
+           display: block;
+       }
+
+       @media (max-width: 480px) {
+           .main-container {
+               border-radius: 15px;
+           }
+
+           .auth-content {
+               padding: 30px 20px;
+           }
+
+           .auth-title {
+               font-size: 24px;
+           }
+
+           .auth-subtitle {
+               font-size: 14px;
+           }
+
+           .form-control {
+               padding: 12px;
+               font-size: 14px;
+           }
+
+           .btn {
+               padding: 12px 25px;
+               font-size: 15px;
+           }
+       }
+
+       @media (max-width: 360px) {
+           body {
+               padding: 10px;
+           }
+
+           .auth-content {
+               padding: 25px 15px;
+           }
+       }
+   </style>
+</head>
+<body>
+   <div class="main-container">
+       <header class="auth-header">
+           <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="logo">
+       </header>
+
+       <div class="auth-content">
+           {% if messages %}
+               {% for message in messages %}
+                   <div class="alert alert-{{ message.tags }}">
+                       {{ message }}
+                   </div>
+               {% endfor %}
+           {% endif %}
+
+           <h1 class="auth-title">Reset Password</h1>
+           <p class="auth-subtitle">Enter your email address and we'll send you instructions to reset your password</p>
+
+           <form method="POST" class="auth-form" novalidate>
+               {% csrf_token %}
+               
+               <div class="form-group">
+                   <label for="{{ form.email.id_for_label }}">Email Address</label>
+                   {{ form.email }}
+                   {% if form.email.errors %}
+                       <span class="error-message">{{ form.email.errors|join:", " }}</span>
+                   {% endif %}
+               </div>
+
+               <button type="submit" class="btn">Send Reset Link</button>
+
+               <div class="auth-links">
+                   <a href="{% url 'dbdint:login' %}">Back to Login</a>
+               </div>
+           </form>
+       </div>
+   </div>
+</body>
+</html>

@@ -1,0 +1,255 @@
+{% extends 'base_trad.html' %}
+{% load static %}
+
+{% block title %}Assignments{% endblock %}
+{% block header_title %}My Assignments{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/assignments.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="assignments-container">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-clock stat-icon"></i>
+            <div class="stat-value">{{ pending_assignments.count }}</div>
+            <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-calendar-check stat-icon"></i>
+            <div class="stat-value">{{ upcoming_assignments.count }}</div>
+            <div class="stat-label">Upcoming</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-running stat-icon"></i>
+            <div class="stat-value">{{ in_progress_assignments.count }}</div>
+            <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-check-circle stat-icon"></i>
+            <div class="stat-value">{{ completed_assignments.count }}</div>
+            <div class="stat-label">Completed</div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="assignments-tabs">
+        <button class="tab-button active" data-tab="pending">
+            Pending
+            {% if pending_assignments %}
+                <span class="tab-count">{{ pending_assignments.count }}</span>
+            {% endif %}
+        </button>
+        <button class="tab-button" data-tab="upcoming">
+            Upcoming
+            {% if upcoming_assignments %}
+                <span class="tab-count">{{ upcoming_assignments.count }}</span>
+            {% endif %}
+        </button>
+        <button class="tab-button" data-tab="in-progress">
+            In Progress
+            {% if in_progress_assignments %}
+                <span class="tab-count">{{ in_progress_assignments.count }}</span>
+            {% endif %}
+        </button>
+        <button class="tab-button" data-tab="completed">
+            Completed
+        </button>
+    </div>
+
+    <!-- Assignments Content -->
+    <div class="assignments-content">
+        <!-- Pending Assignments -->
+        <div class="assignments-grid tab-content active" id="pending-content">
+            {% for assignment in pending_assignments %}
+                <div class="assignment-card" data-id="{{ assignment.id }}">
+                    <div class="assignment-header">
+                        <span class="assignment-status status-pending">Pending</span>
+                        <span class="assignment-time">{{ assignment.start_time|date:"M d, Y" }} at {{ assignment.start_time|time:"g:i A" }}</span>
+                    </div>
+                    <div class="assignment-info">
+                        <div class="assignment-details">
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                {{ assignment.source_language.name }} → {{ assignment.target_language.name }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ assignment.city }}, {{ assignment.state }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                {{ assignment.start_time|time:"g:i A" }} - {{ assignment.end_time|time:"g:i A" }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                ${{ assignment.interpreter_rate }}/hour
+                            </div>
+                        </div>
+                    </div>
+                    <div class="assignment-actions">
+                        <button class="action-button accept-button" onclick="acceptAssignment({{ assignment.id }}, event)">
+                            <i class="fas fa-check"></i> Accept
+                        </button>
+                        <button class="action-button reject-button" onclick="rejectAssignment({{ assignment.id }}, event)">
+                            <i class="fas fa-times"></i> Reject
+                        </button>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox empty-state-icon"></i>
+                    <h3 class="empty-state-text">No pending assignments</h3>
+                    <p class="empty-state-subtext">New assignments will appear here</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Je vais continuer avec la suite dans le prochain message... -->
+         <!-- Upcoming Assignments -->
+        <div class="assignments-grid tab-content" id="upcoming-content">
+            {% for assignment in upcoming_assignments %}
+                <div class="assignment-card" data-id="{{ assignment.id }}">
+                    <div class="assignment-header">
+                        <span class="assignment-status status-confirmed">Confirmed</span>
+                        <span class="assignment-time">{{ assignment.start_time|date:"M d, Y" }} at {{ assignment.start_time|time:"g:i A" }}</span>
+                    </div>
+                    <div class="assignment-info">
+                        <div class="assignment-details">
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                {{ assignment.source_language.name }} → {{ assignment.target_language.name }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ assignment.city }}, {{ assignment.state }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                {{ assignment.start_time|time:"g:i A" }} - {{ assignment.end_time|time:"g:i A" }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                ${{ assignment.interpreter_rate }}/hour
+                            </div>
+                        </div>
+                    </div>
+                    <div class="assignment-actions">
+                        <button class="action-button start-button" onclick="startAssignment({{ assignment.id }}, event)">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-calendar empty-state-icon"></i>
+                    <h3 class="empty-state-text">No upcoming assignments</h3>
+                    <p class="empty-state-subtext">Accepted assignments will appear here</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- In Progress Assignments -->
+        <div class="assignments-grid tab-content" id="in-progress-content">
+            {% for assignment in in_progress_assignments %}
+                <div class="assignment-card" data-id="{{ assignment.id }}">
+                    <div class="assignment-header">
+                        <span class="assignment-status status-in-progress">In Progress</span>
+                        <span class="assignment-time">{{ assignment.start_time|date:"M d, Y" }} at {{ assignment.start_time|time:"g:i A" }}</span>
+                    </div>
+                    <div class="assignment-info">
+                        <div class="assignment-details">
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                {{ assignment.source_language.name }} → {{ assignment.target_language.name }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ assignment.city }}, {{ assignment.state }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                {{ assignment.start_time|time:"g:i A" }} - {{ assignment.end_time|time:"g:i A" }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="assignment-actions">
+                        <button class="action-button complete-button" onclick="completeAssignment({{ assignment.id }}, event)">
+                            <i class="fas fa-check-circle"></i> Complete
+                        </button>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-tasks empty-state-icon"></i>
+                    <h3 class="empty-state-text">No assignments in progress</h3>
+                    <p class="empty-state-subtext">Active assignments will appear here</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Je continue avec la dernière partie dans le prochain message... -->
+         <!-- Completed Assignments -->
+        <div class="assignments-grid tab-content" id="completed-content">
+            {% for assignment in completed_assignments %}
+                <div class="assignment-card" data-id="{{ assignment.id }}">
+                    <div class="assignment-header">
+                        <span class="assignment-status status-completed">Completed</span>
+                        <span class="assignment-time">{{ assignment.start_time|date:"M d, Y" }} at {{ assignment.start_time|time:"g:i A" }}</span>
+                    </div>
+                    <div class="assignment-info">
+                        <div class="assignment-details">
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                {{ assignment.source_language.name }} → {{ assignment.target_language.name }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ assignment.city }}, {{ assignment.state }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                {{ assignment.start_time|time:"g:i A" }} - {{ assignment.end_time|time:"g:i A" }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                Total: ${{ assignment.total_interpreter_payment }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-check-double empty-state-icon"></i>
+                    <h3 class="empty-state-text">No completed assignments</h3>
+                    <p class="empty-state-subtext">Your completed assignments will appear here</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Assignment Details Modal -->
+    <div id="assignmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Assignment Details</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/assignments.js' %}"></script>
+{% endblock %}

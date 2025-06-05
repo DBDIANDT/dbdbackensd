@@ -1,0 +1,320 @@
+{% extends 'intbase.html' %}
+
+{% block title %}Earnings- {{ COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+    <!-- Summary Cards -->
+    <div class="grid stats-grid">
+        <!-- Weekly Earnings Card -->
+        <div class="card stat-card">
+            <div class="card-content">
+                <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                <div class="stat-value">${{ weekly_revenue|floatformat:2 }}</div>
+                <div class="stat-label">Week of {{ week_date_range }}</div>
+            </div>
+        </div>
+
+        <!-- Monthly Earnings Card -->
+        <div class="card stat-card">
+            <div class="card-content">
+                <i class="fas fa-calendar fa-2x mb-2"></i>
+                <div class="stat-value">${{ monthly_revenue|floatformat:2 }}</div>
+                <div class="stat-label">{{ current_month }} Earnings</div>
+            </div>
+        </div>
+
+        <!-- Total Earnings Card -->
+        <div class="card stat-card">
+            <div class="card-content">
+                <i class="fas fa-money-bill-wave fa-2x mb-2"></i>
+                <div class="stat-value">${{ total_revenue|floatformat:2 }}</div>
+                <div class="stat-label">Total Earnings</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Status Summary -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2 class="card-title">Payment Status Overview</h2>
+        </div>
+        <div class="card-content">
+            <div class="status-bars">
+                <div class="status-item">
+                    <div class="status-label">
+                        <span>Paid</span>
+                        <span>{{ paid_count }} assignment{% if paid_count != 1 %}s{% endif %}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress bg-success" style="width: {{ paid_percentage }}%"></div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">
+                        <span>Unpaid</span>
+                        <span>{{ unpaid_count }} assignment{% if unpaid_count != 1 %}s{% endif %}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress bg-danger" style="width: {{ unpaid_percentage }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignments Table -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2 class="card-title">Provided Services</h2>
+        </div>
+        <div class="card-content">
+            <div class="table-responsive">
+                <table class="assignments-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Service Type</th>
+                            
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for assignment in assignments %}
+                        <tr>
+                            <td>{{ assignment.start_time|date:"M d, Y" }}</td>
+                            <td>{{ assignment.service_type.name }}</td>
+                            
+                            <td>${{ assignment.total_interpreter_payment|floatformat:2 }}</td>
+                            <td>
+                                <span class="status-badge {% if assignment.status == 'COMPLETED' %}badge-success{% else %}badge-warning{% endif %}">
+                                    {{ assignment.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status-badge {% if assignment.is_paid %}badge-success{% else %}badge-danger{% endif %}">
+                                    {% if assignment.is_paid %}Paid{% else %}Unpaid{% endif %}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="no-results">No completed services found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if is_paginated %}
+            <div class="pagination">
+                <div class="pagination-container">
+                    {% if page_obj.has_previous %}
+                    <a href="?page=1" class="pagination-item">&laquo; First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="pagination-item">Previous</a>
+                    {% endif %}
+                    
+                    <span class="pagination-item active">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                    
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="pagination-item">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-item">Last &raquo;</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Grid Layout */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Cards */
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: white;
+        margin: 0;
+    }
+
+    .card-content {
+        padding: 2rem;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 1rem 0;
+        color: white;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
+
+    /* Progress Bars */
+    .status-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .status-item {
+        width: 100%;
+    }
+
+    .status-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+        color: white;
+    }
+
+    .progress-bar {
+        height: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 0.3s ease;
+    }
+
+    .bg-success { background-color: #4ade80; }
+    .bg-danger { background-color: #f87171; }
+    .bg-warning { background-color: #fbbf24; }
+
+    /* Table Styles */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .assignments-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .assignments-table th {
+        text-align: left;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .assignments-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .assignments-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .assignments-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 2rem !important;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Status Badges */
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .badge-success {
+        background-color: rgba(74, 222, 128, 0.2);
+        color: #4ade80;
+    }
+
+    .badge-danger {
+        background-color: rgba(248, 113, 113, 0.2);
+        color: #f87171;
+    }
+
+    .badge-warning {
+        background-color: rgba(251, 191, 36, 0.2);
+        color: #fbbf24;
+    }
+
+    /* Pagination */
+    .pagination {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination-container {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .pagination-item {
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .pagination-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .pagination-item.active {
+        background: #2563eb;
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- You could add any JavaScript needed for the payment page here -->
+{% endblock %}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Not Found - {{ COMPANY_NAME }}</title>
+    <style>
+        :root {
+            --primary-dark: #0F172A;
+            --secondary-dark: #1E293B;
+            --accent-green: #48BB78;
+            --text-light: #E2E8F0;
+            --text-muted: #CBD5E1;
+            --background-dark: #0A101E;
+            --error-red: #E53E3E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: var(--secondary-dark);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid rgba(72, 187, 120, 0.2);
+            text-align: center;
+        }
+
+        .logo {
+            display: block;
+            max-width: 180px;
+            margin: 0 auto 30px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--error-red);
+            font-size: 2em;
+            letter-spacing: 0.5px;
+        }
+
+        .message {
+            background-color: rgba(30, 41, 59, 0.6);
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid var(--error-red);
+            margin-bottom: 25px;
+        }
+
+        .message p {
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .login-button {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background-color: var(--accent-green);
+            color: var(--primary-dark);
+            padding: 15px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .login-button:hover {
+            background-color: #38A169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .contact-info {
+            background-color: rgba(72, 187, 120, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-green);
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .contact-heading {
+            color: var(--accent-green);
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .phone-number {
+            color: var(--accent-green);
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 15px 0;
+            display: block;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                margin: 20px;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo" class="logo">
+        
+        <div class="header">
+            <h1>Assignment Not Found</h1>
+        </div>
+        
+        <div class="message">
+            <p>We apologize, but the requested assignment could not be found.</p>
+            <p>This may be because the link has expired or the assignment has been cancelled.</p>
+        </div>
+
+        <a href="https://{{ COMPANY_NAME }}s.up.railway.app/" class="login-button">Go to Login Page</a>
+
+        <div class="contact-info">
+            <p class="contact-heading">Need Immediate Assistance?</p>
+            <p>Contact {{ COMPANY_NAME }} Support</p>
+            <a href="tel:7742238771" class="phone-number">(774) 223-8771</a>
+            <p>Our team is ready to help you!</p>
+        </div>
+    </div>
+</body>
+</html>

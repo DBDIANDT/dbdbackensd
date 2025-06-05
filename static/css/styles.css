@@ -1,0 +1,415 @@
+/* Root Variables */
+:root {
+    --primary-blue: #003366;
+    --secondary-blue: #0066CC;
+    --accent-blue: #0088FF;
+    --white: #FFFFFF;
+    --light-gray: #F5F7FA;
+    --gray: #6B7280;
+    --error-red: #DC2626;
+    --success-green: #059669;
+}
+
+/* Global Reset and Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #002147 100%);
+    min-height: 100vh;
+    color: var(--gray);
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    color: var(--white);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.login-btn {
+    background-color: var(--accent-blue);
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* Quote Form Container */
+.quote-form-container {
+    max-width: 600px;
+    margin: 3rem auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+}
+
+.page-title {
+    color: var(--primary-blue);
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.subtitle {
+    color: var(--gray);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Progress Steps */
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin: 2rem 0;
+    position: relative;
+    padding: 0 2rem;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--light-gray);
+    z-index: 1;
+}
+
+.step {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.step-number {
+    width: 35px;
+    height: 35px;
+    background: var(--light-gray);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--gray);
+    transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+    background: var(--accent-blue);
+    color: var(--white);
+}
+
+.step-label {
+    font-size: 0.875rem;
+    color: var(--gray);
+    font-weight: 500;
+}
+
+/* Form Elements */
+.form-step {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.form-step.active {
+    display: block;
+    opacity: 1;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--primary-blue);
+    font-size: 0.9rem;
+}
+
+/* Form Controls */
+.form-control,
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="datetime-local"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--light-gray);
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #F9FAFB;
+}
+
+.form-control:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    background-color: var(--white);
+    box-shadow: 0 0 0 4px rgba(0, 136, 255, 0.1);
+}
+
+/* Button Styles */
+.btn {
+    padding: 0.75rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-next,
+.btn-submit {
+    background: var(--accent-blue);
+    color: var(--white);
+}
+
+.btn-next:hover,
+.btn-submit:hover {
+    background: var(--secondary-blue);
+    transform: translateY(-1px);
+}
+
+.btn-prev {
+    background: var(--light-gray);
+    color: var(--gray);
+}
+
+.btn-prev:hover {
+    background: #D1D5DB;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Error States */
+.error-message {
+    color: var(--error-red);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+input.error,
+select.error,
+textarea.error {
+    border-color: var(--error-red);
+}
+
+/* Alert Messages */
+.alert {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: rgba(5, 150, 105, 0.1);
+    color: var(--success-green);
+    border: 1px solid var(--success-green);
+}
+
+.alert-error {
+    background-color: rgba(220, 38, 38, 0.1);
+    color: var(--error-red);
+    border: 1px solid var(--error-red);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .quote-form-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-next,
+    .btn-prev,
+    .btn-submit {
+        width: 100%;
+    }
+
+    .progress-steps {
+        padding: 0 1rem;
+    }
+
+    .step-label {
+        font-size: 0.75rem;
+    }
+}
+
+/* Button Styles */
+.btn {
+    padding: 0.75rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-next,
+.btn-submit {
+    background: var(--accent-blue);
+    color: var(--white);
+    min-width: 120px;
+}
+
+.btn-next:hover,
+.btn-submit:hover {
+    background: var(--secondary-blue);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-prev {
+    background: var(--light-gray);
+    color: var(--gray);
+    min-width: 120px;
+}
+
+.btn-prev:hover {
+    background: #D1D5DB;
+    transform: translateY(-1px);
+}
+
+/* Pour assurer que les boutons gardent leur style en état disabled */
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Styles pour input type number */
+input[type="number"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--light-gray);
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #F9FAFB;
+}
+
+/* Cacher les flèches du input number sur Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Cacher les flèches du input number sur Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    background-color: var(--white);
+    box-shadow: 0 0 0 4px rgba(0, 136, 255, 0.1);
+}
+
+.duration-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.duration-unit {
+    position: absolute;
+    right: 12px;
+    color: var(--gray);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+/* Ajuster le padding droit pour éviter que le texte ne chevauche l'unité */
+.duration-input-wrapper input[type="number"] {
+    padding-right: 70px;
+}

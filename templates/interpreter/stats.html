@@ -1,0 +1,358 @@
+{% extends 'intbase.html' %}
+
+{% block title %}Statistics - {{ COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+    <!-- Summary Cards -->
+    <div class="grid stats-grid">
+        <!-- Earnings Card -->
+        <div class="card stat-card">
+            <div class="card-content">
+                <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                <div class="stat-value">${{ total_earnings|floatformat:2 }}</div>
+                <div class="stat-label">Total Earnings</div>
+                <div class="stat-trend {% if earnings_trend >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-arrow-{% if earnings_trend >= 0 %}up{% else %}down{% endif %}"></i>
+                    <span>{{ earnings_trend_abs }}% vs last month</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hours Card -->
+        <div class="card stat-card">
+            <div class="card-content">
+                <i class="fas fa-clock fa-2x mb-2"></i>
+                <div class="stat-value">{{ total_hours|floatformat:1 }}</div>
+                <div class="stat-label">Hours Interpreted</div>
+                <div class="stat-trend {% if hours_trend >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-arrow-{% if hours_trend >= 0 %}up{% else %}down{% endif %}"></i>
+                    <span>{{ hours_trend_abs }}% vs last month</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Missions Card -->
+        <div class="card stat-card">
+            <div class="card-content">
+                <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                <div class="stat-value">{{ completed_missions }}</div>
+                <div class="stat-label">Completed Missions</div>
+                <div class="stat-trend {% if mission_trend >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-arrow-{% if mission_trend >= 0 %}up{% else %}down{% endif %}"></i>
+                    <span>{{ mission_trend_abs }}% vs last month</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Earnings Chart (Full Width) -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2 class="card-title">Monthly Earnings</h2>
+            <div class="period-selector">
+                <button class="btn-period active" data-period="month">Month</button>
+                <button class="btn-period" data-period="year">Year</button>
+            </div>
+        </div>
+        <div class="card-content">
+            <div id="earningsChart" class="chart-container"></div>
+        </div>
+    </div>
+
+    <!-- Mission Status -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2 class="card-title">Mission Status Overview</h2>
+        </div>
+        <div class="card-content">
+            <div class="status-bars">
+                <div class="status-item">
+                    <div class="status-label">
+                        <span>Completed</span>
+                        <span>{{ mission_stats.completed_rate }}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress bg-success" style="width: {{ mission_stats.completed_rate }}%"></div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">
+                        <span>Cancelled</span>
+                        <span>{{ mission_stats.cancelled_rate }}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress bg-danger" style="width: {{ mission_stats.cancelled_rate }}%"></div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">
+                        <span>No Show</span>
+                        <span>{{ mission_stats.no_show_rate }}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress bg-warning" style="width: {{ mission_stats.no_show_rate }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_css %}
+<style>
+    /* Grid Layout */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Cards */
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: white;
+        margin: 0;
+    }
+
+    .card-content {
+        padding: 2rem;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 1rem 0;
+        color: white;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
+
+    .stat-trend {
+        font-size: 1rem;
+        margin-top: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-trend.positive {
+        color: #4ade80;
+    }
+
+    .stat-trend.negative {
+        color: #f87171;
+    }
+
+    /* Charts */
+    .chart-container {
+        height: 500px;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    /* Period Selector */
+    .period-selector {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .btn-period {
+        padding: 0.75rem 1.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: transparent;
+        color: white;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-period:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-period.active {
+        background: #2563eb;
+        border-color: #2563eb;
+    }
+
+    /* Progress Bars */
+    .status-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .status-item {
+        width: 100%;
+    }
+
+    .status-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+        color: white;
+    }
+
+    .progress-bar {
+        height: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 0.3s ease;
+    }
+
+    .bg-success { background-color: #4ade80; }
+    .bg-danger { background-color: #f87171; }
+    .bg-warning { background-color: #fbbf24; }
+
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const earnings = {{ earnings_data|safe }};
+        
+        const chartOptions = {
+            series: [{
+                name: 'Earnings',
+                data: earnings.map(item => ({
+                    x: item.month,
+                    y: item.amount
+                }))
+            }],
+            chart: {
+                height: 500,
+                type: 'line',
+                toolbar: {
+                    show: false
+                },
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800
+                },
+                background: 'transparent'
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 4
+            },
+            colors: ['#2563eb'],
+            grid: {
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                strokeDashArray: 5,
+                xaxis: {
+                    lines: {
+                        show: true
+                    }
+                },
+                yaxis: {
+                    lines: {
+                        show: true
+                    }
+                }
+            },
+            xaxis: {
+                type: 'category',
+                labels: {
+                    style: {
+                        colors: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px'
+                    }
+                }
+            },
+            yaxis: {
+                labels: {
+                    style: {
+                        colors: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '14px'
+                    },
+                    formatter: (value) => `$${value.toFixed(0)}`
+                }
+            },
+            tooltip: {
+                theme: 'dark',
+                y: {
+                    formatter: (value) => `$${value.toFixed(2)}`
+                }
+            },
+            markers: {
+                size: 6,
+                strokeWidth: 0
+            }
+        };
+
+        const chart = new ApexCharts(document.querySelector("#earningsChart"), chartOptions);
+        chart.render();
+
+        // Gestionnaire des périodes
+        document.querySelectorAll('.btn-period').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const period = e.target.dataset.period;
+                
+                try {
+                    const response = await fetch(`/api/earnings/${period}/`);
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const data = await response.json();
+                    
+                    chart.updateSeries([{
+                        name: 'Earnings',
+                        data: data.map(item => ({
+                            x: item.month || item.day,
+                            y: item.amount
+                        }))
+                    }]);
+
+                    document.querySelectorAll('.btn-period').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    e.target.classList.add('active');
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

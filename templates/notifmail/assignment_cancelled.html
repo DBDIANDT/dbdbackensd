@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #E5E7EB;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1f2937 0%, #164e63 100%);
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #1e293b;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #1e293b;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #4CAF50;
+        }
+        .logo {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 30px;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+        }
+        .details-card {
+            background-color: #2d3748;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .info-item {
+            padding: 15px;
+            background-color: #1e293b;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+            color: #F3F4F6;
+        }
+        .info-item strong {
+            color: #6EE7B7;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .notice-box {
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1px solid #4CAF50;
+            color: #F3F4F6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        .action-button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white !important;
+            padding: 14px 32px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 15px;
+            text-align: center;
+        }
+        .action-button:hover {
+            background-color: #45a049;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+        }
+        .support-contact {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #F3F4F6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #4CAF50;
+        }
+        .support-contact strong {
+            color: #6EE7B7;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .support-contact a {
+            color: #6EE7B7;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer {
+            background-color: #1e293b;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #D1D5DB;
+            border-top: 1px solid #2d3748;
+        }
+        h2, h3 {
+            color: #6EE7B7;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        p {
+            color: #F3F4F6;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                margin: 0;
+            }
+            .content {
+                padding: 20px;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-button {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="logo">
+            <h2 style="color: #fff;">Appointment Cancellation Notice</h2>
+        </div>
+
+        <div class="content">
+            <div class="notice-box">
+                <h2>📢 Important Notice</h2>
+                <p>The following interpretation appointment has been cancelled by the administration. We apologize for any inconvenience this may cause.</p>
+            </div>
+
+            <p>Hello {{ interpreter_name }},</p>
+
+            <div class="details-card">
+                <h3>📅 Cancelled Appointment Details</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Client Name</strong>
+                        {{ client_name }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Date & Time</strong>
+                        {{ start_time|date:"m/d/Y h:i A" }} - {{ end_time|date:"h:i A" }} EDT
+                    </div>
+                    <div class="info-item">
+                        <strong>Location</strong>
+                        {{ location }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Languages</strong>
+                        {{ source_language }} → {{ target_language }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Service Type</strong>
+                        {{ service_type }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="notice-box">
+                <strong>ℹ️ Next Steps</strong>
+                <p>Please be aware that:</p>
+                <ul style="color: #F3F4F6;">
+                    <li>The appointment has been removed from your schedule</li>
+                    <li>You can now accept other assignments for this time slot</li>
+                    <li>New opportunities will be sent to you as they become available</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="{{ site_url }}" class="action-button">
+                    VIEW AVAILABLE APPOINTMENTS
+                </a>
+            </div>
+
+            <div class="support-contact">
+                <strong>📞 Questions?</strong>
+                <p>If you have any questions about this cancellation, please contact us:<br>
+                <a href="tel:7742238771">(774) 223-8771</a></p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>This is an automated message from {{ COMPANY_NAME }}.<br>
+            Please do not reply to this email.</p>
+            <p>© {% now "Y" %} {{ COMPANY_NAME }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

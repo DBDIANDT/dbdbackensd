@@ -1,0 +1,419 @@
+{% extends "base_client.html" %}
+
+{% block title %}New Quote Request - {{ COMPANY_NAME }}{% endblock %}
+{% block header_title %}New Quote Request{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Form Container */
+    .form-container {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Progress Steps */
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        position: relative;
+        padding: 0 1rem;
+    }
+
+    .progress-steps::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 1;
+    }
+
+    .step {
+        position: relative;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.6);
+        transition: all 0.3s ease;
+    }
+
+    .step.active {
+        background: var(--accent-blue);
+        border-color: var(--accent-blue);
+        color: white;
+    }
+
+    .step.completed {
+        background: var(--success-green);
+        border-color: var(--success-green);
+        color: white;
+    }
+
+    /* Form Sections */
+    .form-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Form Group */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+    }
+
+    /* Form Controls */
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 2px rgba(0, 136, 255, 0.2);
+    }
+
+    /* Select Styles */
+    select.form-control {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+        padding-right: 40px;
+    }
+
+    select.form-control option {
+        background-color: #1a1a1a;
+        color: white;
+        padding: 8px;
+    }
+
+    select.form-control::-ms-expand {
+        display: none;
+    }
+
+    /* DateTime Inputs */
+    input[type="datetime-local"].form-control,
+    input[type="date"].form-control,
+    input[type="time"].form-control {
+        color-scheme: dark;
+    }
+
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
+    /* Textarea */
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+        background-color: rgba(255, 255, 255, 0.05);
+        color: white;
+    }
+
+    /* Date and Time Inputs */
+    .datetime-group {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+        .datetime-group {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    /* Language Selection */
+    .language-pair {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+        .language-pair {
+            grid-template-columns: 1fr 40px 1fr;
+            align-items: center;
+        }
+
+        .language-pair .arrow {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+    }
+
+    /* Error States */
+    .error-message {
+        color: #FF4B4B;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .form-control.error {
+        border-color: #FF4B4B;
+        background-color: rgba(255, 75, 75, 0.05);
+    }
+
+    /* Placeholders */
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-prev,
+    .btn-next,
+    .btn-submit {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-prev {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-next,
+    .btn-submit {
+        background: var(--accent-blue);
+        color: white;
+        border: none;
+    }
+
+    .btn-prev:hover,
+    .btn-next:hover,
+    .btn-submit:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Help Text */
+    .help-text {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+        <div class="step active">1</div>
+        <div class="step">2</div>
+        <div class="step">3</div>
+    </div>
+
+    <form method="post" id="quoteRequestForm">
+        {% csrf_token %}
+
+        <!-- Service Details Section -->
+        <div class="form-section">
+            <h2 class="section-title">Service Details</h2>
+            
+            <div class="form-group">
+                <label for="{{ form.service_type.id_for_label }}">Service Type</label>
+                {{ form.service_type }}
+                {% if form.service_type.errors %}
+                <div class="error-message">{{ form.service_type.errors|join:", " }}</div>
+                {% endif %}
+                <div class="help-text">Select the type of interpretation service you need</div>
+            </div>
+
+            <div class="datetime-group">
+                <div class="form-group">
+                    <label for="{{ form.requested_date.id_for_label }}">Date & Time</label>
+                    {{ form.requested_date }}
+                    {% if form.requested_date.errors %}
+                    <div class="error-message">{{ form.requested_date.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.duration.id_for_label }}">Duration (minutes)</label>
+                    {{ form.duration }}
+                    {% if form.duration.errors %}
+                    <div class="error-message">{{ form.duration.errors|join:", " }}</div>
+                    {% endif %}
+                    <div class="help-text">Minimum duration: 30 minutes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Language Selection Section -->
+        <div class="form-section">
+            <h2 class="section-title">Languages</h2>
+            
+            <div class="language-pair">
+                <div class="form-group">
+                    <label for="{{ form.source_language.id_for_label }}">From</label>
+                    {{ form.source_language }}
+                    {% if form.source_language.errors %}
+                    <div class="error-message">{{ form.source_language.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.target_language.id_for_label }}">To</label>
+                    {{ form.target_language }}
+                    {% if form.target_language.errors %}
+                    <div class="error-message">{{ form.target_language.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Section -->
+        <div class="form-section">
+            <h2 class="section-title">Location</h2>
+            
+            <div class="form-group">
+                <label for="{{ form.location.id_for_label }}">Address</label>
+                {{ form.location }}
+                {% if form.location.errors %}
+                <div class="error-message">{{ form.location.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.city.id_for_label }}">City</label>
+                {{ form.city }}
+                {% if form.city.errors %}
+                <div class="error-message">{{ form.city.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.state.id_for_label }}">State</label>
+                {{ form.state }}
+                {% if form.state.errors %}
+                <div class="error-message">{{ form.state.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.zip_code.id_for_label }}">ZIP Code</label>
+                {{ form.zip_code }}
+                {% if form.zip_code.errors %}
+                <div class="error-message">{{ form.zip_code.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Special Requirements Section -->
+        <div class="form-section">
+            <h2 class="section-title">Additional Information</h2>
+            
+            <div class="form-group">
+                <label for="{{ form.special_requirements.id_for_label }}">Special Requirements</label>
+                {{ form.special_requirements }}
+                {% if form.special_requirements.errors %}
+                <div class="error-message">{{ form.special_requirements.errors|join:", " }}</div>
+                {% endif %}
+                <div class="help-text">Please specify any special requirements or additional information</div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <a href="{% url 'dbdint:client_quote_list' %}" class="btn btn-prev">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+            <button type="submit" class="btn btn-submit">
+                Submit Request <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set minimum date for datetime input
+        const dateInput = document.querySelector('input[type="datetime-local"]');
+        if (dateInput) {
+            const now = new Date();
+            const tomorrow = new Date(now.setDate(now.getDate() + 1));
+            const minimumDate = tomorrow.toISOString().slice(0, 16);
+            dateInput.min = minimumDate;
+        }
+
+        // Form validation
+        const form = document.getElementById('quoteRequestForm');
+        form.addEventListener('submit', function(e) {
+            // Add your custom validation logic here
+            // Example: duration validation
+            const duration = document.getElementById('{{ form.duration.id_for_label }}').value;
+            if (duration < 30 || duration % 30 !== 0) {
+                e.preventDefault();
+                alert('Duration must be at least 30 minutes and in increments of 30 minutes');
+            }
+        });
+    });
+</script>
+{% endblock %}

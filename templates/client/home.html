@@ -1,0 +1,220 @@
+<!-- templates/dashboard/client_dashboard.html -->
+{% extends "base_client.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block header_title %}Welcome, {{ user.first_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-blue);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Section Styling */
+    .dashboard-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    /* List Items */
+    .list-item {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(5px);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .list-item-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
+
+    .list-item-subtitle {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .list-item-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background: rgba(255, 170, 0, 0.2);
+        color: #FFB020;
+    }
+
+    .status-confirmed {
+        background: rgba(0, 200, 83, 0.2);
+        color: #00C853;
+    }
+
+    .status-completed {
+        background: rgba(0, 136, 255, 0.2);
+        color: #0088FF;
+    }
+
+    .amount {
+        font-family: monospace;
+        font-weight: 600;
+        color: var(--accent-blue);
+    }
+
+    @media (min-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Statistics Overview -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.pending_quotes }}</div>
+        <div class="stat-label">Pending Quotes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.active_assignments }}</div>
+        <div class="stat-label">Active Assignments</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.completed_assignments }}</div>
+        <div class="stat-label">Completed (30d)</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">${{ stats.total_spent|floatformat:2 }}</div>
+        <div class="stat-label">Total Spent (30d)</div>
+    </div>
+</div>
+
+<!-- Upcoming Assignments -->
+<div class="dashboard-section">
+    <h2 class="section-title">Upcoming Assignments</h2>
+    {% if upcoming_assignments %}
+        {% for assignment in upcoming_assignments %}
+        <div class="list-item">
+            <div class="list-item-title">{{ assignment.service_type }}</div>
+            <div class="list-item-subtitle">{{ assignment.start_time|date:"F j, Y - g:i A" }}</div>
+            <div class="list-item-meta">
+                <span class="status-badge status-{{ assignment.status|lower }}">{{ assignment.status }}</span>
+                <span class="amount">${{ assignment.total_amount|floatformat:2 }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="list-item">
+            <div class="list-item-subtitle">No upcoming assignments</div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Recent Quotes -->
+<div class="dashboard-section">
+    <h2 class="section-title">Recent Quotes</h2>
+    {% if recent_quotes %}
+        {% for quote in recent_quotes %}
+        <div class="list-item">
+            <div class="list-item-title">{{ quote.service_type }}</div>
+            <div class="list-item-subtitle">Requested on {{ quote.created_at|date:"F j, Y" }}</div>
+            <div class="list-item-meta">
+                <span class="status-badge status-{{ quote.status|lower }}">{{ quote.status }}</span>
+                {% if quote.estimated_amount %}
+                    <span class="amount">${{ quote.estimated_amount|floatformat:2 }}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="list-item">
+            <div class="list-item-subtitle">No recent quotes</div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Recent Payments -->
+<div class="dashboard-section">
+    <h2 class="section-title">Recent Payments</h2>
+    {% if recent_payments %}
+        {% for payment in recent_payments %}
+        <div class="list-item">
+            <div class="list-item-title">Payment for {{ payment.assignment.service_type }}</div>
+            <div class="list-item-subtitle">{{ payment.payment_date|date:"F j, Y" }}</div>
+            <div class="list-item-meta">
+                <span class="status-badge status-completed">{{ payment.status }}</span>
+                <span class="amount">${{ payment.amount|floatformat:2 }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="list-item">
+            <div class="list-item-subtitle">No recent payments</div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Unread Notifications -->
+<div class="dashboard-section">
+    <h2 class="section-title">Notifications</h2>
+    {% if unread_notifications %}
+        {% for notification in unread_notifications %}
+        <div class="list-item">
+            <div class="list-item-title">{{ notification.title }}</div>
+            <div class="list-item-subtitle">{{ notification.message }}</div>
+            <div class="list-item-meta">
+                <span>{{ notification.created_at|timesince }} ago</span>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="list-item">
+            <div class="list-item-subtitle">No unread notifications</div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

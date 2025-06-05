@@ -1,0 +1,630 @@
+{% extends "base_client.html" %}
+
+{% block title %}My Quotes - {{ COMPANY_NAME }}{% endblock %}
+{% block header_title %}My Quotes{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Stats Grid */
+    .quick-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .quick-stats {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    /* Stat Box Styles */
+    .stat-box {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 1.25rem;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--accent-blue);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+    }
+
+    /* Create Quote Button */
+    .create-quote-btn {
+        width: 100%;
+        background: var(--accent-blue);
+        color: white;
+        padding: 1rem;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .create-quote-btn:hover {
+        background: var(--secondary-blue);
+        transform: translateY(-2px);
+    }
+
+    /* Filter Section */
+    .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .filter-toggle {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 0.5rem;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .filter-toggle:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .filter-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .status-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .status-chip {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .status-chip:hover,
+    .status-chip.active {
+        background: var(--accent-blue);
+        border-color: var(--accent-blue);
+    }
+
+    .filter-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .date-range {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.875rem;
+    }
+
+    .filter-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 0.75rem;
+        color: white;
+        font-size: 0.875rem;
+        width: 100%;
+    }
+
+    .filter-input:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+    }
+
+    .filter-input option {
+        background-color: #1a1a1a;
+        color: white;
+        padding: 8px;
+    }
+
+    select.filter-input {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+        padding-right: 40px;
+    }
+
+    select.filter-input::-ms-expand {
+        display: none;
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .btn-apply, .btn-reset {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-apply {
+        background: var(--accent-blue);
+        color: white;
+        border: none;
+    }
+
+    .btn-apply:hover {
+        background: var(--secondary-blue);
+        transform: translateY(-2px);
+    }
+
+    .btn-reset {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-reset:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Quote Grid */
+    .quote-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+        .quote-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .quote-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    /* Quote Card */
+    .quote-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .quote-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .quote-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+
+    .quote-title h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.125rem;
+        color: white;
+    }
+
+    .quote-datetime {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .quote-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.875rem;
+    }
+
+    .detail-value {
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .quote-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .quote-meta {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .quote-action {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--accent-blue);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .quote-action:hover {
+        transform: translateX(4px);
+    }
+
+    .quote-action i {
+        font-size: 0.75rem;
+        transition: transform 0.3s ease;
+    }
+
+    .quote-action:hover i {
+        transform: translateX(2px);
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        align-items: center;
+    }
+
+    .pagination .current-page {
+        color: white;
+        font-size: 0.875rem;
+    }
+
+    .btn-prev,
+    .btn-next {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-prev:hover,
+    .btn-next:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        grid-column: 1 / -1;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        color: rgba(255, 255, 255, 0.3);
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-state-text {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 1.5rem;
+        font-size: 1.125rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Overview -->
+<div class="quick-stats">
+    <div class="stat-box">
+        <div class="stat-number">{{ stats.pending_count }}</div>
+        <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">{{ stats.processing_count }}</div>
+        <div class="stat-label">Processing</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">{{ stats.quoted_count }}</div>
+        <div class="stat-label">Quoted</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">{{ stats.accepted_count }}</div>
+        <div class="stat-label">Accepted</div>
+    </div>
+</div>
+
+<!-- Create Quote Button -->
+<a href="{% url 'dbdint:client_quote_create' %}" class="create-quote-btn">
+    <i class="fas fa-plus"></i>
+    <span>New Quote Request</span>
+</a>
+
+<!-- Filters -->
+<div class="filter-section">
+    <div class="filter-header">
+        <h3>Filters</h3>
+        <button type="button" class="filter-toggle" data-target="filterForm">
+            <i class="fas fa-filter"></i>
+        </button>
+    </div>
+
+    <div class="status-chips">
+        <button type="button" class="status-chip active" data-status="">All</button>
+        {% for status, label in status_choices %}
+        <button type="button" class="status-chip" data-status="{{ status }}">{{ label }}</button>
+        {% endfor %}
+    </div>
+
+    <form method="get" id="filterForm" class="filter-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="filter-input">
+                    <option value="">All Statuses</option>
+                    {% for status, label in status_choices %}
+                        <option value="{{ status }}" {% if form.status.value == status %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Service Type</label>
+                <select name="service_type" class="filter-input">
+                    <option value="">All Services</option>
+                    {% for service_type in service_types %}
+                        <option value="{{ service_type.0 }}" {% if form.service_type.value == service_type.0 %}selected{% endif %}>
+                            {{ service_type.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="date-range">
+            <div class="form-group">
+                <label>From Date</label>
+                <input type="date" name="date_from" class="filter-input" value="{{ form.date_from.value|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label>To Date</label>
+                <input type="date" name="date_to" class="filter-input" value="{{ form.date_to.value|default:'' }}">
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="btn-apply">Apply Filters</button>
+            <button type="reset" class="btn-reset">Reset</button>
+        </div>
+    </form>
+</div>
+
+<!-- Quote Grid -->
+<div class="quote-grid">
+    {% for quote in quotes %}
+        <div class="quote-card">
+            <div class="quote-header">
+                <div class="quote-title">
+                    <h3>{{ quote.service_type }}</h3>
+                    {% include 'client/partials/_status_badge.html' with status=quote.status %}
+                </div>
+                <div class="quote-datetime">
+                    {{ quote.requested_date|date:"M j, Y - g:i A" }}
+                </div>
+            </div>
+            
+            <div class="quote-details">
+                <div class="detail-row">
+                    <span class="detail-label">Duration:</span>
+                    <span class="detail-value">{{ quote.duration }} minutes</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Languages:</span>
+                    <span class="detail-value">{{ quote.source_language }} → {{ quote.target_language }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Location:</span>
+                    <span class="detail-value">{{ quote.city }}, {{ quote.state }}</span>
+                </div>
+            </div>
+            
+            <div class="quote-footer">
+                <div class="quote-meta">
+                    Created {{ quote.created_at|timesince }} ago
+                </div>
+                <a href="{% url 'dbdint:client_quote_detail' quote.pk %}" class="quote-action">
+                    View Details <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <p class="empty-state-text">No quotes found matching your criteria.</p>
+            <a href="{% url 'dbdint:client_quote_create' %}" class="create-quote-btn">
+                Create Your First Quote
+            </a>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+           class="btn-prev">
+            <i class="fas fa-chevron-left"></i> Previous
+        </a>
+    {% endif %}
+    
+    <span class="current-page">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+    
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" 
+           class="btn-next">
+            Next <i class="fas fa-chevron-right"></i>
+        </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion des filtres
+        const filterForm = document.querySelector('.filter-form');
+        const filterToggle = document.querySelector('.filter-toggle');
+        const statusChips = document.querySelectorAll('.status-chip');
+
+        // Toggle du formulaire de filtre
+        if (filterToggle) {
+            filterToggle.addEventListener('click', () => {
+                filterForm.classList.toggle('show');
+            });
+        }
+
+        // Gestion des status chips
+        statusChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                // Retirer la classe active de tous les chips
+                statusChips.forEach(c => c.classList.remove('active'));
+                // Ajouter la classe active au chip cliqué
+                chip.classList.add('active');
+                // Mettre à jour le champ status caché
+                const statusInput = document.querySelector('input[name="status"]');
+                if (statusInput) {
+                    statusInput.value = chip.dataset.status;
+                }
+                // Soumettre le formulaire
+                filterForm.submit();
+            });
+        });
+
+        // Préserver les paramètres de filtrage lors de la pagination
+        if (filterForm) {
+            filterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const params = new URLSearchParams(formData);
+                window.location.href = `${window.location.pathname}?${params.toString()}`;
+            });
+        }
+
+        // Reset button handler
+        const resetButton = document.querySelector('.btn-reset');
+        if (resetButton) {
+            resetButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = window.location.pathname;
+            });
+        }
+    });
+</script>
+{% endblock %}

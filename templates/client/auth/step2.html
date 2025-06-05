@@ -1,0 +1,631 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ COMPANY_NAME }} - Company Details</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --navy-deep: #1a365d;
+            --navy-medium: #2c5282;
+            --navy-light: #4a5568;
+            --navy-card: #2d3748;
+            --teal-primary: #38d9a9;
+            --teal-light: #4de6b8;
+            --white: #ffffff;
+            --gray-light: #a0aec0;
+            --gray-dark: #718096;
+            --blue-shadow: rgba(26, 54, 93, 0.3);
+            --white-glass: rgba(255, 255, 255, 0.05);
+            --white-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-medium) 50%, var(--navy-card) 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 650px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Progress Steps */
+        .progress-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 3rem;
+            gap: 3rem;
+            position: relative;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--white-glass);
+            border: 2px solid var(--white-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--gray-light);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .step.completed .step-circle {
+            background: var(--teal-primary);
+            border-color: var(--teal-primary);
+            color: var(--navy-deep);
+            box-shadow: 0 0 20px rgba(56, 217, 169, 0.3);
+        }
+
+        .step.active .step-circle {
+            background: var(--teal-primary);
+            border-color: var(--teal-primary);
+            color: var(--navy-deep);
+            box-shadow: 0 0 25px rgba(56, 217, 169, 0.4);
+        }
+
+        .step-text {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--gray-light);
+            font-weight: 500;
+        }
+
+        .step.completed .step-text,
+        .step.active .step-text {
+            color: var(--teal-primary);
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--teal-primary);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(56, 217, 169, 0.3);
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-wrapper {
+            display: inline-block;
+            padding: 1.5rem;
+            background: var(--white-glass);
+            border-radius: 20px;
+            border: 1px solid var(--white-border);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            animation: logoFloat 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+
+        @keyframes logoFloat {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .logo-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px var(--blue-shadow);
+            border-color: rgba(56, 217, 169, 0.3);
+        }
+
+        .logo-wrapper img {
+            height: 60px;
+            width: auto;
+            filter: drop-shadow(0 5px 15px var(--blue-shadow));
+        }
+
+        /* Header Text */
+        .header-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .main-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.75rem;
+            animation: textSlide 0.8s ease-out 0.4s forwards;
+            opacity: 0;
+        }
+
+        .main-subtitle {
+            font-size: 1rem;
+            color: var(--gray-light);
+            font-weight: 400;
+            line-height: 1.5;
+            animation: textSlide 0.8s ease-out 0.6s forwards;
+            opacity: 0;
+        }
+
+        @keyframes textSlide {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--navy-card);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px var(--blue-shadow);
+            border: 1px solid var(--white-border);
+            backdrop-filter: blur(10px);
+            animation: cardSlide 0.8s ease-out 0.8s forwards;
+            opacity: 0;
+        }
+
+        @keyframes cardSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .field-label {
+            color: var(--white);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            height: 55px;
+            padding: 0 1rem 0 3.5rem;
+            background: var(--navy-light);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            color: var(--white);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-select {
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 18px;
+            padding-right: 3rem;
+        }
+
+        .form-input::placeholder,
+        .form-select option {
+            color: var(--gray-dark);
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--teal-primary);
+            background: var(--navy-medium);
+            box-shadow: 0 0 0 4px rgba(56, 217, 169, 0.1);
+        }
+
+        .form-input:focus + .input-icon,
+        .form-select:focus + .input-icon {
+            color: var(--teal-primary);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-light);
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        /* Submit Button */
+        .submit-button {
+            width: 100%;
+            height: 55px;
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--teal-light) 100%);
+            border: none;
+            border-radius: 15px;
+            color: var(--navy-deep);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 20px rgba(56, 217, 169, 0.25);
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(135deg, var(--teal-light) 0%, var(--teal-primary) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(56, 217, 169, 0.35);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .button-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Validation States */
+        .form-input.error,
+        .form-select.error {
+            border-color: #ff4444;
+            box-shadow: 0 0 0 4px rgba(255, 68, 68, 0.1);
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .form-card {
+                padding: 2rem;
+            }
+            
+            .main-title {
+                font-size: 1.5rem;
+            }
+            
+            .main-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .progress-section {
+                gap: 2rem;
+            }
+            
+            .progress-line {
+                width: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem 0.5rem;
+            }
+            
+            .form-card {
+                padding: 1.5rem;
+                border-radius: 15px;
+            }
+            
+            .step-circle {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .logo-wrapper {
+                padding: 1rem;
+            }
+            
+            .logo-wrapper img {
+                height: 50px;
+            }
+            
+            .main-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Progress Steps -->
+        <div class="progress-section">
+            <div class="step completed">
+                <div class="step-circle">
+                    <i data-lucide="check" style="width: 20px; height: 20px;"></i>
+                </div>
+                <div class="step-text">Personal Info</div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="step active">
+                <div class="step-circle">2</div>
+                <div class="step-text">Company Details</div>
+            </div>
+        </div>
+
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-wrapper">
+                <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo">
+            </div>
+        </div>
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="main-title">Company Information</h1>
+            <p class="main-subtitle">Tell us about your company to complete your registration</p>
+        </div>
+
+        <!-- Company Details Form -->
+        <div class="form-card">
+            <form method="post" action="{% url 'dbdint:client_register_step2' %}" novalidate>
+                {% csrf_token %}
+                
+                <div class="form-grid">
+                    <!-- Company Name -->
+                    <div class="form-field">
+                        <label class="field-label" for="company_name">Company Name *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="company_name"
+                                name="company_name" 
+                                class="form-input" 
+                                placeholder="Enter company name"
+                                required>
+                            <i data-lucide="briefcase" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- City -->
+                    <div class="form-field">
+                        <label class="field-label" for="city">City *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="city"
+                                name="city" 
+                                class="form-input" 
+                                placeholder="Enter city"
+                                required>
+                            <i data-lucide="map-pin" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- Address (Full Width) -->
+                    <div class="form-field full-width">
+                        <label class="field-label" for="address">Street Address *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="address"
+                                name="address" 
+                                class="form-input" 
+                                placeholder="Enter street address"
+                                required>
+                            <i data-lucide="home" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- State/Province -->
+                    <div class="form-field">
+                        <label class="field-label" for="state">State/Province *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="state"
+                                name="state" 
+                                class="form-input" 
+                                placeholder="Enter state/province"
+                                required>
+                            <i data-lucide="map" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- ZIP Code -->
+                    <div class="form-field">
+                        <label class="field-label" for="zip_code">ZIP/Postal Code *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="zip_code"
+                                name="zip_code" 
+                                class="form-input" 
+                                placeholder="Enter ZIP/postal code"
+                                required>
+                            <i data-lucide="hash" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- Preferred Language (Full Width) -->
+                    <div class="form-field full-width">
+                        <label class="field-label" for="preferred_language">Preferred Language *</label>
+                        <div class="input-wrapper">
+                            <select 
+                                id="preferred_language"
+                                name="preferred_language" 
+                                class="form-select" 
+                                required>
+                                <option value="">Select your preferred language</option>
+                                {% for language in form.fields.preferred_language.queryset %}
+                                    <option value="{{ language.id }}">{{ language.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <i data-lucide="globe" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-button">
+                    <span>Complete Registration</span>
+                    <i data-lucide="check-circle" class="button-icon"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Form validation
+        document.querySelectorAll('.form-input, .form-select').forEach(input => {
+            input.addEventListener('blur', function() {
+                const errorDiv = this.parentNode.nextElementSibling;
+                
+                if (this.value.trim() === '') {
+                    this.classList.add('error');
+                    if (errorDiv && errorDiv.classList.contains('error-message')) {
+                        errorDiv.textContent = 'This field is required';
+                        errorDiv.style.display = 'block';
+                    }
+                } else {
+                    this.classList.remove('error');
+                    if (errorDiv && errorDiv.classList.contains('error-message')) {
+                        errorDiv.style.display = 'none';
+                    }
+                }
+            });
+
+            // Clear error on input
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                const errorDiv = this.parentNode.nextElementSibling;
+                if (errorDiv && errorDiv.classList.contains('error-message')) {
+                    errorDiv.style.display = 'none';
+                }
+            });
+        });
+
+        // Form submission validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            let hasErrors = false;
+            const requiredFields = document.querySelectorAll('.form-input[required], .form-select[required]');
+            
+            requiredFields.forEach(field => {
+                if (field.value.trim() === '') {
+                    field.classList.add('error');
+                    const errorDiv = field.parentNode.nextElementSibling;
+                    if (errorDiv && errorDiv.classList.contains('error-message')) {
+                        errorDiv.textContent = 'This field is required';
+                        errorDiv.style.display = 'block';
+                    }
+                    hasErrors = true;
+                }
+            });
+
+            if (hasErrors) {
+                e.preventDefault();
+                // Scroll to first error
+                const firstError = document.querySelector('.form-input.error, .form-select.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+
+        // Smooth animations for form fields
+        const formFields = document.querySelectorAll('.form-field');
+        formFields.forEach((field, index) => {
+            field.style.animation = `slideUp 0.6s ease-out ${1 + (index * 0.1)}s forwards`;
+            field.style.opacity = '0';
+        });
+    </script>
+</body>
+</html>

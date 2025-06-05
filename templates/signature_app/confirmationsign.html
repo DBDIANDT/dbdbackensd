@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ COMPANY_NAME }} - Agreement Confirmation</title>
+    <style>
+        :root {
+            --primary-color: #1a5959;
+            --secondary-color: #2a7a7a;
+            --accent-color: #4bb74b;
+            --text-color: #ffffff;
+            --background-color: #193f3f;
+            --card-background: #214e4e;
+            --border-color: #336666;
+            --input-background: rgba(255, 255, 255, 0.05);
+            --highlight-color: rgba(75, 183, 75, 0.1);
+            --success-color: rgba(75, 183, 75, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            height: 40px;
+        }
+        
+        .header-info {
+            font-size: 0.9rem;
+            text-align: right;
+        }
+        
+        main {
+            flex: 1;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .progress-step::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            z-index: 1;
+        }
+        
+        .progress-step:first-child::before {
+            left: 50%;
+        }
+        
+        .progress-step:last-child::before {
+            right: 50%;
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .active .step-number {
+            background-color: var(--accent-color);
+        }
+        
+        .completed .step-number {
+            background-color: var(--accent-color);
+        }
+        
+        .step-label {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .active .step-label {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .confirmation-container {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .success-header {
+            background-color: var(--success-color);
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+        
+        .success-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+        
+        .confirmation-message {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .agreement-id {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 0.5rem 0;
+            font-weight: 600;
+        }
+        
+        .confirmation-date {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .summary-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dotted var(--border-color);
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .summary-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .summary-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .summary-item {
+            margin-bottom: 0.75rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .summary-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .item-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.25rem;
+        }
+        
+        .item-value {
+            font-weight: 500;
+        }
+        
+        .signature-preview {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        
+        .signature-preview img {
+            max-height: 60px;
+        }
+        
+        .next-steps {
+            padding: 1.5rem;
+        }
+        
+        .next-steps-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        
+        .steps-list {
+            list-style-type: none;
+            margin-left: 0.5rem;
+        }
+        
+        .steps-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        
+        .steps-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .btn-container {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #3da63d;
+        }
+        
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .contract-download {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+        
+        .download-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+
+
+            
+        .font-brush-script {
+            font-family: 'Brush Script MT', cursive;
+        }
+        
+        .font-dancing-script {
+            font-family: 'Dancing Script', 'Brush Script MT', cursive;
+        }
+        
+        .font-pacifico {
+            font-family: 'Pacifico', 'Brush Script MT', cursive;
+        }
+        
+        .font-satisfy {
+            font-family: 'Satisfy', 'Brush Script MT', cursive;
+        }
+        
+        .font-caveat {
+            font-family: 'Caveat', 'Brush Script MT', cursive;
+        }
+        
+        .font-sacramento {
+            font-family: 'Sacramento', 'Brush Script MT', cursive;
+        }
+        
+        .font-great-vibes {
+            font-family: 'Great Vibes', 'Brush Script MT', cursive;
+        }
+        
+        /* Assurez-vous d'importer les polices Google */
+        @import url('https://fonts.googleapis.com/css2?family=Caveat&family=Dancing+Script&family=Great+Vibes&family=Pacifico&family=Sacramento&family=Satisfy&display=swap');
+
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo" class="logo">
+        <div class="header-info">
+            <div>Agreement #: <span id="agreement-number">{{ agreement_number }}</span></div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="progress-container">
+            <div class="progress-step completed">
+                <div class="step-number">1</div>
+                <div class="step-label">Verification</div>
+            </div>
+            <div class="progress-step completed">
+                <div class="step-number">2</div>
+                <div class="step-label">Review</div>
+            </div>
+            <div class="progress-step completed">
+                <div class="step-number">3</div>
+                <div class="step-label">Payment Info</div>
+            </div>
+            <div class="progress-step completed">
+                <div class="step-number">4</div>
+                <div class="step-label">Sign</div>
+            </div>
+            <div class="progress-step active">
+                <div class="step-number">5</div>
+                <div class="step-label">Confirmation</div>
+            </div>
+        </div>
+        
+        <div class="confirmation-container">
+            <div class="success-header">
+                <div class="success-icon">✅</div>
+                <h1>Agreement Successfully Completed!</h1>
+                <div class="confirmation-message">Your Interpreter Service Agreement has been signed and processed.</div>
+                <div class="agreement-id">Agreement #: {{ agreement_number }}</div>
+                <div class="confirmation-date">Completed on: {{ current_date }}</div>
+            </div>
+            
+            <div class="summary-section">
+                <div class="section-title">Agreement Summary</div>
+                
+                <div class="summary-grid">
+                    <div class="summary-box">
+                        <div class="summary-title">Interpreter Information</div>
+                        <div class="summary-item">
+                            <div class="item-label">Name</div>
+                            <div class="item-value">{{ interpreter_name }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="item-label">Address</div>
+                            <div class="item-value">{{ interpreter_address }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="item-label">Contact</div>
+                            <div class="item-value">{{ interpreter_phone }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="item-label">Email</div>
+                            <div class="item-value">{{ interpreter_email }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-box">
+                        <div class="summary-title">Payment Information</div>
+                        <div class="summary-item">
+                            <div class="item-label">Bank Name</div>
+                            <div class="item-value">{{ bank_name }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="item-label">Account Type</div>
+                            <div class="item-value">{{ account_type|title }}</div>
+                        </div>
+                        {% if account_number %}
+                        <div class="summary-item">
+                            <div class="item-label">Account Number</div>
+                            <div class="item-value">{{ account_number }}</div>
+                        </div>
+                        {% endif %}
+                        {% if routing_number %}
+                        <div class="summary-item">
+                            <div class="item-label">Routing Number</div>
+                            <div class="item-value">{{ routing_number }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="summary-box">
+                    <div class="summary-title">Signature Information</div>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="item-label">Signature Method</div>
+                            <div class="item-value">{{ signature_info.display_type }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="item-label">Date Signed</div>
+                            <div class="item-value">{{ signed_at|date:"F d, Y" }}</div>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="item-label">Signature</div>
+                        <div class="signature-preview">
+                            {% if signature_info.type == 'upload' and contract.signature_image %}
+                                <img src="{{ contract.signature_image.url }}" alt="Uploaded Signature">
+                            {% elif signature_info.type == 'type' and signature_info.data %}
+                                {% if signature_info.font %}
+                                    <span class="{{ signature_info.font }}" style="font-size: 1.8rem; color: #fff;">{{ signature_info.data }}</span>
+                                {% else %}
+                                    <span style="font-family: 'Brush Script MT', cursive; font-size: 1.8rem; color: #fff;">{{ signature_info.data }}</span>
+                                {% endif %}
+                            {% elif signature_info.type == 'draw' and signature_info.data %}
+                                <img src="{{ signature_info.data }}" alt="Drawn Signature">
+                            {% else %}
+                                <span style="font-family: 'Brush Script MT', cursive; font-size: 1.8rem; color: #fff;">{{ interpreter_name }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="next-steps">
+                <div class="next-steps-title">Next Steps</div>
+                <ul class="steps-list">
+                    <li>A copy of this agreement has been sent to your email address.</li>
+                    <li>Our team will review your agreement and activate your account within 1-2 business days.</li>
+                    <li>You will receive a welcome email with information on how to access the interpreter portal.</li>
+                    <li>For any questions regarding this agreement, please contact us at (774) 223-8771 or email support@{{ COMPANY_NAME }}translation.com</li>
+                </ul>
+                
+                {% if contract.contract_document %}
+                <a href="#" download class="contract-download">
+                    <div class="download-icon">📄</div>
+                    <div>
+                        <div><strong>Download a copy of your agreement</strong></div>
+                        <div style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">For your records</div>
+                    </div>
+                </a>
+                {% endif %}
+            </div>
+            
+            <div class="btn-container">
+                <a href="https://{{ COMPANY_NAME }}.com/interpreter/dashboard" class="btn">Go to Portal</a>
+                <a href="{{ COMPANY_WEBSITE }}" class="btn btn-secondary">Return to Home</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

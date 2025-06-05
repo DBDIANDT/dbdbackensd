@@ -1,0 +1,20 @@
+<!-- templates/emails/quote_request_confirmation.html -->
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Thank you for your quote request</h2>
+    <p>Dear {{ name }},</p>
+    <p>We have received your quote request and will process it shortly. Here are your request details:</p>
+    
+    <ul>
+        <li>Service: {{ quote_request.service_type }}</li>
+        <li>Languages: {{ quote_request.source_language }} to {{ quote_request.target_language }}</li>
+        <li>Date: {{ quote_request.requested_date }}</li>
+        <li>Duration: {{ quote_request.duration }} minutes</li>
+        <li>Location: {{ quote_request.location }}, {{ quote_request.city }}, {{ quote_request.state }}</li>
+    </ul>
+
+    <p>We will contact you shortly with more information.</p>
+    <p>Best regards,<br>{{ COMPANY_NAME }} Team</p>
+</body>
+</html>

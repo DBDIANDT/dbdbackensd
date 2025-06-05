@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Interpreter Registration{% endblock %}</title>
+    
+    <!-- CSS Dependencies -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/registration.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="registration-container">
+        <!-- En-tête -->
+        <div class="registration-header">
+            <h1 class="registration-title">Interpreter Registration</h1>
+            <p class="registration-subtitle">Complete your profile in 3 easy steps</p>
+        </div>
+
+        <!-- Barre de progression -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-step">
+                    <div class="step-circle {% if current_step == 1 %}active{% elif current_step > 1 %}completed{% endif %}" data-step="1">
+                        {% if current_step > 1 %}✓{% else %}1{% endif %}
+                    </div>
+                    <span class="step-label">Basic Info</span>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle {% if current_step == 2 %}active{% elif current_step > 2 %}completed{% endif %}" data-step="2">
+                        {% if current_step > 2 %}✓{% else %}2{% endif %}
+                    </div>
+                    <span class="step-label">Qualifications</span>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle {% if current_step == 3 %}active{% endif %}" data-step="3">3</div>
+                    <span class="step-label">Address</span>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-bar-fill" style="width: {% widthratio current_step 3 100 %}%"></div>
+            </div>
+        </div>
+
+        <!-- Messages d'erreur -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Contenu spécifique de chaque étape -->
+        <form method="POST" class="registration-form">
+            {% csrf_token %}
+            {% block form_content %}{% endblock %}
+
+            <!-- Boutons de navigation -->
+            <div class="button-container">
+                {% if current_step > 1 %}
+                <a href="{% block prev_url %}{% endblock %}" class="btn btn-secondary">Back</a>
+                {% endif %}
+                
+                {% block submit_button %}
+                {% if current_step < 3 %}
+                <button type="submit" class="btn btn-primary">Next</button>
+                {% else %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+                {% endif %}
+                {% endblock %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="{% static 'js/registration.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

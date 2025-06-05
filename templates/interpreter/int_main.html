@@ -1,0 +1,658 @@
+{% extends 'intbase.html' %}
+
+{% block title %}Dashboard - {{ COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+    <!-- Stats Section -->
+    <div class="grid stats-grid">
+        <div class="card stat-card">
+            <div class="card-content relative">
+                <i class="fas fa-dollar-sign mb-2 text-2xl text-primary-green"></i>
+                <div class="stat-value text-3xl font-bold">
+                    {% if stats.weekly_earnings != '-' %}
+                        ${{ stats.weekly_earnings }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="stat-label">This Week's Income</div>
+                <div class="absolute top-2 right-2">
+                    <!-- Icône info déclenchant l'affichage lors du clic -->
+                    <i class="fas fa-info-circle text-gray-400 hover:text-gray-600 cursor-pointer" 
+                         id="info-icon" 
+                         onclick="toggleInfoMessage()"></i>
+                    <div id="info-message" class="info-message" style="position: absolute; z-index: 20; right: 0; top: 2.5rem; min-width: 16rem; padding: 0.5rem; background: black; color: white; font-size: 0.75rem; border-radius: 0.25rem;">
+                        Click on Earnings on the menu for more details info
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card stat-card">
+            <div class="card-content">
+                <i class="fas fa-clock mb-2 text-2xl text-primary-green"></i>
+                <div class="stat-value text-3xl font-bold">{{ stats.pending_missions }}</div>
+                <div class="stat-label">Pending Missions</div>
+            </div>
+        </div>
+        <div class="card stat-card">
+            <div class="card-content relative">
+                <i class="fas fa-calendar-check mb-2 text-2xl text-primary-green"></i>
+                <div class="stat-value text-3xl font-bold">{{ stats.upcoming_missions }}</div>
+                <div class="stat-label">Upcoming Missions</div>
+                <button onclick="window.location.reload()" class="refresh-btn absolute top-2 right-2">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification Toast -->
+    <div id="notification-toast" class="notification-toast">
+        <div class="notification-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="notification-message"></span>
+        </div>
+    </div>
+
+    <!-- Pending Missions Section -->
+<!-- Pending Missions Section -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h2 class="text-lg font-bold">Pending Missions</h2>
+    </div>
+    <div class="card-content" id="missions-container">
+        {% for assignment in pending_assignments %}
+        <div class="mission-item" id="mission-{{ assignment.main_info.id }}" data-mission-id="{{ assignment.main_info.id }}">
+            <div class="mission-header">
+                <div class="mission-date-time">
+                    <div class="mission-date">
+                        <i class="fas fa-calendar-day text-primary-green"></i>
+                        <span>{{ assignment.main_info.start_datetime|date:"l, F j, Y" }}</span>
+                    </div>
+                    <div class="mission-time">
+                        <i class="fas fa-clock text-primary-green"></i>
+                        <span>{{ assignment.main_info.start_time|date:"g:i A" }} - {{ assignment.main_info.end_time|date:"g:i A" }}</span>
+                    </div>
+                    <div class="mission-duration">
+                        <i class="fas fa-hourglass-half text-primary-green"></i>
+                        <span>{{ assignment.main_info.duration }}</span>
+                    </div>
+                </div>
+                <div class="mission-status pending">
+                    {{ assignment.main_info.status }}
+                </div>
+            </div>
+            <div class="mission-details">
+                <div class="mission-client">
+                    <i class="fas fa-user text-primary-green"></i>
+                    <span>{{ assignment.main_info.client_name }}</span>
+                </div>
+                <div class="mission-location">
+                    <i class="fas fa-map-marker-alt text-primary-green"></i>
+                    <span>{{ assignment.main_info.address }}</span>
+                </div>
+                <div class="mission-language">
+                    <i class="fas fa-language text-primary-green"></i>
+                    <span>{{ assignment.main_info.languages }}</span>
+                </div>
+                <div class="mission-amount">
+                    <i class="fas fa-dollar-sign text-primary-green"></i>
+                    <span>${{ assignment.main_info.interpreter_rate }}/hour</span>
+                </div>
+            </div>
+            
+            <!-- Le reste du code reste inchangé -->
+            <div class="mission-additional-details" id="details-{{ assignment.main_info.id }}">
+                <div class="detail-row">
+                    <span class="detail-label">Special Requirements:</span>
+                    <span>{{ assignment.detailed_info.special_requirements }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Client Phone:</span>
+                    <span>{{ assignment.detailed_info.client_phone }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Client Email:</span>
+                    <span>{{ assignment.detailed_info.client_email }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Total Amount:</span>
+                    <span>${{ assignment.detailed_info.total_amount }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Service Type:</span>
+                    <span>{{ assignment.detailed_info.service_type }}</span>
+                </div>
+            </div>
+
+            <button class="btn-show-more" onclick="toggleDetails('{{ assignment.main_info.id }}')">
+                Show More Details
+            </button>
+
+            <div class="mission-actions">
+                <button class="btn btn-success" onclick="handleMissionResponse('{{ assignment.action_urls.accept }}', {{ assignment.main_info.id }}, 'accept')" id="accept-btn-{{ assignment.main_info.id }}">
+                    <i class="fas fa-check"></i>
+                    <span>Accept</span>
+                    <i class="fas fa-spinner fa-spin" style="display: none;"></i>
+                </button>
+                <button class="btn btn-danger" onclick="handleMissionResponse('{{ assignment.action_urls.decline }}', {{ assignment.main_info.id }}, 'decline')" id="decline-btn-{{ assignment.main_info.id }}">
+                    <i class="fas fa-times"></i>
+                    <span>Decline</span>
+                    <i class="fas fa-spinner fa-spin" style="display: none;"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+
+    <!-- Confirmed Missions Section -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2 class="text-lg font-bold">Confirmed Missions</h2>
+        </div>
+        <div class="card-content" id="confirmed-missions-container">
+            {% for assignment in confirmed_assignments %}
+            <div class="mission-item" id="mission-{{ assignment.main_info.id }}" data-mission-id="{{ assignment.main_info.id }}">
+                <div class="mission-header">
+                    <div class="mission-time">
+                        <i class="fas fa-clock text-primary-green"></i>
+                        <span>{{ assignment.main_info.start_time|date:"g:i A" }}</span>
+                    </div>
+                    <div class="mission-status confirmed">
+                        {{ assignment.main_info.status }}
+                    </div>
+                </div>
+                <div class="mission-details">
+                    <div class="mission-client">
+                        <i class="fas fa-user text-primary-green"></i>
+                        <span>{{ assignment.main_info.client_name }}</span>
+                    </div>
+                    <div class="mission-location">
+                        <i class="fas fa-map-marker-alt text-primary-green"></i>
+                        <span>{{ assignment.main_info.address }}</span>
+                    </div>
+                    <div class="mission-language">
+                        <i class="fas fa-language text-primary-green"></i>
+                        <span>{{ assignment.main_info.languages }}</span>
+                    </div>
+                    <div class="mission-amount">
+                        <i class="fas fa-dollar-sign text-primary-green"></i>
+                        <span>${{ assignment.main_info.interpreter_rate }}/hour</span>
+                    </div>
+                </div>
+                
+                <!-- Additional Details (Hidden by Default) -->
+                <div class="mission-additional-details" id="details-{{ assignment.main_info.id }}">
+                    <div class="detail-row">
+                        <span class="detail-label">Special Requirements:</span>
+                        <span>{{ assignment.detailed_info.special_requirements }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Client Phone:</span>
+                        <span>{{ assignment.detailed_info.client_phone }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Client Email:</span>
+                        <span>{{ assignment.detailed_info.client_email }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Total Amount:</span>
+                        <span>${{ assignment.detailed_info.total_amount }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Service Type:</span>
+                        <span>{{ assignment.detailed_info.service_type }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Start Date:</span>
+                        <span>{{ assignment.main_info.start_datetime|date:"M d, Y g:i A" }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">End Date:</span>
+                        <span>{{ assignment.main_info.end_datetime|date:"M d, Y g:i A" }}</span>
+                    </div>
+                </div>
+
+                <button class="btn-show-more" onclick="toggleDetails('{{ assignment.main_info.id }}')">
+                    Show More Details
+                </button>
+
+                <div class="mission-actions">
+                    <button class="btn btn-primary complete-btn" 
+                            onclick="markAsComplete('{{ assignment.main_info.id }}')" 
+                            id="complete-btn-{{ assignment.main_info.id }}">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Mark as Completed</span>
+                        <i class="fas fa-spinner fa-spin" style="display: none;"></i>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+    /* Stats Grid Improvements */
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(var(--primary-green-rgb), 0.1);
+        background: rgba(255, 255, 255, 0.03);
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(var(--primary-green-rgb), 0.3);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    .stat-value {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, var(--primary-green), #4CAF50);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0.5rem 0;
+    }
+    .stat-label {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 500;
+    }
+    .refresh-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .refresh-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    .refresh-btn i {
+        transition: transform 0.5s ease;
+    }
+    .refresh-btn:hover i {
+        transform: rotate(180deg);
+    }
+    
+    /* Mission Card Improvements */
+    .mission-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    .mission-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+    
+    /* Additional Details Animation */
+    .mission-additional-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        opacity: 0;
+    }
+    .mission-additional-details.expanded {
+        max-height: 500px;
+        opacity: 1;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 0.5rem;
+    }
+    
+    /* Show More/Less Button Style */
+    .btn-show-more {
+        width: 100%;
+        padding: 0.75rem;
+        margin: 1rem 0;
+        background: linear-gradient(to right, rgba(var(--primary-green-rgb), 0.1), rgba(var(--primary-green-rgb), 0.05));
+        border: 1px solid rgba(var(--primary-green-rgb), 0.2);
+        border-radius: 0.5rem;
+        color: var(--white);
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .btn-show-more:hover {
+        background: linear-gradient(to right, rgba(var(--primary-green-rgb), 0.2), rgba(var(--primary-green-rgb), 0.1));
+        border-color: rgba(var(--primary-green-rgb), 0.4);
+        transform: translateY(-1px);
+    }
+    .btn-show-more i {
+        transition: transform 0.3s ease;
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+    .btn-show-more:hover i {
+        opacity: 1;
+    }
+    .btn-show-more.expanded i {
+        transform: rotate(180deg);
+    }
+    .btn-show-more:active {
+        transform: translateY(1px);
+    }
+    
+    /* Button Improvements */
+    .btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        font-size: 0.95rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+    .btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: scale(0.98);
+    }
+    .btn::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .btn:not(:disabled):hover::after {
+        opacity: 1;
+    }
+    .btn .fa-spinner {
+        position: absolute;
+        display: none;
+        animation: spin 1s linear infinite;
+    }
+    .btn.loading {
+        pointer-events: none;
+        transform: scale(0.98);
+    }
+    .btn.loading span {
+        opacity: 0;
+    }
+    .btn.loading .fa-spinner {
+        display: inline-block;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .btn-success {
+        background: var(--success);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .btn-danger {
+        background: var(--danger);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Toast Improvements */
+    .notification-toast {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1000;
+        transform: translateX(150%);
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .notification-toast.show {
+        transform: translateX(0);
+    }
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .notification-content.success {
+        background: var(--success);
+    }
+    .notification-content.error {
+        background: var(--danger);
+    }
+    @media (max-width: 768px) {
+        .mission-actions {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .btn {
+            width: 100%;
+        }
+    }
+    
+    /* Nouveaux styles pour les missions confirmées */
+    .mission-status.confirmed {
+        display: inline-block;
+        background: var(--primary-green);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    .fade-out {
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.5s ease;
+    }
+    .btn-primary {
+        background: var(--primary-green);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .btn-primary:hover {
+        background: var(--primary-green-dark);
+    }
+    .complete-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .complete-btn.loading {
+        background: var(--primary-green-dark);
+    }
+    
+    /* Styles simplifiés pour le message d'info */
+    #info-message {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+    }
+    #info-message.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Fonction simplifiée pour basculer l'affichage du message d'info
+    function toggleInfoMessage() {
+        const infoMessage = document.getElementById('info-message');
+        if (!infoMessage.classList.contains('active')) {
+            infoMessage.classList.add('active');
+            // Masquer le message après 5 secondes
+            setTimeout(() => {
+                infoMessage.classList.remove('active');
+            }, 5000);
+        } else {
+            infoMessage.classList.remove('active');
+        }
+    }
+
+    function showNotification(message, type = 'success') {
+        const toast = document.getElementById('notification-toast');
+        const content = toast.querySelector('.notification-content');
+        const messageEl = document.getElementById('notification-message');
+        content.className = `notification-content ${type}`;
+        messageEl.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    function toggleDetails(missionId) {
+        const detailsEl = document.getElementById(`details-${missionId}`);
+        const button = event.target.closest('.btn-show-more');
+        const targetButton = button || event.target;
+        if (!detailsEl.classList.contains('expanded')) {
+            detailsEl.classList.add('expanded');
+            targetButton.classList.add('expanded');
+            targetButton.innerHTML = '<i class="fas fa-chevron-up"></i><span>Show Less</span>';
+            detailsEl.style.maxHeight = detailsEl.scrollHeight + 'px';
+            setTimeout(() => {
+                detailsEl.style.opacity = '1';
+            }, 50);
+        } else {
+            detailsEl.classList.remove('expanded');
+            targetButton.classList.remove('expanded');
+            targetButton.innerHTML = '<i class="fas fa-chevron-down"></i><span>Show More Details</span>';
+            detailsEl.style.opacity = '0';
+            setTimeout(() => {
+                detailsEl.style.maxHeight = '0';
+            }, 50);
+        }
+    }
+
+    async function handleMissionResponse(url, missionId, action) {
+        const btnId = `${action}-btn-${missionId}`;
+        const button = document.getElementById(btnId);
+        const missionEl = document.getElementById(`mission-${missionId}`);
+        const acceptBtn = document.getElementById(`accept-btn-${missionId}`);
+        const declineBtn = document.getElementById(`decline-btn-${missionId}`);
+        acceptBtn.disabled = true;
+        declineBtn.disabled = true;
+        button.classList.add('loading');
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                credentials: 'same-origin'
+            });
+            if (response.ok) {
+                missionEl.classList.add('fade-out');
+                setTimeout(() => {
+                    missionEl.remove();
+                    const pendingCount = document.querySelector('.stat-card:nth-child(2) .stat-value');
+                    const upcomingCount = document.querySelector('.stat-card:nth-child(3) .stat-value');
+                    if (action === 'accept') {
+                        pendingCount.textContent = parseInt(pendingCount.textContent) - 1;
+                        upcomingCount.textContent = parseInt(upcomingCount.textContent) + 1;
+                        showNotification('Mission accepted successfully!');
+                    } else {
+                        pendingCount.textContent = parseInt(pendingCount.textContent) - 1;
+                        showNotification('Mission declined successfully!');
+                    }
+                }, 500);
+            } else {
+                throw new Error('Request failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('An error occurred. Please try again.', 'error');
+            acceptBtn.disabled = false;
+            declineBtn.disabled = false;
+            button.classList.remove('loading');
+        }
+    }
+
+    async function markAsComplete(missionId) {
+        const button = document.getElementById(`complete-btn-${missionId}`);
+        const missionEl = document.getElementById(`mission-${missionId}`);
+        button.disabled = true;
+        button.classList.add('loading');
+        try {
+            const response = await fetch(`/assignments/${missionId}/complete/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ status: 'COMPLETED' }),
+                credentials: 'same-origin'
+            });
+            const data = await response.json();
+            if (response.ok) {
+                missionEl.classList.add('fade-out');
+                setTimeout(() => {
+                    missionEl.remove();
+                    const upcomingMissionsCard = document.querySelector('.stat-card:nth-child(3) .stat-value');
+                    const weeklyEarningsCard = document.querySelector('.stat-card:nth-child(1) .stat-value');
+                    if (upcomingMissionsCard) {
+                        const currentValue = parseInt(upcomingMissionsCard.textContent);
+                        upcomingMissionsCard.textContent = Math.max(0, currentValue - 1);
+                    }
+                    const missionAmount = missionEl.querySelector('.mission-amount span')?.textContent;
+                    if (weeklyEarningsCard && missionAmount) {
+                        const rate = parseFloat(missionAmount.replace('$', '').split('/')[0]);
+                        const duration = parseFloat(missionEl.querySelector('.mission-details')?.dataset?.duration || "0");
+                        if (!isNaN(rate) && !isNaN(duration)) {
+                            if (weeklyEarningsCard.textContent === "-") {
+                                weeklyEarningsCard.textContent = `$${(rate * duration).toFixed(2)}`;
+                            } else {
+                                const currentEarnings = parseFloat(weeklyEarningsCard.textContent.replace('$', ''));
+                                const newEarnings = currentEarnings + (rate * duration);
+                                weeklyEarningsCard.textContent = `$${newEarnings.toFixed(2)}`;
+                            }
+                        }
+                    }
+                    showNotification('Mission marked as completed successfully!', 'success');
+                }, 500);
+            } else {
+                throw new Error(data.message || 'Failed to complete mission');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification(error.message || 'An error occurred while completing the mission', 'error');
+            button.disabled = false;
+            button.classList.remove('loading');
+        }
+    }
+</script>
+{% endblock %}

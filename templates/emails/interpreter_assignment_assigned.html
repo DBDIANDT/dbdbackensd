@@ -1,0 +1,29 @@
+<!-- templates/emails/interpreter_assignment_assigned.html -->
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+    <h1>{{ COMPANY_NAME }}</h1>
+    <p>New Assignment Available</p>
+</div>
+<div class="content">
+    <h2>Dear {{ interpreter_name }},</h2>
+    <p>A new interpretation assignment has been assigned to you:</p>
+
+    <div class="assignment-details">
+        <p><strong>Assignment ID:</strong> #{{ assignment_id }}</p>
+        <p><strong>Service Type:</strong> {{ service_type }}</p>
+        <p><strong>Date:</strong> {{ start_time|date:"F j, Y" }}</p>
+        <p><strong>Time:</strong> {{ start_time|date:"P" }} to {{ end_time|date:"P" }}</p>
+        <p><strong>Location:</strong> {{ location }}</p>
+        <p><strong>Languages:</strong> {{ source_language }} to {{ target_language }}</p>
+        <p><strong>Rate:</strong> ${{ interpreter_rate }}/hour</p>
+        <p><strong>Minimum Hours:</strong> {{ minimum_hours }}</p>
+        {% if special_requirements %}
+        <p><strong>Special Requirements:</strong> {{ special_requirements }}</p>
+        {% endif %}
+    </div>
+
+    <p>Please log in to your account to confirm your availability for this assignment.</p>
+    <a href="{{ login_url }}" class="button">Review Assignment</a>
+</div>
+{% endblock %}

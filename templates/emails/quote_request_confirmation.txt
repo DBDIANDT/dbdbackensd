@@ -1,0 +1,44 @@
+Dear {{ quote_request.full_name }},
+
+Thank you for requesting a quote from {{ COMPANY_NAME }} - Your Trusted Language Services Partner.
+
+Your request details:
+------------------------------------------
+Quote Reference: #{{ quote_request.id }}
+Service Type: {{ quote_request.service_type }}
+Source Language: {{ quote_request.source_language }}
+Target Language: {{ quote_request.target_language }}
+Requested Date: {{ quote_request.requested_date|date:"F j, Y, g:i a" }}
+Duration: {{ quote_request.duration }} minutes
+Location: {{ quote_request.location }}, {{ quote_request.city }}, {{ quote_request.state }} {{ quote_request.zip_code }}
+
+Next Steps:
+------------------------------------------
+1. Our team is reviewing your request
+2. You will receive a detailed quote within 24 hours
+3. A dedicated project manager will be assigned to assist you
+
+Would you like to streamline future requests?
+------------------------------------------
+Create your {{ COMPANY_NAME }} account using your email ({{ quote_request.email }}) to:
+- Track your quote requests and projects
+- Access our client portal
+- Receive priority support
+- Manage your preferences
+
+Visit: https://www.dbdit.com/register
+
+Need immediate assistance?
+------------------------------------------
+Contact our support team:
+Email: support@{{ COMPANY_NAME }}translation.com
+Phone: 1-800-XXX-XXXX
+
+Thank you for choosing {{ COMPANY_NAME }}. We look forward to serving you.
+
+Best regards,
+The {{ COMPANY_NAME }} Team
+
+------------------------------------------
+This is an automated message. Please do not reply to this email.
+If you did not request this quote, please ignore this message.

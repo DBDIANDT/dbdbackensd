@@ -1,0 +1,322 @@
+{% extends 'intbase.html' %}
+
+{% block title %}Missions - {{ COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+    <!-- Filter Tabs -->
+    <div class="filter-container card">
+        <div class="card-content">
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-status="all">
+                    All
+                    <span class="badge">8</span>
+                </button>
+                <button class="filter-tab" data-status="pending">
+                    Pending
+                    <span class="badge bg-warning">3</span>
+                </button>
+                <button class="filter-tab" data-status="accepted">
+                    Accepted
+                    <span class="badge bg-success">3</span>
+                </button>
+                <button class="filter-tab" data-status="completed">
+                    Completed
+                    <span class="badge bg-secondary">2</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Missions List -->
+    <div class="missions-list mt-4" id="missionsList">
+        <!-- Pending Mission -->
+        <div class="card mission-card" data-status="pending">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="mission-date">
+                    <i class="fas fa-calendar"></i>
+                    February 15, 2025
+                </div>
+                <div class="mission-status pending">Pending</div>
+            </div>
+            <div class="card-content">
+                <div class="mission-details">
+                    <div class="detail-row">
+                        <i class="fas fa-clock"></i>
+                        <span>2:00 PM - 3:00 PM</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-user"></i>
+                        <span>John Smith</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Central Hospital - Emergency Department</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-language"></i>
+                        <span>English - Spanish</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>$120</span>
+                    </div>
+                </div>
+                <div class="mission-actions">
+                    <button class="btn btn-success" onclick="acceptMission(1)">
+                        <i class="fas fa-check"></i>
+                        Accept
+                    </button>
+                    <button class="btn btn-danger" onclick="declineMission(1)">
+                        <i class="fas fa-times"></i>
+                        Decline
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accepted Mission -->
+        <div class="card mission-card mt-4" data-status="accepted">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="mission-date">
+                    <i class="fas fa-calendar"></i>
+                    February 16, 2025
+                </div>
+                <div class="mission-status accepted">Accepted</div>
+            </div>
+            <div class="card-content">
+                <div class="mission-details">
+                    <div class="detail-row">
+                        <i class="fas fa-clock"></i>
+                        <span>10:30 AM - 11:30 AM</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-user"></i>
+                        <span>Maria Garcia</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>St. Joseph Medical Center - Clinic</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-language"></i>
+                        <span>Spanish - English</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>$150</span>
+                    </div>
+                </div>
+                <div class="mission-actions">
+                    <button class="btn btn-primary" onclick="completeMission(2)">
+                        <i class="fas fa-check-double"></i>
+                        Mark as Completed
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Mission -->
+        <div class="card mission-card mt-4" data-status="completed">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="mission-date">
+                    <i class="fas fa-calendar"></i>
+                    February 14, 2025
+                </div>
+                <div class="mission-status completed">Completed</div>
+            </div>
+            <div class="card-content">
+                <div class="mission-details">
+                    <div class="detail-row">
+                        <i class="fas fa-clock"></i>
+                        <span>9:00 AM - 10:00 AM</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-user"></i>
+                        <span>Robert Johnson</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>City Medical Center</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-language"></i>
+                        <span>English - French</span>
+                    </div>
+                    <div class="detail-row">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>$100</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-container {
+        position: sticky;
+        top: 60px;
+        z-index: 10;
+        background: rgba(27, 31, 43, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .filter-tabs {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-tab {
+        padding: 0.5rem 1rem;
+        border: 2px solid transparent;
+        border-radius: 2rem;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--white);
+        font-size: 0.9rem;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all var(--transition-fast);
+    }
+
+    .filter-tab.active {
+        border-color: var(--primary-green);
+        background: rgba(var(--primary-green-rgb), 0.2);
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.2);
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+    }
+
+    .mission-card {
+        transition: transform var(--transition-fast);
+    }
+
+    .mission-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .mission-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+
+    .mission-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .mission-status.pending {
+        background: var(--warning);
+    }
+
+    .mission-status.accepted {
+        background: var(--success);
+    }
+
+    .mission-status.completed {
+        background: var(--gray-700);
+    }
+
+    .mission-details {
+        display: grid;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--gray-200);
+    }
+
+    .detail-row i {
+        width: 16px;
+        color: var(--primary-green);
+    }
+
+    .mission-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .mission-actions .btn {
+        flex: 1;
+    }
+
+    @media (min-width: 768px) {
+        .mission-details {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .mission-actions {
+            flex-direction: column;
+        }
+
+        .mission-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Filter functionality
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Update active tab
+            document.querySelector('.filter-tab.active').classList.remove('active');
+            tab.classList.add('active');
+
+            // Filter missions
+            const status = tab.dataset.status;
+            const missions = document.querySelectorAll('.mission-card');
+            
+            missions.forEach(mission => {
+                if (status === 'all' || mission.dataset.status === status) {
+                    mission.style.display = 'block';
+                } else {
+                    mission.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Mission actions
+    function acceptMission(id) {
+        // Add your accept mission logic here
+        console.log('Accepting mission:', id);
+    }
+
+    function declineMission(id) {
+        // Add your decline mission logic here
+        console.log('Declining mission:', id);
+    }
+
+    function completeMission(id) {
+        // Add your complete mission logic here
+        console.log('Completing mission:', id);
+    }
+</script>
+{% endblock %}

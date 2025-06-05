@@ -1,0 +1,480 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ COMPANY_NAME }} - Interpreter Portal{% endblock %}</title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Base CSS -->
+    <link href="{% static 'css/interprete.css' %}" rel="stylesheet">
+    <style>
+        /* Header Styles */
+        :root {
+            --navy-deep: #1a365d;
+            --navy-medium: #2c5282;
+            --navy-light: #4a5568;
+            --navy-card: #2d3748;
+            --teal-primary: #38d9a9;
+            --teal-light: #4de6b8;
+            --white: #ffffff;
+            --gray-light: #a0aec0;
+            --gray-dark: #718096;
+            --blue-shadow: rgba(26, 54, 93, 0.3);
+            --white-glass: rgba(255, 255, 255, 0.05);
+            --white-border: rgba(255, 255, 255, 0.1);
+            --font-size-sm: 0.875rem;
+            --transition-fast: 0.3s ease;
+        }
+
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(45, 55, 72, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px var(--blue-shadow);
+            border-bottom: 1px solid var(--white-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: translateY(-1px);
+        }
+
+        .logo img {
+            height: 42px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px var(--blue-shadow));
+        }
+
+        .logo span {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--white);
+        }
+
+        /* Profile Menu Styles */
+        .profile-menu {
+            position: relative;
+        }
+
+        .profile-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--teal-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--navy-deep);
+            border: 2px solid var(--white-border);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(56, 217, 169, 0.2);
+        }
+
+        .profile-icon:hover {
+            border-color: var(--teal-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(56, 217, 169, 0.3);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: var(--navy-card);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px var(--blue-shadow);
+            border: 1px solid var(--white-border);
+            backdrop-filter: blur(10px);
+            display: none;
+            overflow: hidden;
+            min-width: 180px;
+            animation: dropdownSlide 0.3s ease-out;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 14px 18px;
+            color: var(--white);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .dropdown-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--teal-primary);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: var(--white-glass);
+            color: var(--teal-primary);
+            padding-left: 22px;
+        }
+
+        .dropdown-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .dropdown-item i {
+            width: 18px;
+            height: 18px;
+            color: var(--gray-light);
+            transition: color 0.3s ease;
+        }
+
+        .dropdown-item:hover i {
+            color: var(--teal-primary);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 75px;
+            background: rgba(45, 55, 72, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid var(--white-border);
+            z-index: 1000;
+            box-shadow: 0 -4px 20px var(--blue-shadow);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--gray-light);
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.75rem 0.5rem;
+            min-width: 65px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: var(--teal-light);
+            background: var(--white-glass);
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            color: var(--teal-primary);
+            background: rgba(56, 217, 169, 0.1);
+        }
+
+        .nav-item.active i {
+            transform: scale(1.1);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: var(--teal-primary);
+            border-radius: 0 0 3px 3px;
+        }
+
+        /* Main Content Adjustment */
+        .main-content {
+            padding-top: 60px;
+            padding-bottom: 75px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-medium) 50%, var(--navy-card) 100%);
+        }
+
+        .container {
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Loading State */
+        .nav-item.loading {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .nav-item.loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #ff4444;
+            color: var(--white);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--navy-card);
+        }
+
+        /* Fallback for browsers that don't support backdrop-filter */
+        @supports not (backdrop-filter: blur(12px)) {
+            .header, 
+            .bottom-nav {
+                background: rgba(45, 55, 72, 0.98);
+            }
+            
+            .dropdown-menu {
+                background: rgba(45, 55, 72, 0.98);
+            }
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-item {
+                font-size: 0.75rem;
+                min-width: 55px;
+            }
+
+            .nav-item i {
+                font-size: 1.3rem;
+            }
+
+            .header {
+                padding: 0 0.75rem;
+            }
+
+            .logo span {
+                font-size: 1.1rem;
+            }
+
+            .profile-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .dropdown-menu {
+                min-width: 160px;
+                right: -10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-item {
+                font-size: 0.7rem;
+                padding: 0.5rem 0.25rem;
+            }
+
+            .nav-item i {
+                font-size: 1.2rem;
+            }
+
+            .bottom-nav {
+                height: 70px;
+            }
+
+            .main-content {
+                padding-bottom: 70px;
+            }
+
+            .container {
+                padding: 0.75rem;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .header,
+            .bottom-nav {
+                background: rgba(26, 54, 93, 0.95);
+            }
+            
+            .dropdown-menu {
+                background: var(--navy-deep);
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="app-container">
+    <!-- Header -->
+    <header class="header">
+        <a href="{% url 'dbdint:new_interpreter_dashboard' %}" class="logo">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" width="40" height="40" onerror="this.src='/api/placeholder/40/40'">
+        </a>
+        <div class="profile-menu">
+            <div class="profile-icon" id="profileButton">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="dropdown-menu" id="profileDropdown">
+                <form action="{% url 'dbdint:logout' %}" method="POST" style="margin: 0; padding: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Bottom Navigation (uniquement Home) -->
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+    <!-- Home est toujours visible -->
+    <a href="{% url 'dbdint:new_interpreter_dashboard' %}" 
+       class="nav-item {% if request.resolver_match.url_name == 'new_interpreter_dashboard' %}active{% endif %}">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </a>
+
+    <!-- Les autres boutons ne sont visibles que si l'inscription est complète -->
+    {% if request.user.registration_complete %}
+        <a href="{% url 'dbdint:new_interpreter_calendar' %}" 
+           class="nav-item {% if request.resolver_match.url_name == 'new_interpreter_calendar' %}active{% endif %}">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Calendar</span>
+        </a>
+
+        <a href="{% url 'dbdint:new_interpreter_stats' %}" 
+           class="nav-item {% if request.resolver_match.url_name == 'new_interpreter_stats' %}active{% endif %}">
+            <i class="fas fa-chart-bar"></i>
+            <span>Stats</span>
+        </a>
+        
+        <a href="{% url 'dbdint:interpreter_payments' %}" 
+           class="nav-item {% if request.resolver_match.url_name == 'interpreter_payments' %}active{% endif %}">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>Earnings</span>
+        </a>
+    {% endif %}
+</nav>
+
+    <!-- Scripts -->
+    <script>
+        const profileButton = document.getElementById('profileButton');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        if (profileButton && profileDropdown) {
+            profileButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('active');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!profileDropdown.contains(e.target) && !profileButton.contains(e.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                if (item.getAttribute('href') === currentPath) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,131 @@
+/* Styles généraux pour les tableaux d'administration */
+#changelist-form .results {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* En-têtes de colonnes */
+#result_list thead th {
+    background: #f8f9fa;
+    font-weight: 600;
+    padding: 8px 12px;
+}
+
+/* Alternance des couleurs des lignes */
+#result_list tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Survol des lignes */
+#result_list tbody tr:hover {
+    background-color: #f0f7ff;
+}
+
+/* Styles des cellules */
+#result_list td {
+    padding: 12px;
+    vertical-align: top;
+}
+
+/* Style pour les informations client et interprète */
+.field-get_client_display strong,
+.field-get_interpreter strong {
+    color: #2c5282;
+    font-size: 14px;
+}
+
+.field-get_client_display small,
+.field-get_interpreter small {
+    color: #718096;
+    font-size: 12px;
+}
+
+/* Style pour les langues */
+.field-get_languages {
+    white-space: nowrap;
+    color: #4a5568;
+}
+
+/* Style pour la localisation */
+.field-get_location {
+    line-height: 1.4;
+}
+
+.field-get_location small {
+    color: #718096;
+    font-size: 12px;
+}
+
+/* Style pour la durée et le tarif */
+.field-get_duration,
+.field-interpreter_rate,
+.field-total_interpreter_payment {
+    font-family: monospace;
+    text-align: right;
+}
+
+/* Style pour les montants */
+.field-total_interpreter_payment {
+    font-weight: bold;
+    color: #2c5282;
+}
+
+/* Tooltips */
+[title] {
+    cursor: help;
+    border-bottom: 1px dotted #ccc;
+}
+
+/* Status badges */
+.field-get_status_display span {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* Styles responsifs */
+@media (max-width: 1024px) {
+    #result_list td {
+        padding: 8px;
+    }
+    
+    .field-get_client_display,
+    .field-get_interpreter,
+    .field-get_location {
+        min-width: 200px;
+    }
+}
+
+/* Style pour les champs de formulaire */
+.form-row {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.form-row:last-child {
+    border-bottom: none;
+}
+
+/* Style pour les fieldsets */
+.module {
+    margin-bottom: 20px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+.module h2 {
+    padding: 12px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Style pour les messages d'aide */
+.help {
+    color: #718096;
+    font-size: 12px;
+    margin-top: 4px;
+}

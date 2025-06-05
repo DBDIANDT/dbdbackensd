@@ -1,0 +1,289 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ COMPANY_NAME }} - Create Account</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{% static 'css/new-register.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Progress Steps -->
+        <div class="progress-section">
+            <div class="step active">
+                <div class="step-circle">1</div>
+                <div class="step-text">Personal Info</div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="step">
+                <div class="step-circle">2</div>
+                <div class="step-text">Company Details</div>
+            </div>
+        </div>
+
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-wrapper">
+                <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo">
+            </div>
+        </div>
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="main-title">Join DBD I&T</h1>
+            <p class="main-subtitle">Connect with our global network of language professionals and unlock new opportunities</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="form-card">
+            <form method="post" action="{% url 'dbdint:client_register' %}" novalidate>
+                {% csrf_token %}
+                
+                <div class="form-grid">
+                    <!-- Username Field -->
+                    <div class="form-field">
+                        <label class="field-label" for="username">Username *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="username"
+                                name="username" 
+                                class="form-input" 
+                                placeholder="Choose a username"
+                                required
+                                autocomplete="username">
+                            <i data-lucide="user" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="form-field">
+                        <label class="field-label" for="email">Email Address *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="email" 
+                                id="email"
+                                name="email" 
+                                class="form-input" 
+                                placeholder="your.email@example.com"
+                                required
+                                autocomplete="email">
+                            <i data-lucide="mail" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- First Name Field -->
+                    <div class="form-field">
+                        <label class="field-label" for="first_name">First Name *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="first_name"
+                                name="first_name" 
+                                class="form-input" 
+                                placeholder="Your first name"
+                                required
+                                autocomplete="given-name">
+                            <i data-lucide="user" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- Last Name Field -->
+                    <div class="form-field">
+                        <label class="field-label" for="last_name">Last Name *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="last_name"
+                                name="last_name" 
+                                class="form-input" 
+                                placeholder="Your last name"
+                                required
+                                autocomplete="family-name">
+                            <i data-lucide="user" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- Phone Field -->
+                    <div class="form-field">
+                        <label class="field-label" for="phone">Phone Number *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="tel" 
+                                id="phone"
+                                name="phone" 
+                                class="form-input" 
+                                placeholder="+1 (555) 123-4567"
+                                required
+                                autocomplete="tel">
+                            <i data-lucide="phone" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-field">
+                        <label class="field-label" for="password">Password *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password"
+                                name="password1" 
+                                class="form-input" 
+                                placeholder="Create a strong password"
+                                required
+                                autocomplete="new-password">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <i data-lucide="eye" class="password-toggle" id="togglePassword"></i>
+                        </div>
+                        
+                        <!-- Password Strength Indicator -->
+                        <div class="password-strength">
+                            <div class="strength-bar" id="strengthBar"></div>
+                        </div>
+                        
+                        <!-- Password Requirements -->
+                        <div class="password-hints">
+                            <div class="hint-item" data-requirement="length">
+                                <i data-lucide="circle" class="hint-icon"></i>
+                                <span>At least 8 characters</span>
+                            </div>
+                            <div class="hint-item" data-requirement="number">
+                                <i data-lucide="circle" class="hint-icon"></i>
+                                <span>One number</span>
+                            </div>
+                            <div class="hint-item" data-requirement="special">
+                                <i data-lucide="circle" class="hint-icon"></i>
+                                <span>One special character</span>
+                            </div>
+                        </div>
+                        
+                        <div class="error-message"></div>
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="form-field">
+                        <label class="field-label" for="password2">Confirm Password *</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password2"
+                                name="password2" 
+                                class="form-input" 
+                                placeholder="Confirm your password"
+                                required
+                                autocomplete="new-password">
+                            <i data-lucide="lock" class="input-icon"></i>
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-button">
+                    <span>Continue to Step 2</span>
+                    <i data-lucide="arrow-right" class="button-icon"></i>
+                </button>
+
+                <!-- Login Link -->
+                <div class="login-section">
+                    Already have an account? 
+                    <a href="{% url 'dbdint:login' %}" class="login-link">Sign in here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Password toggle functionality
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('password');
+            const icon = this;
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                passwordField.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        });
+
+        // Password strength checker
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthBar = document.getElementById('strengthBar');
+            const hints = document.querySelectorAll('.hint-item');
+            
+            // Check requirements
+            const requirements = {
+                length: password.length >= 8,
+                number: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+            
+            // Update hint items
+            hints.forEach(hint => {
+                const requirement = hint.getAttribute('data-requirement');
+                if (requirements[requirement]) {
+                    hint.classList.add('valid');
+                    hint.querySelector('.hint-icon').setAttribute('data-lucide', 'check-circle');
+                } else {
+                    hint.classList.remove('valid');
+                    hint.querySelector('.hint-icon').setAttribute('data-lucide', 'circle');
+                }
+            });
+            
+            // Update strength bar
+            const validCount = Object.values(requirements).filter(Boolean).length;
+            const percentage = (validCount / 3) * 100;
+            
+            strengthBar.style.width = percentage + '%';
+            strengthBar.className = 'strength-bar';
+            
+            if (percentage <= 33) {
+                strengthBar.classList.add('weak');
+            } else if (percentage <= 66) {
+                strengthBar.classList.add('medium');
+            } else {
+                strengthBar.classList.add('strong');
+            }
+            
+            lucide.createIcons();
+        });
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password1 = document.getElementById('password').value;
+            const password2 = document.getElementById('password2').value;
+            
+            if (password1 !== password2) {
+                e.preventDefault();
+                const errorDiv = document.querySelector('#password2').parentNode.nextElementSibling;
+                errorDiv.textContent = 'Passwords do not match';
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        // Clear error messages on input
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('input', function() {
+                const errorDiv = this.parentNode.nextElementSibling;
+                if (errorDiv && errorDiv.classList.contains('error-message')) {
+                    errorDiv.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

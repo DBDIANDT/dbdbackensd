@@ -1,0 +1,60 @@
+<!-- quotes/partials/_status_badge.html -->
+{% comment %}
+Usage: {% include 'client/partials/_status_badge.html' with status=quote.status %}
+{% endcomment %}
+<span class="status-badge status-{{ status|lower }}">
+    {% if status == "PENDING" %}
+        Pending
+    {% elif status == "PROCESSING" %}
+        Processing
+    {% elif status == "QUOTED" %}
+        Quoted
+    {% elif status == "ACCEPTED" %}
+        Accepted
+    {% elif status == "REJECTED" %}
+        Rejected
+    {% elif status == "EXPIRED" %}
+        Expired
+    {% endif %}
+</span>
+
+<style>
+    /* Status Badge Styles */
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-pending { 
+        background: rgba(255, 170, 0, 0.2); 
+        color: #FFB020; 
+    }
+    
+    .status-processing { 
+        background: rgba(88, 103, 221, 0.2); 
+        color: #5867DD; 
+    }
+    
+    .status-quoted { 
+        background: rgba(0, 136, 255, 0.2); 
+        color: #0088FF; 
+    }
+    
+    .status-accepted { 
+        background: rgba(0, 200, 83, 0.2); 
+        color: #00C853; 
+    }
+    
+    .status-rejected { 
+        background: rgba(255, 75, 75, 0.2); 
+        color: #FF4B4B; 
+    }
+
+    .status-expired { 
+        background: rgba(108, 117, 125, 0.2); 
+        color: #6c757d; 
+    }
+</style>

@@ -1,0 +1,39 @@
+<!-- quotes/partials/_quote_card.html -->
+{% comment %}
+Usage: {% include 'client/partials/_quote_card.html' with quote=quote %}
+{% endcomment %}
+<div class="quote-card">
+    <div class="quote-header">
+        <div class="quote-title">
+            <h3>{{ quote.service_type }}</h3>
+            {% include 'client/partials/_status_badge.html' with status=quote.status %}
+        </div>
+        <div class="quote-datetime">
+            {{ quote.requested_date|date:"M j, Y - g:i A" }}
+        </div>
+    </div>
+    
+    <div class="quote-details">
+        <div class="detail-row">
+            <span class="detail-label">Duration:</span>
+            <span class="detail-value">{{ quote.duration }} minutes</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Languages:</span>
+            <span class="detail-value">{{ quote.source_language }} → {{ quote.target_language }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Location:</span>
+            <span class="detail-value">{{ quote.city }}, {{ quote.state }}</span>
+        </div>
+    </div>
+    
+    <div class="quote-footer">
+        <div class="quote-meta">
+            Created {{ quote.created_at|timesince }} ago
+        </div>
+        <a href="{% url 'dbdint:quote_detail' quote.pk %}" class="quote-action">
+            View Details <i class="fas fa-chevron-right"></i>
+        </a>
+    </div>
+</div>

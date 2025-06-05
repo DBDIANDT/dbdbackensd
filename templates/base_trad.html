@@ -1,0 +1,345 @@
+<!-- templates/dashboard/translator_base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} - InterpreterPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/notif.css' %}">
+    <style>
+        /* Base styles (keeping the same glassmorphism theme) */
+        :root {
+            --primary-blue: #003366;
+            --secondary-blue: #0066CC;
+            --accent-blue: #0088FF;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #002147 100%);
+            font-family: 'Inter', sans-serif;
+            padding-bottom: 70px;
+            color: white;
+        }
+
+        /* Header styles */
+        .dashboard-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        /* Notification badge */
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #FF4B4B;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Profile dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-button img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            min-width: 150px;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.75rem 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            color: var(--accent-blue);
+        }
+
+        .nav-item i {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Main content and other styles remain the same */
+        .dashboard-content {
+            margin-top: 70px;
+            padding: 1rem;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive design */
+        @media (min-width: 768px) {
+            .dashboard-content {
+                max-width: 768px;
+                padding: 2rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard-content {
+                max-width: 1024px;
+            }
+        }
+
+            .notification-icon-wrapper {
+        position: relative;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #FF4B4B;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-3px); }
+        75% { transform: translateX(3px); }
+    }
+
+    .shake {
+        animation: shake 0.5s ease-in-out infinite;
+    }
+
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <h1 class="header-title">{% block header_title %}Dashboard{% endblock %}</h1>
+        <div class="header-actions">
+
+            <div class="profile-dropdown">
+                <button class="profile-button" id="profileButton">
+                    <img 
+                    src="{% if user.interpreter_profile.profile_image %}{{ user.interpreter_profile.profile_image.url }}{% else %}https://cdn-icons-png.flaticon.com/512/3177/3177440.png{% endif %}"
+                    alt="Profile" 
+                    class="profile-image-preview" 
+                    id="profileImagePreview">
+                
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu" id="profileMenu">
+                    <a href="{% url 'dbdint:interpreter_settings' %}" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+            
+                    <!-- Remplace le lien Logout par un formulaire POST -->
+                    <form action="{% url 'dbdint:logout' %}" method="POST" style="margin: 0; padding: 0;">
+                        {% csrf_token %}
+                        <!-- Bouton stylé comme un lien du menu dropdown -->
+                        <button type="submit" class="dropdown-item" style="background: none; border: none; width: 100%; text-align: left;">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="{% url 'dbdint:interpreter_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'interpreter_dashboard' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'dbdint:interpreter_schedule' %}" class="nav-item {% if request.resolver_match.url_name == 'interpreter_schedule' %}active{% endif %}">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Schedule</span>
+        </a>
+        <a href="{% url 'dbdint:interpreter_assignments' %}" class="nav-item {% if request.resolver_match.url_name == 'interpreter_assignments' %}active{% endif %} position-relative">
+            <div class="notification-icon-wrapper">
+                <i class="fas fa-language"></i>
+                <span class="notification-badge" id="assignment-badge" style="display: none;"></span>
+            </div>
+            <span>Appointment</span>
+        </a>
+  
+    </nav>
+    
+    <script src="{% static 'js/notif.js' %}"></script>
+    <script>
+        // Profile dropdown toggle
+        const profileButton = document.getElementById('profileButton');
+        const profileMenu = document.getElementById('profileMenu');
+
+        profileButton.addEventListener('click', () => {
+            profileMenu.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
+                profileMenu.classList.remove('show');
+            }
+        });
+
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

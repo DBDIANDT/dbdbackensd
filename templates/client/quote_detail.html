@@ -1,0 +1,272 @@
+{% extends "base_client.html" %}
+
+{% block title %}Quote #{{ quote_request.id }} - {{ COMPANY_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Page Container */
+    .detail-container {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Section Card */
+    .info-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Section Header */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    /* Info Grid */
+    .info-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* Quote Amount Card */
+    .amount-card {
+        background: rgba(0, 200, 83, 0.1);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .amount-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #00C853;
+        margin: 0.5rem 0;
+    }
+
+    .amount-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.875rem;
+    }
+
+    /* Action Buttons */
+    .quote-actions {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+        margin-top: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .quote-actions {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .btn-accept,
+    .btn-reject {
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-accept {
+        background: #00C853;
+        color: white;
+    }
+
+    .btn-reject {
+        background: rgba(255, 75, 75, 0.9);
+        color: white;
+    }
+
+    .btn-accept:hover,
+    .btn-reject:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Assignment Preview */
+    .assignment-preview {
+        background: rgba(0, 136, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        border: 1px solid rgba(0, 136, 255, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <!-- Header Section -->
+    <div class="info-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-file-alt"></i>
+                Quote Request #{{ quote_request.id }}
+            </h2>
+            {% include 'client/partials/_status_badge.html' with status=quote_request.status %}
+        </div>
+    </div>
+
+    <!-- Service Details -->
+    <div class="info-section">
+        <div class="section-title">
+            <i class="fas fa-info-circle"></i>
+            Service Details
+        </div>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Service Type</div>
+                <div class="info-value">{{ quote_request.service_type }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Requested Date</div>
+                <div class="info-value">{{ quote_request.requested_date|date:"F j, Y - g:i A" }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Duration</div>
+                <div class="info-value">{{ quote_request.duration }} minutes</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Languages</div>
+                <div class="info-value">{{ quote_request.source_language }} → {{ quote_request.target_language }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Details -->
+    <div class="info-section">
+        <div class="section-title">
+            <i class="fas fa-map-marker-alt"></i>
+            Location Information
+        </div>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Address</div>
+                <div class="info-value">{{ quote_request.location }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">City</div>
+                <div class="info-value">{{ quote_request.city }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">State</div>
+                <div class="info-value">{{ quote_request.state }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">ZIP Code</div>
+                <div class="info-value">{{ quote_request.zip_code }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quote Details if exists -->
+    {% if quote %}
+    <div class="info-section">
+        <div class="section-title">
+            <i class="fas fa-file-invoice-dollar"></i>
+            Quote Information
+        </div>
+        <div class="amount-card">
+            <div class="amount-label">Total Amount</div>
+            <div class="amount-value">${{ quote.amount|floatformat:2 }}</div>
+            <div class="amount-label">Valid until {{ quote.valid_until|date:"F j, Y" }}</div>
+        </div>
+
+        {% if quote.status == 'SENT' %}
+        <div class="quote-actions">
+            <form method="post" action="{% url 'dbdint:quote_accept' quote.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-accept">
+                    <i class="fas fa-check"></i> Accept Quote
+                </button>
+            </form>
+            <form method="post" action="{% url 'dbdint:quote_reject' quote.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-reject">
+                    <i class="fas fa-times"></i> Reject Quote
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Assignment Details if exists -->
+    {% if assignment %}
+    <div class="info-section">
+        <div class="section-title">
+            <i class="fas fa-calendar-check"></i>
+            Assignment Details
+        </div>
+        <div class="assignment-preview">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">
+                        {% include 'client/partials/_status_badge.html' with status=assignment.status %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Interpreter</div>
+                    <div class="info-value">{{ assignment.interpreter.user.get_full_name }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Start Time</div>
+                    <div class="info-value">{{ assignment.start_time|date:"F j, Y - g:i A" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">End Time</div>
+                    <div class="info-value">{{ assignment.end_time|date:"F j, Y - g:i A" }}</div>
+                </div>
+            </div>
+            <div style="margin-top: 1rem; text-align: right;">
+                <a href="{% url 'dbdint:assignment_detail' assignment.pk %}" class="btn btn-primary">
+                    View Full Assignment Details
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Timeline -->
+    <div class="info-section">
+        <div class="section-title">
+            <i class="fas fa-history"></i>
+            Request Timeline
+        </div>
+        {% include 'client/partials/_timeline.html' with events=timeline_events current_status=quote_request.status %}
+    </div>
+</div>
+{% endblock %}

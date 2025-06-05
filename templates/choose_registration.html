@@ -1,0 +1,1162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Account Type - {{ COMPANY_NAME }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<style>
+    :root {
+        --primary-blue: #1e3a8a;        /* Bleu principal profond */
+        --secondary-blue: #1e40af;      /* Bleu secondaire */
+        --accent-blue: #3b82f6;         /* Bleu accent moderne */
+        --light-blue: #60a5fa;          /* Bleu clair */
+        --dark-blue: #1e293b;           /* Bleu très foncé */
+        --blue-gradient-start: #0f172a; /* Début du dégradé */
+        --blue-gradient-end: #1e40af;   /* Fin du dégradé */
+        --white-text: #ffffff;
+        --gray-text: #cbd5e1;
+        --light-gray-text: #94a3b8;
+        --error-red: #ef4444;
+        --success-blue: #2563eb;
+        --card-bg: rgba(15, 23, 42, 0.85);
+        --card-border: rgba(59, 130, 246, 0.2);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        background: linear-gradient(135deg, var(--blue-gradient-start) 0%, var(--primary-blue) 35%, var(--secondary-blue) 100%);
+        color: var(--white-text);
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* Animation du fond améliorée */
+    .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        overflow: hidden;
+    }
+
+    .bg-animation::before {
+        content: '';
+        position: absolute;
+        width: 300%;
+        height: 300%;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(30, 64, 175, 0.08) 0%, transparent 50%);
+        animation: float 25s ease-in-out infinite;
+        transform: translate(-50%, -50%);
+        left: 50%;
+        top: 50%;
+    }
+
+    .bg-animation::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, transparent 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%);
+        animation: slide 20s linear infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+        50% { transform: translate(-50%, -50%) rotate(180deg); }
+    }
+
+    @keyframes slide {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Logo styles */
+    .logo-container {
+        margin-bottom: 3rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .main-logo {
+        width: 220px;
+        height: auto;
+        object-fit: contain;
+        filter: brightness(1.1);
+        transition: transform 0.3s ease;
+    }
+
+    .main-logo:hover {
+        transform: scale(1.05);
+    }
+
+    @keyframes slideDown {
+        from { 
+            opacity: 0; 
+            transform: translateY(-30px); 
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+    }
+
+    /* Header styles */
+    .header {
+        margin-bottom: 4rem;
+        animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+    }
+
+    .header h1 {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, var(--white-text) 0%, var(--light-blue) 50%, var(--accent-blue) 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+    }
+
+    .header-tagline {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--light-blue);
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+
+    .header-subtitle {
+        font-size: 1.3rem;
+        color: var(--gray-text);
+        margin-top: 1rem;
+        font-weight: 400;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    @keyframes fadeInUp {
+        from { 
+            opacity: 0; 
+            transform: translateY(40px); 
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+    }
+
+    /* Grid layout */
+    .options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3rem;
+        margin: 4rem auto;
+        max-width: 1200px;
+    }
+
+    /* Card styles */
+    .option-card {
+        min-height: 580px;
+        display: flex;
+        flex-direction: column;
+        padding: 3rem 2.5rem;
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        text-align: left;
+        border: 1.5px solid var(--card-border);
+        box-shadow: 
+            0 20px 25px -5px rgba(0, 0, 0, 0.4),
+            0 10px 10px -5px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(59, 130, 246, 0.1);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .option-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+        border-radius: 24px 24px 0 0;
+    }
+
+    .option-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .option-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 
+            0 32px 64px -12px rgba(0, 0, 0, 0.5),
+            0 20px 25px -5px rgba(59, 130, 246, 0.3),
+            inset 0 1px 0 rgba(59, 130, 246, 0.2);
+        border-color: var(--accent-blue);
+    }
+
+    .option-card:hover::after {
+        left: 100%;
+    }
+
+    .card-badge {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, var(--accent-blue) 0%, var(--secondary-blue) 100%);
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        color: var(--white-text);
+        letter-spacing: 0.02em;
+    }
+
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(96, 165, 250, 0.1) 100%);
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2.5rem;
+        font-size: 2rem;
+        color: var(--accent-blue);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .icon-circle::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, var(--accent-blue) 0%, var(--light-blue) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 50%;
+    }
+
+    .icon-circle i {
+        position: relative;
+        z-index: 2;
+        transition: color 0.3s ease;
+    }
+
+    .option-card:hover .icon-circle {
+        transform: scale(1.15) rotate(10deg);
+        border-color: var(--accent-blue);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    .option-card:hover .icon-circle::before {
+        opacity: 0.1;
+    }
+
+    .option-card:hover .icon-circle i {
+        color: var(--light-blue);
+    }
+
+    .card-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--white-text);
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+    }
+
+    .card-description {
+        font-size: 1.2rem;
+        color: var(--gray-text);
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+        font-weight: 400;
+    }
+
+    /* Feature list */
+    .feature-list {
+        flex-grow: 1;
+        margin: 2rem 0;
+        list-style: none;
+    }
+
+    .feature-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        color: var(--gray-text);
+        transition: all 0.3s ease;
+        padding: 0.5rem 0;
+        border-radius: 8px;
+    }
+
+    .feature-list li:hover {
+        color: var(--white-text);
+        background: rgba(59, 130, 246, 0.05);
+        padding-left: 0.5rem;
+    }
+
+    .feature-list i {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(96, 165, 250, 0.1) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 50%;
+        margin-right: 1.25rem;
+        font-size: 1.1rem;
+        color: var(--accent-blue);
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .feature-list li:hover i {
+        background: linear-gradient(135deg, var(--accent-blue) 0%, var(--light-blue) 100%);
+        color: var(--white-text);
+        transform: scale(1.1);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Button container */
+    .button-container {
+        margin-top: auto;
+        padding-top: 2.5rem;
+    }
+
+    /* Button styles */
+    .cta-button {
+        width: 100%;
+        padding: 1.5rem 2rem;
+        background: linear-gradient(135deg, var(--accent-blue) 0%, var(--secondary-blue) 100%);
+        color: var(--white-text);
+        border: none;
+        border-radius: 16px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        letter-spacing: 0.01em;
+    }
+
+    .cta-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .cta-button:hover::before {
+        left: 100%;
+    }
+
+    .cta-button:hover {
+        background: linear-gradient(135deg, var(--light-blue) 0%, var(--accent-blue) 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(59, 130, 246, 0.6);
+    }
+
+    .cta-button i {
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        font-size: 1.1rem;
+    }
+
+    .cta-button:hover i {
+        transform: translateX(8px);
+    }
+
+    .cta-button:active {
+        transform: translateY(-1px);
+    }
+
+    /* Footer */
+    .footer {
+        margin-top: 5rem;
+        color: var(--light-gray-text);
+        animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+    }
+
+    .footer-text {
+        font-size: 1.2rem;
+        font-weight: 400;
+    }
+
+    .footer-link {
+        color: var(--accent-blue);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        background: rgba(59, 130, 246, 0.05);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .footer-link:hover {
+        color: var(--light-blue);
+        background: rgba(59, 130, 246, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    }
+
+    .footer-link i {
+        transition: transform 0.3s ease;
+    }
+
+    .footer-link:hover i {
+        transform: translateX(3px);
+    }
+
+    /* ===== RESPONSIVE DESIGN COMPLET ===== */
+    
+    /* Large Desktop */
+    @media (max-width: 1400px) {
+        .container {
+            max-width: 1200px;
+            padding: 1.5rem;
+        }
+    }
+
+    /* Desktop moyen */
+    @media (max-width: 1200px) {
+        .container {
+            max-width: 1000px;
+            padding: 1.5rem;
+        }
+        
+        .options-grid {
+            gap: 2.5rem;
+            max-width: 900px;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+        }
+        
+        .header-tagline {
+            font-size: 1.6rem;
+        }
+        
+        .option-card {
+            min-height: 560px;
+        }
+    }
+
+    /* Tablettes landscape */
+    @media (max-width: 1024px) {
+        body {
+            padding: 1rem;
+        }
+        
+        .container {
+            padding: 1rem;
+            max-width: 100%;
+        }
+        
+        .options-grid {
+            gap: 2rem;
+            max-width: 800px;
+        }
+
+        .header h1 {
+            font-size: 3.2rem;
+        }
+        
+        .header-tagline {
+            font-size: 1.5rem;
+        }
+        
+        .option-card {
+            min-height: 520px;
+            padding: 2.5rem 2rem;
+        }
+        
+        .main-logo {
+            width: 200px;
+        }
+    }
+
+    /* Tablettes portrait */
+    @media (max-width: 768px) {
+        body {
+            padding: 0.5rem;
+        }
+        
+        .container {
+            padding: 1rem 0.5rem;
+            max-width: 100%;
+        }
+        
+        .options-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2rem;
+            margin: 2.5rem auto;
+            max-width: 500px;
+        }
+        
+        .header {
+            margin-bottom: 2.5rem;
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            line-height: 1.1;
+        }
+        
+        .header-tagline {
+            font-size: 1.4rem;
+        }
+        
+        .header-subtitle {
+            font-size: 1.1rem;
+            max-width: 90%;
+        }
+        
+        .option-card {
+            min-height: auto;
+            padding: 2rem 1.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .main-logo {
+            width: 180px;
+        }
+        
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            font-size: 1.75rem;
+        }
+        
+        .card-title {
+            font-size: 1.8rem;
+        }
+        
+        .card-description {
+            font-size: 1.1rem;
+        }
+        
+        .cta-button {
+            padding: 1.3rem 1.5rem;
+            font-size: 1.1rem;
+        }
+    }
+
+    /* Mobiles landscape */
+    @media (max-width: 640px) {
+        body {
+            padding: 0.25rem;
+        }
+        
+        .container {
+            padding: 0.5rem;
+        }
+        
+        .logo-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .header {
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            font-size: 2.4rem;
+            line-height: 1.1;
+        }
+        
+        .header-tagline {
+            font-size: 1.25rem;
+        }
+        
+        .header-subtitle {
+            font-size: 1rem;
+            max-width: 95%;
+        }
+        
+        .options-grid {
+            gap: 1.5rem;
+            margin: 2rem auto;
+            max-width: 100%;
+            padding: 0;
+        }
+        
+        .option-card {
+            padding: 1.5rem 1.25rem;
+            border-radius: 20px;
+            width: 100%;
+        }
+        
+        .card-badge {
+            padding: 0.6rem 1.5rem;
+            font-size: 0.85rem;
+            top: -12px;
+        }
+        
+        .icon-circle {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-description {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-list {
+            margin: 1.5rem 0;
+        }
+        
+        .feature-list li {
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-list i {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+            margin-right: 1rem;
+        }
+        
+        .cta-button {
+            padding: 1.25rem 1rem;
+            font-size: 1.05rem;
+        }
+        
+        .footer {
+            margin-top: 2.5rem;
+        }
+        
+        .footer-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .footer-link {
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+        
+        .main-logo {
+            width: 150px;
+        }
+    }
+
+    /* Mobiles portrait */
+    @media (max-width: 480px) {
+        body {
+            padding: 0;
+        }
+        
+        .container {
+            padding: 0.5rem 0.25rem;
+        }
+        
+        .logo-container {
+            margin-bottom: 1.25rem;
+        }
+        
+        .header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        
+        .header-tagline {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .header-subtitle {
+            font-size: 0.9rem;
+            max-width: 100%;
+        }
+        
+        .options-grid {
+            gap: 1.25rem;
+            margin: 1.5rem auto;
+            padding: 0 0.25rem;
+        }
+        
+        .option-card {
+            padding: 1.25rem 1rem;
+            border-radius: 16px;
+        }
+        
+        .card-badge {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.8rem;
+            top: -10px;
+        }
+        
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            font-size: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .card-description {
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
+        }
+        
+        .feature-list {
+            margin: 1.25rem 0;
+        }
+        
+        .feature-list li {
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-list i {
+            width: 30px;
+            height: 30px;
+            font-size: 0.9rem;
+            margin-right: 0.75rem;
+        }
+        
+        .button-container {
+            padding-top: 1.5rem;
+        }
+        
+        .cta-button {
+            padding: 1rem 0.75rem;
+            font-size: 0.95rem;
+            border-radius: 12px;
+        }
+        
+        .footer {
+            margin-top: 2rem;
+        }
+        
+        .footer-text {
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        
+        .footer-link {
+            font-size: 0.85rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .main-logo {
+            width: 130px;
+        }
+    }
+
+    /* Très petits mobiles */
+    @media (max-width: 360px) {
+        .container {
+            padding: 0.25rem;
+        }
+        
+        .option-card {
+            padding: 1rem 0.75rem;
+        }
+        
+        .header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .header-tagline {
+            font-size: 1rem;
+        }
+        
+        .header-subtitle {
+            font-size: 0.85rem;
+        }
+        
+        .card-badge {
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+        }
+        
+        .icon-circle {
+            width: 45px;
+            height: 45px;
+            font-size: 1.1rem;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+        }
+        
+        .card-description {
+            font-size: 0.85rem;
+        }
+        
+        .feature-list li {
+            font-size: 0.85rem;
+        }
+        
+        .feature-list i {
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+        
+        .cta-button {
+            padding: 0.875rem 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .main-logo {
+            width: 110px;
+        }
+    }
+
+    /* Mode paysage mobile - amélioration */
+    @media (max-height: 700px) and (orientation: landscape) {
+        body {
+            padding: 0.25rem;
+        }
+        
+        .container {
+            padding: 0.5rem;
+        }
+        
+        .header {
+            margin-bottom: 1rem;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-tagline {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-subtitle {
+            font-size: 0.9rem;
+        }
+        
+        .logo-container {
+            margin-bottom: 1rem;
+        }
+        
+        .main-logo {
+            width: 100px;
+        }
+        
+        .options-grid {
+            margin: 1rem auto;
+            gap: 1rem;
+        }
+        
+        .option-card {
+            padding: 1rem;
+        }
+        
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-description {
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-list {
+            margin: 1rem 0;
+        }
+        
+        .feature-list li {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-list i {
+            width: 25px;
+            height: 25px;
+            font-size: 0.75rem;
+        }
+        
+        .cta-button {
+            padding: 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        .footer {
+            margin-top: 1rem;
+        }
+    }
+
+    /* Mode paysage très petit */
+    @media (max-height: 500px) and (orientation: landscape) {
+        .options-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.75rem;
+        }
+        
+        .option-card {
+            min-height: auto;
+            padding: 0.75rem;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .header-tagline {
+            font-size: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="container">
+        <!-- Logo -->
+        <div class="logo-container">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo" class="main-logo">
+        </div>
+
+        <header class="header">
+            <h1>Breaking Language Barriers</h1>
+            <p class="header-tagline">Unleash the power of global communication with {{ COMPANY_NAME }}</p>
+            <div class="header-subtitle">Choose your path to international success</div>
+        </header>
+
+        <div class="options-grid">
+            <!-- Client Card -->
+            <div class="option-card" data-aos="fade-up" data-aos-duration="800">
+                <div class="card-badge">Business Solution</div>
+                <div class="icon-circle">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <h2 class="card-title">Empower Your Business</h2>
+                <p class="card-description">Connect with a world of opportunities through our professional translation services.</p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-clock"></i> 24/7 on-demand service</li>
+                    <li><i class="fas fa-chart-line"></i> Real-time performance analytics</li>
+                    <li><i class="fas fa-shield-alt"></i> Secure & confidential service</li>
+                </ul>
+                <div class="button-container">
+                    <a href="{% url 'dbdint:client_register' %}" class="cta-button">
+                        Launch Your Global Journey <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Interpreter Card -->
+            <div class="option-card" data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">
+                <div class="card-badge">Career Opportunity</div>
+                <div class="icon-circle">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h2 class="card-title">Join Our Elite Network</h2>
+                <p class="card-description">Transform your linguistic expertise into a rewarding global career.</p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-wallet"></i> Industry-leading compensation</li>
+                    <li><i class="fas fa-calendar-alt"></i> Flexible schedule control</li>
+                    <li><i class="fas fa-graduation-cap"></i> Continuous professional growth</li>
+                </ul>
+                <div class="button-container">
+                    <a href="{% url 'dbdint:interpreter_registration_step1' %}" class="cta-button">
+                        Begin Your Journey <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">Already part of our global community? <a href="{% url 'dbdint:login' %}" class="footer-link">Sign in here <i class="fas fa-sign-in-alt"></i></a></p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        // Initialisation de AOS (Animate On Scroll)
+        AOS.init({
+            duration: 800,
+            offset: 100,
+            once: true,
+            easing: 'cubic-bezier(0.16, 1, 0.3, 1)'
+        });
+
+        // Animation améliorée des cartes au survol
+        document.querySelectorAll('.option-card').forEach((card, index) => {
+            card.addEventListener('mouseenter', () => {
+                const iconCircle = card.querySelector('.icon-circle');
+                const features = card.querySelectorAll('.feature-list li');
+                
+                iconCircle.style.transform = 'scale(1.15) rotate(10deg)';
+                
+                features.forEach((feature, i) => {
+                    setTimeout(() => {
+                        feature.style.transform = 'translateX(5px)';
+                    }, i * 50);
+                });
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                const iconCircle = card.querySelector('.icon-circle');
+                const features = card.querySelectorAll('.feature-list li');
+                
+                iconCircle.style.transform = 'scale(1) rotate(0deg)';
+                
+                features.forEach(feature => {
+                    feature.style.transform = 'translateX(0)';
+                });
+            });
+
+            // Animation d'entrée échelonnée
+            setTimeout(() => {
+                card.style.animation = `fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both`;
+            }, index * 200);
+        });
+
+        // Animation des boutons au survol améliorée
+        document.querySelectorAll('.cta-button').forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                const icon = button.querySelector('i');
+                icon.style.transform = 'translateX(8px) scale(1.1)';
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                const icon = button.querySelector('i');
+                icon.style.transform = 'translateX(0) scale(1)';
+            });
+        });
+
+        // Animation du logo au chargement
+        window.addEventListener('load', () => {
+            const logo = document.querySelector('.main-logo');
+            setTimeout(() => {
+                logo.style.animation = 'pulse 3s infinite';
+            }, 2000);
+        });
+
+        // Parallax léger pour le fond
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const bgAnimation = document.querySelector('.bg-animation');
+            bgAnimation.style.transform = `translateY(${scrolled * 0.1}px)`;
+        });
+
+        // Ajout des animations CSS personnalisées
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+            
+            @keyframes fadeInUp {
+                from { 
+                    opacity: 0; 
+                    transform: translateY(40px) scale(0.95); 
+                }
+                to { 
+                    opacity: 1; 
+                    transform: translateY(0) scale(1); 
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

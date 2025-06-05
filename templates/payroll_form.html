@@ -1,0 +1,825 @@
+{% load widget_tweaks %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ COMPANY_NAME }} - Payment Statement Generator</title>
+    <style>
+        /* Base styles */
+        :root {
+            --primary: #003B71;
+            --secondary: #002b54;
+            --success: #28a745;
+            --error: #dc3545;
+            --gray: #6c757d;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-container {
+            flex: 1;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: width 0.3s ease;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e9ecef;
+            z-index: 1;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .progress-step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--gray);
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .progress-step.completed {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Form styles */
+        .step-container {
+            display: none;
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0,59,113,0.1);
+        }
+
+        /* Services section */
+        .service-entry {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .service-total {
+            text-align: right;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* Navigation buttons */
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .step-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .step-btn.next {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-btn.prev {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .step-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Preview container */
+        .preview-container {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .preview-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .preview-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preview-btn-refresh {
+            background: var(--primary);
+            color: white;
+        }
+
+        .preview-btn-close {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        /* Add service button */
+        .add-service-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 4px;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .add-service-btn:hover {
+            background: #dee2e6;
+        }
+
+        /* Export buttons */
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .export-btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        /* Duration input styles */
+        .duration-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .duration-hours, .duration-minutes {
+            width: 60px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .duration-separator {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .duration-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="form-container">
+            <h1>Payment Statement Generator</h1>
+            
+            <!-- Progress bar -->
+            <div class="progress-bar">
+                <div class="progress-line">
+                    <div class="progress-line-fill"></div>
+                </div>
+                <div class="progress-step active" data-step="1">1</div>
+                <div class="progress-step" data-step="2">2</div>
+                <div class="progress-step" data-step="3">3</div>
+            </div>
+
+            <form method="post" id="payrollForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Step 1: Company Information -->
+                <div class="step-container active" data-step="1">
+                    <h2>Company Information</h2>
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.company_address.id_for_label }}">Company Address</label>
+                        {{ form.company_address }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.company_phone.id_for_label }}">Company Phone</label>
+                        {{ form.company_phone }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.company_email.id_for_label }}">Company Email</label>
+                        {{ form.company_email }}
+                    </div>
+                </div>
+
+                <!-- Step 2: Interpreter Information -->
+                <div class="step-container" data-step="2">
+                    <h2>Interpreter Information</h2>
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.interpreter_name.id_for_label }}">Full Name</label>
+                        {{ form.interpreter_name }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.interpreter_address.id_for_label }}">Address</label>
+                        {{ form.interpreter_address }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.interpreter_phone.id_for_label }}">Phone</label>
+                        {{ form.interpreter_phone }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.interpreter_email.id_for_label }}">Email</label>
+                        {{ form.interpreter_email }}
+                    </div>
+                </div>
+
+                <!-- Step 3: Services, Reimbursements, and Deductions -->
+                <div class="step-container" data-step="3">
+                    <h2>Services</h2>
+                    {{ service_formset.management_form }}
+                    <div id="services-container">
+                        {% for service_form in service_formset %}
+                            <div class="service-entry">
+                                <div class="service-grid">
+                                    {% for field in service_form %}
+                                        <div class="form-group">
+                                            <label class="form-label">{{ field.label }}</label>
+                                            {% if 'duration' in field.name %}
+                                                <div class="duration-input-group">
+                                                    <input type="number" class="duration-hours" min="0" max="24" placeholder="hrs">
+                                                    <span class="duration-separator">:</span>
+                                                    <input type="number" class="duration-minutes" min="0" max="59" placeholder="min">
+                                                    {{ field|add_class:"duration-hidden" }}
+                                                </div>
+                                            {% else %}
+                                                {{ field }}
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="service-total">
+                                    Total: $<span class="service-amount">0</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" id="add-service" class="add-service-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Service
+                    </button>
+
+                    <!-- Reimbursements Section -->
+                    <h2 class="mt-4">Reimbursements</h2>
+                    {{ reimbursement_formset.management_form }}
+                    <div id="reimbursements-container">
+                        {% for reimbursement_form in reimbursement_formset %}
+                            <div class="reimbursement-entry service-entry">
+                                <div class="service-grid">
+                                    {% for field in reimbursement_form %}
+                                        <div class="form-group">
+                                            <label class="form-label">{{ field.label }}</label>
+                                            {{ field }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" id="add-reimbursement" class="add-service-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Reimbursement
+                    </button>
+
+                    <!-- Deductions Section -->
+                    <h2 class="mt-4">Deductions</h2>
+                    {{ deduction_formset.management_form }}
+                    <div id="deductions-container">
+                        {% for deduction_form in deduction_formset %}
+                            <div class="deduction-entry service-entry">
+                                <div class="service-grid">
+                                    {% for field in deduction_form %}
+                                        <div class="form-group">
+                                            <label class="form-label">{{ field.label }}</label>
+                                            {{ field }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" id="add-deduction" class="add-service-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Deduction
+                    </button>
+                </div>
+
+                <!-- Navigation -->
+                <div class="step-navigation">
+                    <button type="button" class="step-btn prev" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        Previous
+                    </button>
+                    <button type="button" class="step-btn next">
+                        Next
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Preview Container -->
+        <div class="preview-container">
+            <div class="preview-header">
+                <h2>Preview</h2>
+                <div class="preview-controls">
+                    <button type="button" class="preview-btn preview-btn-refresh">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+                        </svg>
+                        Refresh Preview
+                    </button>
+                    <button type="button" class="preview-btn preview-btn-close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Close Preview
+                    </button>
+                </div>
+            </div>
+            <div class="preview-frame" id="previewFrame"></div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentStep = 1;
+            const totalSteps = 3;
+            let currentPayrollId = null;
+            
+            // Initialize duration inputs
+            function initializeDurationInputs(serviceEntry) {
+                const durationInput = serviceEntry.querySelector('[name$="-duration"]');
+                const durationGroup = serviceEntry.querySelector('.duration-input-group');
+                
+                if (durationInput && durationGroup) {
+                    const hoursInput = durationGroup.querySelector('.duration-hours');
+                    const minutesInput = durationGroup.querySelector('.duration-minutes');
+                    
+                    // Sync from hidden input to hours/minutes on load
+                    if (durationInput.value) {
+                        const totalHours = parseFloat(durationInput.value) || 0;
+                        const hours = Math.floor(totalHours);
+                        const minutes = Math.round((totalHours - hours) * 60);
+                        hoursInput.value = hours;
+                        minutesInput.value = minutes;
+                    }
+                    
+                    // Update hidden input when hours/minutes change
+                    const updateDuration = () => {
+                        const hours = parseInt(hoursInput.value) || 0;
+                        const minutes = parseInt(minutesInput.value) || 0;
+                        const decimalDuration = hours + (minutes / 60);
+                        durationInput.value = decimalDuration.toFixed(2);
+                        
+                        // Trigger input event on the hidden input to update calculations
+                        const event = new Event('input', { bubbles: true });
+                        durationInput.dispatchEvent(event);
+                    };
+                    
+                    hoursInput.addEventListener('input', updateDuration);
+                    minutesInput.addEventListener('input', updateDuration);
+                }
+            }
+            
+            // Update progress bar and navigation
+            function updateStep(step) {
+                // Hide all steps
+                document.querySelectorAll('.step-container').forEach(container => {
+                    container.classList.remove('active');
+                });
+                // Show current step
+                document.querySelector(`.step-container[data-step="${step}"]`).classList.add('active');
+                
+                // Update progress bar
+                document.querySelectorAll('.progress-step').forEach(stepEl => {
+                    const stepNum = parseInt(stepEl.dataset.step);
+                    stepEl.classList.remove('active', 'completed');
+                    if (stepNum === step) {
+                        stepEl.classList.add('active');
+                    } else if (stepNum < step) {
+                        stepEl.classList.add('completed');
+                    }
+                });
+                
+                // Update progress line
+                const progress = ((step - 1) / (totalSteps - 1)) * 100;
+                document.querySelector('.progress-line-fill').style.width = `${progress}%`;
+                
+                // Update navigation buttons
+                const prevBtn = document.querySelector('.step-btn.prev');
+                const nextBtn = document.querySelector('.step-btn.next');
+                
+                prevBtn.style.display = step === 1 ? 'none' : 'flex';
+                
+                if (step === totalSteps) {
+                    nextBtn.innerHTML = `Generate PDF
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>`;
+                } else {
+                    nextBtn.innerHTML = `Next
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>`;
+                }
+            }
+            
+            // Calculate service amount
+            function calculateServiceAmount(serviceEntry) {
+                const duration = parseFloat(serviceEntry.querySelector('[name$="-duration"]').value) || 0;
+                const rate = parseFloat(serviceEntry.querySelector('[name$="-rate"]').value) || 0;
+                const amount = duration * rate;
+                const amountDisplay = amount.toFixed(2);
+                serviceEntry.querySelector('.service-amount').textContent = amountDisplay.endsWith('.00') 
+                    ? amountDisplay.slice(0, -3) 
+                    : amountDisplay;
+            }
+            
+            // Update all formset management forms
+            function updateFormsetManagement() {
+                const servicesTotal = document.getElementById('services-container').children.length;
+                document.querySelector('[name="services-TOTAL_FORMS"]').value = servicesTotal;
+                
+                const reimbursementsTotal = document.getElementById('reimbursements-container').children.length;
+                document.querySelector('[name="reimbursements-TOTAL_FORMS"]').value = reimbursementsTotal;
+                
+                const deductionsTotal = document.getElementById('deductions-container').children.length;
+                document.querySelector('[name="deductions-TOTAL_FORMS"]').value = deductionsTotal;
+            }
+            
+            // Add reimbursement button handler
+            document.getElementById('add-reimbursement').addEventListener('click', function() {
+                const container = document.getElementById('reimbursements-container');
+                const newReimbursement = container.querySelector('.reimbursement-entry').cloneNode(true);
+                
+                // Reset input values
+                newReimbursement.querySelectorAll('input, select').forEach(input => {
+                    input.value = '';
+                    // Update form prefix
+                    const oldName = input.getAttribute('name');
+                    if (oldName) {
+                        const newIndex = container.children.length;
+                        input.name = oldName.replace(/\d+/, newIndex);
+                        input.id = input.id.replace(/\d+/, newIndex);
+                    }
+                });
+                
+                container.appendChild(newReimbursement);
+                updateFormsetManagement();
+            });
+            
+            // Add deduction button handler
+            document.getElementById('add-deduction').addEventListener('click', function() {
+                const container = document.getElementById('deductions-container');
+                const newDeduction = container.querySelector('.deduction-entry').cloneNode(true);
+                
+                // Reset input values
+                newDeduction.querySelectorAll('input, select').forEach(input => {
+                    input.value = '';
+                    // Update form prefix
+                    const oldName = input.getAttribute('name');
+                    if (oldName) {
+                        const newIndex = container.children.length;
+                        input.name = oldName.replace(/\d+/, newIndex);
+                        input.id = input.id.replace(/\d+/, newIndex);
+                    }
+                });
+                
+                container.appendChild(newDeduction);
+                updateFormsetManagement();
+            });
+            
+            // Add service button handler
+            document.getElementById('add-service').addEventListener('click', function() {
+                const container = document.getElementById('services-container');
+                const newServiceTemplate = document.createElement('div');
+                newServiceTemplate.className = 'service-entry';
+                
+                const newIndex = container.children.length;
+                
+                // Create new service entry with hours/minutes inputs
+                newServiceTemplate.innerHTML = `
+                    <div class="service-grid">
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="services-${newIndex}-date" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Client</label>
+                            <input type="text" name="services-${newIndex}-client" class="form-input" placeholder="Client name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Source language</label>
+                            <input type="text" name="services-${newIndex}-source_language" class="form-input" placeholder="Source language">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target language</label>
+                            <input type="text" name="services-${newIndex}-target_language" class="form-input" placeholder="Target language">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Duration</label>
+                            <div class="duration-input-group">
+                                <input type="number" class="duration-hours" min="0" max="24" placeholder="hrs">
+                                <span class="duration-separator">:</span>
+                                <input type="number" class="duration-minutes" min="0" max="59" placeholder="min">
+                                <input type="hidden" name="services-${newIndex}-duration" class="form-input duration-hidden" step="0.5">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Rate</label>
+                            <input type="number" name="services-${newIndex}-rate" class="form-input" placeholder="Hourly rate">
+                        </div>
+                    </div>
+                    <div class="service-total">
+                        Total: $<span class="service-amount">0</span>
+                    </div>
+                `;
+                
+                container.appendChild(newServiceTemplate);
+                
+                // Initialize duration inputs for the new service
+                initializeDurationInputs(newServiceTemplate);
+                
+                // Add event listeners for calculations
+                newServiceTemplate.querySelectorAll('input[name$="-duration"], input[name$="-rate"]').forEach(input => {
+                    input.addEventListener('input', () => calculateServiceAmount(newServiceTemplate));
+                });
+                
+                updateFormsetManagement();
+            });
+            
+            // Preview handlers
+            function togglePreview() {
+                const previewContainer = document.querySelector('.preview-container');
+                const formContainer = document.querySelector('.form-container');
+                
+                if (previewContainer.style.display === 'none') {
+                    previewContainer.style.display = 'block';
+                    formContainer.style.width = '50%';
+                    refreshPreview();
+                } else {
+                    previewContainer.style.display = 'none';
+                    formContainer.style.width = '100%';
+                }
+            }
+            
+            function refreshPreview() {
+                const previewFrame = document.getElementById('previewFrame');
+                const formData = new FormData(document.getElementById('payrollForm'));
+                
+                previewFrame.innerHTML = `
+                    <div class="preview-loading">
+                        <div class="loading-spinner"></div>
+                    </div>`;
+                
+                fetch('{% url "dbdint:payroll_preview" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(html => {
+                    previewFrame.innerHTML = html;
+                })
+                .catch(error => {
+                    previewFrame.innerHTML = `
+                        <div class="preview-error">
+                            An error occurred while loading the preview.
+                        </div>`;
+                });
+            }
+            
+            // Form submission handler
+            function submitForm(generatePDF = false) {
+                const form = document.getElementById('payrollForm');
+                const formData = new FormData(form);
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        currentPayrollId = data.id;
+                        if (generatePDF) {
+                            window.location.href = `{% url 'dbdint:payroll_detail' '0' %}`.replace('0', data.id);
+                        }
+                    } else {
+                        throw new Error(data.message || 'Error saving document');
+                    }
+                })
+                .catch(error => {
+                    alert('Error saving document: ' + error.message);
+                });
+            }
+            
+            // Navigation button handlers
+            document.querySelector('.step-btn.next').addEventListener('click', function() {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateStep(currentStep);
+                } else {
+                    submitForm(true);
+                }
+            });
+            
+            document.querySelector('.step-btn.prev').addEventListener('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateStep(currentStep);
+                }
+            });
+            
+            // Initialize service calculations and duration inputs
+            document.querySelectorAll('.service-entry').forEach(entry => {
+                // Initialize duration inputs
+                initializeDurationInputs(entry);
+                
+                // Add event listeners for calculations
+                entry.querySelectorAll('input[name$="-duration"], input[name$="-rate"]').forEach(input => {
+                    input.addEventListener('input', () => calculateServiceAmount(entry));
+                });
+            });
+            
+            // Initialize preview buttons
+            const refreshBtn = document.querySelector('.preview-btn-refresh');
+            const closeBtn = document.querySelector('.preview-btn-close');
+            if (refreshBtn) refreshBtn.addEventListener('click', refreshPreview);
+            if (closeBtn) closeBtn.addEventListener('click', togglePreview);
+            
+            // Add preview toggle to navigation
+            const nextBtn = document.querySelector('.step-btn.next');
+            nextBtn.insertAdjacentHTML('beforebegin', `
+                <button type="button" class="step-btn preview-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Preview
+                </button>
+            `);
+            
+            document.querySelector('.preview-toggle').addEventListener('click', togglePreview);
+        });
+    </script>
+</body>
+</html>

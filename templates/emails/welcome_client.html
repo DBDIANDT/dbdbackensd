@@ -1,0 +1,28 @@
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+    <h1>{{ COMPANY_NAME }}</h1>
+    <p>We are your voice!</p>
+</div>
+<div class="content">
+    <h2>Welcome {{ name }}!</h2>
+    <p>Thank you for choosing {{ COMPANY_NAME }} for your interpretation needs. We are committed to breaking language barriers with professional interpretation services, anytime, anywhere.</p>
+    
+    <h3>Our Mission</h3>
+    <p>{{ mission }}</p>
+    
+    <h3>Our Values</h3>
+    <ul class="values-list">
+        {% for value in values %}
+            <li>{{ value }}</li>
+        {% endfor %}
+    </ul>
+    
+    <a href="{{ login_url }}" class="button">Get Started</a>
+</div>
+<div class="footer">
+    <p>{{ COMPANY_NAME }} - Professional Interpretation Services</p>
+    <p>This email was sent to {{ email }}</p>
+</div>
+{% endblock %}
+

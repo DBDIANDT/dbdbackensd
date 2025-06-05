@@ -1,0 +1,28 @@
+<!-- templates/emails/quote_request_pending.html -->
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+    <h1>{{ COMPANY_NAME }}</h1>
+    <p>Your Quote Request Has Been Received</p>
+</div>
+<div class="content">
+    <h2>Thank you for your request, {{ client_name }}!</h2>
+    <p>We have received your quote request and our team will review it shortly. Here are the details of your request:</p>
+    
+    <div class="request-details">
+        <p><strong>Request ID:</strong> #{{ request_id }}</p>
+        <p><strong>Service Type:</strong> {{ service_type }}</p>
+        <p><strong>Date Requested:</strong> {{ requested_date|date:"F j, Y, P" }}</p>
+        <p><strong>Duration:</strong> {{ duration }} minutes</p>
+        <p><strong>Location:</strong> {{ location }}</p>
+        <p><strong>Languages:</strong> {{ source_language }} to {{ target_language }}</p>
+    </div>
+    
+    <p>Our team will process your request and provide you with a detailed quote within 24 hours.</p>
+    
+    <a href="{{ login_url }}" class="button">Track Your Request</a>
+</div>
+<div class="footer">
+    <p>{{ COMPANY_NAME }} - Breaking Language Barriers</p>
+</div>
+{% endblock %}

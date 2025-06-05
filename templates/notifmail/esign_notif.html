@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ COMPANY_NAME }} Interpreter Agreement</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            margin: 10px 0 5px;
+            font-size: 24px;
+        }
+        .content {
+            padding: 30px 20px;
+            color: #333;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .message {
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #444;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .note {
+            background-color: #f5f5f5;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .footer {
+            background-color: #2c3e50;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+            font-size: 14px;
+        }
+        .footer-logo {
+            max-width: 100px;
+            margin-bottom: 10px;
+        }
+        .contact-info {
+            margin-top: 15px;
+        }
+        .unsubscribe {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #ddd;
+        }
+        @media (max-width: 600px) {
+            .content {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Translation Services Logo" class="logo">
+            <h1>Welcome to {{ COMPANY_NAME }}</h1>
+            <p>Where Languages Connect People</p>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">Hello {{ interpreter_name }},</div>
+            
+            <div class="message">
+                Thank you for joining our professional team of interpreters at {{ COMPANY_NAME }}. Your linguistic expertise will help us break language barriers worldwide.
+            </div>
+            
+            <div class="message">
+                To complete your registration and begin receiving assignments, please electronically sign our agreement contract. This step ensures a smooth and professional collaboration.
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{{ verification_url }}" class="btn">
+                    Sign Your Contract
+                </a>
+            </div>
+            
+            <div class="note">
+                <strong>Important:</strong> To access your contract, please use this OTP code: <span class="highlight">{{ otp_code }}</span>. This code will expire in 24 hours.
+            </div>
+            
+            <div class="message">
+                Once your contract is signed and your profile is approved, you'll receive a confirmation email with access to your personalized dashboard. You'll also receive a copy of the countersigned contract for your records.
+            </div>
+            
+            <div class="message">
+                We're delighted to have you join our interpreter team and look forward to a rewarding collaboration.
+            </div>
+            
+            <div class="message" style="margin-top: 30px;">
+                Regards,<br>
+                <strong>The {{ COMPANY_NAME }} Team</strong>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }} Logo" class="footer-logo">
+            <div>{{ COMPANY_NAME }} Translation Services</div>
+            
+            <div class="contact-info">
+                Phone: {{ COMPANY_NUM }}<br>
+                Email: {{ COMPANY_MAIL }}
+            </div>
+            
+            <div class="unsubscribe">
+                <a href="https://{{ COMPANY_NAME }}.com/unsubscribe?email={{ email }}" style="color: #ddd;">Unsubscribe</a> from promotional emails
+            </div>
+        </div>
+    </div>
+</body>
+</html>

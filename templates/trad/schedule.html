@@ -1,0 +1,601 @@
+{% extends 'base_trad.html' %}
+{% load static %}
+
+{% block title %}Schedule{% endblock %}
+{% block header_title %}Schedule{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" rel="stylesheet" />
+
+<!-- Custom CSS -->
+<link href="{% static 'css/schedule.css' %}" rel="stylesheet" />
+<style>
+    /* Container principal */
+    .schedule-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: var(--accent-blue);
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(45deg, #fff, var(--accent-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        opacity: 0.8;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .action-button {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .action-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Calendar Container */
+    .schedule-grid {
+        display: grid;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (min-width: 1024px) {
+        .schedule-grid {
+            grid-template-columns: 7fr 3fr;
+        }
+    }
+
+    .calendar-container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* FullCalendar Customization */
+    .fc {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 1rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .fc .fc-button {
+        background: var(--accent-blue);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        text-transform: capitalize;
+        transition: all 0.3s ease;
+    }
+
+    .fc .fc-button:hover {
+        background: var(--secondary-blue);
+        transform: translateY(-1px);
+    }
+
+    .fc .fc-button-primary:not(:disabled).fc-button-active,
+    .fc .fc-button-primary:not(:disabled):active {
+        background: var(--secondary-blue);
+    }
+
+    .fc-theme-standard th,
+    .fc-theme-standard td {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .fc-day-today {
+        background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    .fc-event {
+        border-radius: 6px;
+        padding: 2px 4px;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .fc-event:hover {
+        transform: scale(1.02);
+    }
+
+    /* Upcoming Assignments Sidebar */
+    .upcoming-assignments {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .assignment-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .assignment-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .assignment-card:hover {
+        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .assignment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .assignment-time {
+        font-size: 0.875rem;
+        opacity: 0.7;
+    }
+
+    .assignment-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-confirmed {
+        background: rgba(72, 187, 120, 0.2);
+        color: #48bb78;
+    }
+
+    .status-assigned {
+        background: rgba(66, 153, 225, 0.2);
+        color: #4299e1;
+    }
+
+    .assignment-details {
+        font-size: 0.875rem;
+    }
+
+    .assignment-location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        opacity: 0.8;
+        margin-top: 0.5rem;
+    }
+
+    /* Event Tooltip */
+    .event-tooltip {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 8px;
+        padding: 1rem;
+        color: white;
+        font-size: 0.875rem;
+        max-width: 300px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+    }
+
+    .tooltip-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tooltip-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    .tooltip-label {
+        opacity: 0.7;
+    }
+
+    .tooltip-value {
+        font-weight: 500;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .schedule-container {
+            padding: 0.5rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quick-actions {
+            flex-wrap: wrap;
+        }
+
+        .fc .fc-toolbar {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="schedule-container">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-calendar-check stat-icon"></i>
+            <div class="stat-value">{{ weekly_stats.total_assignments }}</div>
+            <div class="stat-label">This Week's Assignments</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-clock stat-icon"></i>
+            <div class="stat-value">{{ weekly_stats.total_hours|floatformat:1 }}h</div>
+            <div class="stat-label">Total Hours</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-dollar-sign stat-icon"></i>
+            <div class="stat-value">${{ weekly_stats.earnings|floatformat:2 }}</div>
+            <div class="stat-label">Expected Earnings</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <button class="action-button" id="todayBtn">
+            <i class="fas fa-calendar-day"></i>
+            Today
+        </button>
+        <button class="action-button" id="weekBtn">
+            <i class="fas fa-calendar-week"></i>
+            Week View
+        </button>
+        <button class="action-button" id="monthBtn">
+            <i class="fas fa-calendar-alt"></i>
+            Month View
+        </button>
+        <button class="action-button" id="refreshBtn">
+            <i class="fas fa-sync-alt"></i>
+            Refresh
+        </button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="schedule-grid">
+        <!-- Calendar Section -->
+        <div class="calendar-container">
+            <div id="calendar"></div>
+        </div>
+
+        <!-- Upcoming Assignments -->
+        <div class="upcoming-assignments">
+            <h2 class="section-title">
+                <i class="fas fa-clock"></i> Upcoming Assignments
+            </h2>
+            <div class="assignment-list">
+                {% for assignment in upcoming_assignments %}
+                    <div class="assignment-card">
+                        <div class="assignment-header">
+                            <span class="assignment-status status-{{ assignment.status|lower }}">
+                                {{ assignment.get_status_display }}
+                            </span>
+                            <span class="assignment-time">
+                                {{ assignment.start_time|date:"M d, g:i A" }}
+                            </span>
+                        </div>
+                        <div class="assignment-details">
+                            <div class="detail-languages">
+                                {{ assignment.source_language.name }} → {{ assignment.target_language.name }}
+                            </div>
+                            <div class="detail-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ assignment.city }}, {{ assignment.state }}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-check"></i>
+                        <p>No upcoming assignments</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div id="eventModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="eventTitle"></h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="eventDetails"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
+<!-- Popper.js for tooltips -->
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<!-- Custom JS -->
+<script src="{% static 'js/schedule.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    let currentTooltip = null;
+    let calendar;
+
+    // Initialize FullCalendar
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 'auto',
+        headerToolbar: false, // We'll use our custom buttons
+        events: '{% url "dbdint:get_calendar_assignments" %}',
+        dayMaxEvents: true,
+        eventTimeFormat: {
+            hour: 'numeric',
+            minute: '2-digit',
+            meridiem: 'short'
+        },
+        eventDidMount: function(info) {
+            // Initialize tooltip for the event
+            initializeTooltip(info.el, info.event);
+        },
+        eventClick: function(info) {
+            showEventDetails(info.event);
+        },
+        loading: function(isLoading) {
+            if (isLoading) {
+                // Show loading state
+                calendarEl.classList.add('loading');
+            } else {
+                // Hide loading state
+                calendarEl.classList.remove('loading');
+            }
+        }
+    });
+
+    calendar.render();
+
+    // Quick Action Buttons
+    document.getElementById('todayBtn').addEventListener('click', () => {
+        calendar.today();
+    });
+
+    document.getElementById('weekBtn').addEventListener('click', () => {
+        calendar.changeView('timeGridWeek');
+    });
+
+    document.getElementById('monthBtn').addEventListener('click', () => {
+        calendar.changeView('dayGridMonth');
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+        calendar.refetchEvents();
+    });
+
+    // Tooltip Functions
+    function initializeTooltip(element, event) {
+        const tooltip = createTooltipContent(event);
+        
+        element.addEventListener('mouseenter', () => {
+            document.body.appendChild(tooltip);
+            currentTooltip = Popper.createPopper(element, tooltip, {
+                placement: 'top',
+                modifiers: [
+                    {
+                        name: 'offset',
+                        options: { offset: [0, 8] }
+                    },
+                    {
+                        name: 'preventOverflow',
+                        options: { padding: 8 }
+                    }
+                ]
+            });
+        });
+
+        element.addEventListener('mouseleave', () => {
+            tooltip.remove();
+            if (currentTooltip) {
+                currentTooltip.destroy();
+                currentTooltip = null;
+            }
+        });
+    }
+
+    function createTooltipContent(event) {
+        const props = event.extendedProps;
+        const tooltip = document.createElement('div');
+        tooltip.className = 'event-tooltip';
+        
+        tooltip.innerHTML = `
+            <div class="tooltip-row">
+                <span class="tooltip-label">Status:</span>
+                <span class="tooltip-value">${props.status}</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Languages:</span>
+                <span class="tooltip-value">${props.languages}</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Location:</span>
+                <span class="tooltip-value">${props.city}</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Duration:</span>
+                <span class="tooltip-value">${props.hours.toFixed(1)}h</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Rate:</span>
+                <span class="tooltip-value">$${props.rate}/hour</span>
+            </div>
+        `;
+
+        return tooltip;
+    }
+
+    // Event Details Modal Functions
+    function showEventDetails(event) {
+        const props = event.extendedProps;
+        const modal = document.getElementById('eventModal');
+        const titleEl = document.getElementById('eventTitle');
+        const detailsEl = document.getElementById('eventDetails');
+
+        titleEl.textContent = event.title;
+        detailsEl.innerHTML = `
+            <div class="modal-info-grid">
+                <div class="info-group">
+                    <label>Date & Time</label>
+                    <div>${formatDateTime(event.start)} - ${formatDateTime(event.end)}</div>
+                </div>
+                <div class="info-group">
+                    <label>Status</label>
+                    <div class="status-badge status-${props.status.toLowerCase()}">${props.status}</div>
+                </div>
+                <div class="info-group">
+                    <label>Languages</label>
+                    <div>${props.languages}</div>
+                </div>
+                <div class="info-group">
+                    <label>Location</label>
+                    <div>${props.location}</div>
+                    <div>${props.city}</div>
+                </div>
+                <div class="info-group">
+                    <label>Payment Details</label>
+                    <div>Rate: $${props.rate}/hour</div>
+                    <div>Duration: ${props.hours.toFixed(1)} hours</div>
+                    <div>Total: $${props.total_payment.toFixed(2)}</div>
+                </div>
+                ${props.special_requirements ? `
+                <div class="info-group">
+                    <label>Special Requirements</label>
+                    <div>${props.special_requirements}</div>
+                </div>
+                ` : ''}
+            </div>
+        `;
+
+        modal.style.display = 'block';
+    }
+
+    // Helper Functions
+    function formatDateTime(date) {
+        return new Date(date).toLocaleString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+
+    // Modal Close Button
+    document.querySelector('.close-btn').addEventListener('click', () => {
+        document.getElementById('eventModal').style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('eventModal');
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request a Quote -  {{ COMPANY_NAME }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="bg-gradient">
+    <div class="container">
+        <div class="quote-form-container">
+            <h1 class="page-title">Get a Quote</h1>
+            <p class="subtitle">Breaking language barriers with professional interpretation services</p>
+
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Contact Info</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Service Details</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Location</div>
+                </div>
+            </div>
+
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" id="quoteForm" class="step-form">
+                {% csrf_token %}
+
+                <!-- Step 1: Contact Information -->
+                <div class="form-step active" id="step1">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        {{ form.full_name }}
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        {{ form.phone }}
+                    </div>
+                    <div class="input-group">
+                        <label>Company Name</label>
+                        {{ form.company_name }}
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-next">Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Service Details -->
+                <div class="form-step" id="step2">
+                    <div class="input-group">
+                        <label>Source Language</label>
+                        {{ form.source_language }}
+                    </div>
+                    <div class="input-group">
+                        <label>Target Language</label>
+                        {{ form.target_language }}
+                    </div>
+                    <div class="input-group">
+                        <label>Service Type</label>
+                        {{ form.service_type }}
+                    </div>
+                    <div class="input-group">
+                        <label>Date Needed</label>
+                        {{ form.requested_date }}
+                    </div>
+                    <div class="input-group">
+                        <label>Duration</label>
+                        <div class="duration-input-wrapper">
+                            {{ form.duration }}
+                            <span class="duration-unit">minutes</span>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-prev">Back</button>
+                        <button type="button" class="btn btn-next">Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Location -->
+                <div class="form-step" id="step3">
+                    <div class="input-group">
+                        <label>Address</label>
+                        {{ form.location }}
+                    </div>
+                    <div class="input-group">
+                        <label>City</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="input-group">
+                        <label>State</label>
+                        {{ form.state }}
+                    </div>
+                    <div class="input-group">
+                        <label>ZIP Code</label>
+                        {{ form.zip_code }}
+                    </div>
+                    <div class="input-group">
+                        <label>Special Requirements</label>
+                        {{ form.special_requirements }}
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-prev">Back</button>
+                        <button type="submit" class="btn btn-submit">Submit Request</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('quoteForm');
+            const steps = document.querySelectorAll('.form-step');
+            const progressSteps = document.querySelectorAll('.progress-steps .step');
+            
+            // Handle next step buttons
+            document.querySelectorAll('.btn-next').forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentStep = this.closest('.form-step');
+                    const nextStep = currentStep.nextElementSibling;
+                    
+                    if (validateStep(currentStep)) {
+                        currentStep.classList.remove('active');
+                        nextStep.classList.add('active');
+                        
+                        // Update progress indicator
+                        const nextStepNum = nextStep.id.replace('step', '');
+                        updateProgress(nextStepNum);
+                    }
+                });
+            });
+            
+            // Handle previous step buttons
+            document.querySelectorAll('.btn-prev').forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentStep = this.closest('.form-step');
+                    const prevStep = currentStep.previousElementSibling;
+                    
+                    currentStep.classList.remove('active');
+                    prevStep.classList.add('active');
+                    
+                    // Update progress indicator
+                    const prevStepNum = prevStep.id.replace('step', '');
+                    updateProgress(prevStepNum);
+                });
+            });
+
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (validateStep(document.querySelector('.form-step.active'))) {
+                    // Si tous les champs sont valides, soumettre le formulaire
+                    this.submit();
+                }
+            });
+            
+            function updateProgress(stepNumber) {
+                progressSteps.forEach(step => {
+                    const stepNum = step.getAttribute('data-step');
+                    if (stepNum <= stepNumber) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
+            }
+            
+            function validateStep(step) {
+                let isValid = true;
+                const inputs = step.querySelectorAll('input, select, textarea');
+                
+                inputs.forEach(input => {
+                    if (input.name !== 'special_requirements' && !input.value.trim()) {
+                        isValid = false;
+                        input.classList.add('error');
+                        showError(input);
+                    } else {
+                        input.classList.remove('error');
+                        hideError(input);
+                    }
+
+                    if (input.name === 'email' && input.value) {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(input.value)) {
+                            isValid = false;
+                            input.classList.add('error');
+                            showError(input, 'Please enter a valid email address');
+                        }
+                    }
+
+                    if (input.name === 'phone' && input.value) {
+                        const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+                        if (!phoneRegex.test(input.value)) {
+                            isValid = false;
+                            input.classList.add('error');
+                            showError(input, 'Please enter a valid phone number');
+                        }
+                    }
+                });
+                
+                return isValid;
+            }
+
+            function showError(input, message = 'This field is required') {
+                let errorDiv = input.nextElementSibling;
+                if (!errorDiv || !errorDiv.classList.contains('error-message')) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    input.parentNode.insertBefore(errorDiv, input.nextSibling);
+                }
+                errorDiv.textContent = message;
+            }
+
+            function hideError(input) {
+                const errorDiv = input.nextElementSibling;
+                if (errorDiv && errorDiv.classList.contains('error-message')) {
+                    errorDiv.remove();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

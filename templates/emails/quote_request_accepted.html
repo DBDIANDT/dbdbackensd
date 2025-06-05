@@ -1,0 +1,18 @@
+<!-- templates/emails/quote_request_accepted.html -->
+{% extends "emails/base_email.html" %}
+{% block content %}
+<div class="header">
+    <h1>{{ COMPANY_NAME }}</h1>
+    <p>Quote Request Accepted</p>
+</div>
+<div class="content">
+    <h2>Thank you for accepting the quote, {{ client_name }}!</h2>
+    <p>We are proceeding with arranging your interpretation service. Our team will be in touch shortly with further details.</p>
+    
+    <div class="request-details">
+        <p><strong>Service Details:</strong></p>
+        <p>Date: {{ requested_date|date:"F j, Y, P" }}</p>
+        <p>Location: {{ location }}</p>
+    </div>
+</div>
+{% endblock %}
