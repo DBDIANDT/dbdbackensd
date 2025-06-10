@@ -5,126 +5,213 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #E5E7EB;
+            color: #f8fafc;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(135deg, #1f2937 0%, #164e63 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #2563eb 50%, #3b82f6 100%);
+            min-height: 100vh;
         }
+        
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background-color: #1e293b;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-radius: 12px;
+            background: rgba(30, 58, 138, 0.4);
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         .header {
-            background-color: {% if action == 'accepted' %}#4CAF50{% else %}#ef4444{% endif %};
-            padding: 20px;
+            background: {% if action == 'accepted' %}rgba(30, 58, 138, 0.6){% else %}rgba(30, 64, 175, 0.6){% endif %};
+            padding: 30px 20px;
             text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         .logo {
             max-width: 200px;
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
+        
+        .header h2 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
         .content {
-            padding: 30px;
+            padding: 40px 30px;
             font-size: 16px;
-            letter-spacing: 0.3px;
         }
+        
         .details-card {
-            background-color: #2d3748;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            border-left: 4px solid {% if action == 'accepted' %}#4CAF50{% else %}#ef4444{% endif %};
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 0;
+            margin: 25px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
+        
         .detail-row {
-            padding: 12px;
-            border-bottom: 1px solid #374151;
+            padding: 18px 25px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: #1e293b;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
         }
+        
+        .detail-row:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        
         .detail-row:last-child {
             border-bottom: none;
         }
+        
         .detail-row strong {
-            color: #6EE7B7;
-            font-weight: bold;
+            color: #0f172a;
+            font-weight: 600;
+            min-width: 120px;
+            text-align: left;
         }
+        
         .notice-box {
-            background-color: {% if action == 'accepted' %}rgba(76, 175, 80, 0.1){% else %}rgba(239, 68, 68, 0.1){% endif %};
-            border: 1px solid {% if action == 'accepted' %}#4CAF50{% else %}#ef4444{% endif %};
-            color: #F3F4F6;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
             font-size: 0.95em;
             line-height: 1.8;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
+        
+        .notice-box h3 {
+            color: #0f172a;
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        
         .next-steps {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: rgba(45, 55, 72, 0.5);
-            border-radius: 8px;
+            margin: 25px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
+        
         .next-steps h3 {
             margin-top: 0;
-            color: #6EE7B7;
+            color: #0f172a;
+            font-weight: 600;
+            font-size: 1.2em;
         }
+        
         .next-steps ul {
-            color: #F3F4F6;
-            margin: 0;
+            color: #374151;
+            margin: 15px 0 0 0;
             padding-left: 20px;
+            font-weight: 500;
         }
+        
         .next-steps li {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            line-height: 1.6;
         }
+        
         .action-button {
             display: inline-block;
-            background-color: {% if action == 'accepted' %}#4CAF50{% else %}#ef4444{% endif %};
+            background: {% if action == 'accepted' %}linear-gradient(135deg, #059669 0%, #10b981 100%){% else %}linear-gradient(135deg, #dc2626 0%, #ef4444 100%){% endif %};
             color: white !important;
-            padding: 14px 32px;
+            padding: 16px 32px;
             text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            margin: 20px 0;
-            transition: all 0.2s ease;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 25px 0;
+            transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 15px;
+            letter-spacing: 0.8px;
+            font-size: 14px;
             text-align: center;
+            box-shadow: 0 4px 16px {% if action == 'accepted' %}rgba(5, 150, 105, 0.3){% else %}rgba(220, 38, 38, 0.3){% endif %};
+            border: none;
         }
+        
         .action-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px {% if action == 'accepted' %}rgba(76, 175, 80, 0.2){% else %}rgba(239, 68, 68, 0.2){% endif %};
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px {% if action == 'accepted' %}rgba(5, 150, 105, 0.4){% else %}rgba(220, 38, 38, 0.4){% endif %};
         }
+        
         .footer {
-            background-color: #1e293b;
-            padding: 20px;
+            background: rgba(30, 58, 138, 0.6);
+            padding: 25px 20px;
             text-align: center;
             font-size: 0.9em;
-            color: #D1D5DB;
-            border-top: 1px solid #2d3748;
+            color: rgba(255, 255, 255, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
+        .footer p {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 5px 0;
+        }
+        
+        p {
+            color: #f8fafc;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .checkmark {
+            color: #10b981;
+            margin-right: 8px;
+        }
+        
         @media (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 15px;
             }
             .container {
                 margin: 0;
+                border-radius: 12px;
             }
             .content {
-                padding: 20px;
+                padding: 25px 20px;
+            }
+            .header {
+                padding: 25px 15px;
             }
             .action-button {
                 display: block;
-                margin: 10px 0;
+                margin: 15px 0;
+                padding: 14px 28px;
+                font-size: 13px;
+            }
+            .detail-row {
+                flex-direction: column;
+                text-align: left;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .detail-row strong {
+                min-width: auto;
             }
         }
     </style>
@@ -133,7 +220,7 @@
     <div class="container">
         <div class="header">
             <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="logo">
-            <h2 style="color: #fff;">Assignment {{ action|title }} by Interpreter</h2>
+            <h2>Assignment {{ action|title }} by Interpreter</h2>
         </div>
 
         <div class="content">
@@ -163,7 +250,7 @@
 
             {% if action == 'accepted' %}
                 <div class="next-steps">
-                    <h3>Next Steps:</h3>
+                    <h3>✅ Next Steps:</h3>
                     <ul>
                         <li>The interpreter has been automatically notified with assignment details</li>
                         <li>Calendar invitation has been sent</li>
@@ -179,7 +266,7 @@
                     <p>This assignment needs to be reassigned to a new interpreter.</p>
                 </div>
                 <div class="next-steps">
-                    <h3>Next Steps:</h3>
+                    <h3>📋 Next Steps:</h3>
                     <ul>
                         <li>Assignment status has been automatically set to CANCELLED</li>
                         <li>Previous interpreter has been removed from the assignment</li>

@@ -1,244 +1,341 @@
 <!DOCTYPE html>
 <html>
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <style>
-       body {
-            font-family: 'Arial', sans-serif;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #F3F4F6;  /* Couleur plus claire pour le texte */
+            color: #f8fafc;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(135deg, #1f2937 0%, #164e63 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #2563eb 50%, #3b82f6 100%);
+            min-height: 100vh;
         }
+        
         .email-container {
             max-width: 600px;
             margin: 0 auto;
-            background-color: #1e293b;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-radius: 12px;
+            background: rgba(30, 58, 138, 0.4);
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         .header {
-            background-color: #1e293b;
-            padding: 20px;
+            background: rgba(30, 58, 138, 0.6);
+            padding: 30px 20px;
             text-align: center;
-            border-bottom: 2px solid #4CAF50;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         .logo {
             max-width: 200px;
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
-        .content {
-            padding: 30px;
-            font-size: 16px;
-            letter-spacing: 0.3px;
-            background-color: #1e293b;
-            color: #F3F4F6;  /* Couleur plus claire pour le texte */
-        }
-        .confirmation-box {
-            background-color: rgba(76, 175, 80, 0.1);
-            border: 1px solid #4CAF50;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        .detail-row {
-            padding: 12px;
-            border-bottom: 1px solid #374151;
-            margin-bottom: 8px;
-            color: #F3F4F6;  /* Couleur plus claire pour le texte */
-        }
-        .detail-label {
-            font-weight: bold;
-            color: #6EE7B7;
-            display: block;
-            margin-bottom: 4px;
-            font-size: 0.9em;
-            text-transform: uppercase;
+        
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 500;
             letter-spacing: 0.5px;
         }
+        
+        .content {
+            padding: 40px 30px;
+            font-size: 16px;
+        }
+        
+        .confirmation-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .confirmation-box h2 {
+            color: #0f172a;
+            margin: 0 0 15px 0;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        
+        .confirmation-box p {
+            color: #374151;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .details-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .details-section h3 {
+            color: #0f172a;
+            margin: 0 0 20px 0;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .detail-row {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+            margin-bottom: 0;
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #0f172a;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
         .calendar-info {
-            background-color: rgba(76, 175, 80, 0.1);
-            border: 1px solid #4CAF50;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #4CAF50;
-            color: #F3F4F6;  /* Couleur plus claire pour le texte */
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
+        
+        .calendar-info h3 {
+            color: #0f172a;
+            margin: 0 0 15px 0;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .calendar-info p {
+            color: #374151;
+            margin: 0;
+            line-height: 1.6;
+        }
+        
         .reminders {
-            background-color: rgba(76, 175, 80, 0.1);
-            border: 1px solid #4CAF50;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #4CAF50;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
+        
+        .reminders h3 {
+            color: #0f172a;
+            margin: 0 0 15px 0;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
         .reminders ul {
-            color: #F3F4F6;  /* Couleur plus claire pour le texte */
-            margin: 10px 0;
+            color: #374151;
+            margin: 15px 0 0 0;
             padding-left: 20px;
+            font-weight: 500;
         }
+        
         .reminders li {
-            margin-bottom: 8px;
-            color: #F3F4F6;  /* Couleur plus claire pour le texte */
+            margin-bottom: 10px;
+            line-height: 1.6;
         }
+        
         .action-button {
             display: inline-block;
-            background-color: #4CAF50;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             color: white !important;
-            padding: 14px 32px;
+            padding: 16px 32px;
             text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            margin: 10px;
-            transition: all 0.2s ease;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 25px 5px;
+            transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 15px;
+            letter-spacing: 0.8px;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+            border: none;
         }
+        
         .action-button:hover {
-            background-color: #45a049;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
         }
+        
         .footer {
-            background-color: #1e293b;
-            padding: 20px;
+            background: rgba(30, 58, 138, 0.6);
+            padding: 25px 20px;
             text-align: center;
             font-size: 0.9em;
-            color: #F3F4F6;  /* Couleur plus claire pour le texte */
-            border-top: 1px solid #2d3748;
+            color: rgba(255, 255, 255, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-        h1, h2, h3 {
-            color: #6EE7B7;
-            margin-bottom: 20px;
-            letter-spacing: 0.5px;
+        
+        .footer p {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 5px 0;
         }
+        
+        .footer hr {
+            border-color: rgba(255, 255, 255, 0.2);
+            margin: 20px 0;
+            border-width: 1px 0 0 0;
+        }
+        
         p {
-            color: #F3F4F6;  /* Couleur plus claire pour le texte */
+            color: #f8fafc;
             line-height: 1.8;
             margin-bottom: 15px;
         }
+        
         @media (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 15px;
             }
-            .container {
+            .email-container {
                 margin: 0;
+                border-radius: 12px;
             }
             .content {
-                padding: 20px;
+                padding: 25px 20px;
+            }
+            .header {
+                padding: 25px 15px;
             }
             .action-button {
                 display: block;
-                margin: 10px 0;
+                margin: 15px 0;
+                padding: 14px 28px;
+                font-size: 13px;
             }
         }
-   </style>
+    </style>
 </head>
 <body>
-   <div class="email-container">
-       <div class="header">
-           <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="logo">
-           <h1>Assignment Confirmed! 🎉</h1>
-       </div>
+    <div class="email-container">
+        <div class="header">
+            <img src="{{ LOGO_COMPANY }}" alt="{{ COMPANY_NAME }}" class="logo">
+            <h1>Assignment Confirmed! 🎉</h1>
+        </div>
 
-       <div class="content">
-           <p>Hello {{ interpreter_name }},</p>
+        <div class="content">
+            <p>Hello {{ interpreter_name }},</p>
 
-           <div class="confirmation-box">
-               <h2>Thank you for accepting this assignment!</h2>
-               <p>Your interpretation services have been confirmed.</p>
-           </div>
-
-           <h3>Assignment Details:</h3>
-           <div class="detail-row">
-               <span class="detail-label">Assignment ID</span> 
-               #{{ assignment.id }}
-           </div>
-
-           <div class="detail-row">
-               <span class="detail-label">Client</span> 
-               {{ client_name }}
-           </div>
-           
-           <div class="detail-row">
-                <span class="detail-label">Client Phone</span> 
-                {{ client_phone }}
+            <div class="confirmation-box">
+                <h2>Thank you for accepting this assignment!</h2>
+                <p>Your interpretation services have been confirmed.</p>
             </div>
 
-           <div class="detail-row">
-               <span class="detail-label">Date</span> 
-               {{ start_time|date:"l, F j, Y" }}
-           </div>
+            <div class="details-section">
+                <h3>📋 Assignment Details</h3>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Assignment ID</span> 
+                    #{{ assignment.id }}
+                </div>
 
-           <div class="detail-row">
-               <span class="detail-label">Time</span> 
-               {{ start_time|time:"g:i A" }} - {{ end_time|time:"g:i A" }} EDT
-           </div>
+                <div class="detail-row">
+                    <span class="detail-label">Client</span> 
+                    {{ client_name }}
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Client Phone</span> 
+                    {{ client_phone }}
+                </div>
 
-           <div class="detail-row">
-               <span class="detail-label">Location</span> 
-               {{ location }}<br>
-               {{ city }}, {{ state }}
-           </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date</span> 
+                    {{ start_time|date:"l, F j, Y" }}
+                </div>
 
-           <div class="detail-row">
-               <span class="detail-label">Service Type</span>
-               {{ service_type }}
-           </div>
+                <div class="detail-row">
+                    <span class="detail-label">Time</span> 
+                    {{ start_time|time:"g:i A" }} - {{ end_time|time:"g:i A" }} EDT
+                </div>
 
-           <div class="detail-row">
-               <span class="detail-label">Languages</span>
-               {{ source_language }} → {{ target_language }}
-           </div>
+                <div class="detail-row">
+                    <span class="detail-label">Location</span> 
+                    {{ location }}<br>
+                    {{ city }}, {{ state }}
+                </div>
 
-           <div class="detail-row">
-               <span class="detail-label">Rate</span>
-               ${{ rate }}/hour
-           </div>
+                <div class="detail-row">
+                    <span class="detail-label">Service Type</span>
+                    {{ service_type }}
+                </div>
 
-           <div class="calendar-info">
-               <h3>📅 Calendar Invitation</h3>
-               <p>A calendar invitation has been attached to this email. Please add it to your calendar to ensure you don't miss this appointment.</p>
-           </div>
+                <div class="detail-row">
+                    <span class="detail-label">Languages</span>
+                    {{ source_language }} → {{ target_language }}
+                </div>
 
-           <div class="reminders">
-               <h3>⚠️ Important Reminders</h3>
-               <ul>
-                   <li>Please arrive 15 minutes before the scheduled start time</li>
+                <div class="detail-row">
+                    <span class="detail-label">Rate</span>
+                    ${{ rate }}/hour
+                </div>
 
-                   <li>In case of emergency, contact us immediately</li>
-               </ul>
-           </div>
+                {% if special_requirements != "None" %}
+                <div class="detail-row">
+                    <span class="detail-label">Special Requirements</span>
+                    {{ special_requirements }}
+                </div>
+                {% endif %}
+            </div>
 
-           {% if special_requirements != "None" %}
-           <div class="detail-row">
-               <span class="detail-label">Special Requirements</span>
-               {{ special_requirements }}
-           </div>
-           {% endif %}
+            <div class="calendar-info">
+                <h3>📅 Calendar Invitation</h3>
+                <p>A calendar invitation has been attached to this email. Please add it to your calendar to ensure you don't miss this appointment.</p>
+            </div>
 
-           <div style="text-align: center; margin-top: 20px;">
-               <a href="{{ site_url }}" class="action-button">View Assignment Details</a>
-           </div>
-       </div>
+            <div class="reminders">
+                <h3>⚠️ Important Reminders</h3>
+                <ul>
+                    <li>Please arrive 15 minutes before the scheduled start time</li>
+                    <li>In case of emergency, contact us immediately</li>
+                </ul>
+            </div>
 
-       <div class="footer">
-           <p>Have questions about this assignment?</p>
-           <p>Contact us:</p>
-           <p>📞 (774) 223-8771</p>
-           <p>✉️ {{ COMPANY_MAIL }}</p>
-           <hr style="border-color: #374151; margin: 20px 0;">
-           <p>This is an automated message from {{ COMPANY_NAME }}.<br>
-           Please do not reply to this email.</p>
-           <p>© {% now "Y" %} {{ COMPANY_NAME }}. All rights reserved.</p>
-       </div>
-   </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{{ site_url }}" class="action-button">View Assignment Details</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Have questions about this assignment?</p>
+            <p>Contact us:</p>
+            <p>📞 (774) 223-8771</p>
+            <p>✉️ {{ COMPANY_MAIL }}</p>
+            <hr>
+            <p>This is an automated message from {{ COMPANY_NAME }}.<br>
+            Please do not reply to this email.</p>
+            <p>© {% now "Y" %} {{ COMPANY_NAME }}. All rights reserved.</p>
+        </div>
+    </div>
 </body>
 </html>
