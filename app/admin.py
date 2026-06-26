@@ -33,9 +33,10 @@ from django.conf import settings
 import time
 from django.utils.safestring import mark_safe
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotAllowed
 from django.urls import path
 from urllib.parse import urlencode
+from django.middleware.csrf import get_token
 # =======================================================
 # 1. UTILITAIRES POUR LE FUSEAU HORAIRE
 # =======================================================
@@ -614,6 +615,13 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.select_related('client', 'interpreter__user', 'source_language', 'target_language', 'service_type')
 
+    def changelist_view(self, request, extra_context=None):
+        self._quick_actions_request = request
+        try:
+            return super().changelist_view(request, extra_context=extra_context)
+        finally:
+            self._quick_actions_request = None
+
     fieldsets = (
         ('Assignment Information', {
             'fields': (
@@ -831,28 +839,66 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
         base = reverse('admin:app_assignment_quick_update', args=[obj.pk, action])
         return f"{base}?{urlencode({'next': '../'})}"
 
+    def _quick_action_button(self, obj, action, label, csrf_token):
+        action_url = self._quick_action_url(obj, action)
+        return (
+            f'<form method="post" action="{action_url}" style="display:inline-block; margin-right:4px;">'
+            f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">'
+            f'<input type="hidden" name="next" value="../">'
+            f'<button type="submit" class="button">{label}</button>'
+            '</form>'
+        )
+
+    def _client_ip(self, request):
+        forwarded = request.META.get('HTTP_X_FORWARDED_FOR')
+        if forwarded:
+            return forwarded.split(',')[0].strip()
+        return request.META.get('REMOTE_ADDR')
+
+    def _log_quick_action(self, request, assignment, action, changes):
+        try:
+            models.AuditLog.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                action=f'Quick Action: {action}',
+                model_name='Assignment',
+                object_id=str(assignment.id),
+                changes=changes,
+                ip_address=self._client_ip(request),
+            )
+        except Exception:
+            # Never block admin updates if audit logging fails.
+            pass
+
     def quick_actions(self, obj):
+        request = getattr(self, '_quick_actions_request', None)
+        if request is None:
+            return '-'
+
+        csrf_token = get_token(request)
         links = []
 
         if obj.status == models.Assignment.Status.PENDING and obj.interpreter_id:
-            links.append(f'<a class="button" href="{self._quick_action_url(obj, "confirm")}">Confirm</a>')
+            links.append(self._quick_action_button(obj, 'confirm', 'Confirm', csrf_token))
         if obj.status == models.Assignment.Status.CONFIRMED:
-            links.append(f'<a class="button" href="{self._quick_action_url(obj, "start")}">Start</a>')
+            links.append(self._quick_action_button(obj, 'start', 'Start', csrf_token))
         if obj.status in [models.Assignment.Status.CONFIRMED, models.Assignment.Status.IN_PROGRESS]:
-            links.append(f'<a class="button" href="{self._quick_action_url(obj, "complete")}">Complete</a>')
+            links.append(self._quick_action_button(obj, 'complete', 'Complete', csrf_token))
         if obj.status not in [models.Assignment.Status.CANCELLED, models.Assignment.Status.COMPLETED]:
-            links.append(f'<a class="button" href="{self._quick_action_url(obj, "cancel")}">Cancel</a>')
+            links.append(self._quick_action_button(obj, 'cancel', 'Cancel', csrf_token))
 
         if obj.is_paid is not True:
-            links.append(f'<a class="button" href="{self._quick_action_url(obj, "mark_paid")}">Mark Paid</a>')
+            links.append(self._quick_action_button(obj, 'mark_paid', 'Mark Paid', csrf_token))
         else:
-            links.append(f'<a class="button" href="{self._quick_action_url(obj, "mark_unpaid")}">Mark Unpaid</a>')
+            links.append(self._quick_action_button(obj, 'mark_unpaid', 'Mark Unpaid', csrf_token))
 
         return format_html(' '.join(links))
 
     quick_actions.short_description = 'Quick Actions'
 
     def quick_update_view(self, request, assignment_id, action):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(['POST'])
+
         assignment = self.get_object(request, assignment_id)
         if assignment is None:
             self.message_user(request, 'Assignment not found.', level=messages.ERROR)
@@ -861,6 +907,9 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
         if not self.has_change_permission(request, assignment):
             self.message_user(request, 'You do not have permission for this action.', level=messages.ERROR)
             return HttpResponseRedirect('../')
+
+        previous_status = assignment.status
+        previous_paid = assignment.is_paid
 
         if action == 'confirm':
             assignment.status = models.Assignment.Status.CONFIRMED
@@ -896,7 +945,18 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
         else:
             self.message_user(request, 'Unknown action.', level=messages.ERROR)
 
-        next_url = request.GET.get('next') or '../'
+        if assignment.status != previous_status or assignment.is_paid != previous_paid:
+            self._log_quick_action(
+                request,
+                assignment,
+                action,
+                {
+                    'status': {'before': previous_status, 'after': assignment.status},
+                    'is_paid': {'before': previous_paid, 'after': assignment.is_paid},
+                },
+            )
+
+        next_url = request.POST.get('next') or request.GET.get('next') or '../'
         return HttpResponseRedirect(next_url)
 
     def save_model(self, request, obj, form, change):
