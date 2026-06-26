@@ -33,6 +33,9 @@ from django.conf import settings
 import time
 from django.utils.safestring import mark_safe
 from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.urls import path
+from urllib.parse import urlencode
 # =======================================================
 # 1. UTILITAIRES POUR LE FUSEAU HORAIRE
 # =======================================================
@@ -331,6 +334,7 @@ class AssignmentPaymentFocusFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ('pending_payment', 'Pending payment'),
+            ('completed_unpaid', 'Completed and unpaid'),
         )
 
     def queryset(self, request, queryset):
@@ -342,6 +346,10 @@ class AssignmentPaymentFocusFilter(admin.SimpleListFilter):
                     models.Assignment.Status.COMPLETED,
                 ]
             ).filter(Q(is_paid=False) | Q(is_paid__isnull=True))
+        if self.value() == 'completed_unpaid':
+            return queryset.filter(status=models.Assignment.Status.COMPLETED).filter(
+                Q(is_paid=False) | Q(is_paid__isnull=True)
+            )
         return queryset
 
 # =======================================================
@@ -534,7 +542,8 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
         'formatted_start_time',
         'formatted_end_time',
         'get_status_display',
-        'get_payment_status'
+        'get_payment_status',
+        'quick_actions',
     )
     list_filter = (
         AssignmentQuickViewFilter,
@@ -579,6 +588,31 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
         'formatted_start_time_detail',
         'formatted_end_time_detail'
     )
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                '<int:assignment_id>/quick/<str:action>/',
+                self.admin_site.admin_view(self.quick_update_view),
+                name='app_assignment_quick_update',
+            )
+        ]
+        return custom_urls + urls
+
+    def _can_manage_payments(self, request):
+        return request.user.is_superuser or getattr(request.user, 'role', None) == models.User.Roles.ADMIN
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if not self._can_manage_payments(request):
+            actions.pop('mark_as_paid', None)
+            actions.pop('mark_as_unpaid', None)
+        return actions
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('client', 'interpreter__user', 'source_language', 'target_language', 'service_type')
 
     fieldsets = (
         ('Assignment Information', {
@@ -776,16 +810,94 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
     mark_status_no_show.short_description = 'Mark selected assignments as No Show'
 
     def mark_as_paid(self, request, queryset):
+        if not self._can_manage_payments(request):
+            self.message_user(request, 'You do not have permission to update payment status.', level=messages.ERROR)
+            return
         updated = queryset.update(is_paid=True)
         self.message_user(request, f"{updated} assignment(s) marked as Paid.")
 
     mark_as_paid.short_description = 'Mark selected assignments as Paid'
 
     def mark_as_unpaid(self, request, queryset):
+        if not self._can_manage_payments(request):
+            self.message_user(request, 'You do not have permission to update payment status.', level=messages.ERROR)
+            return
         updated = queryset.update(is_paid=False)
         self.message_user(request, f"{updated} assignment(s) marked as Unpaid.")
 
     mark_as_unpaid.short_description = 'Mark selected assignments as Unpaid'
+
+    def _quick_action_url(self, obj, action):
+        base = reverse('admin:app_assignment_quick_update', args=[obj.pk, action])
+        return f"{base}?{urlencode({'next': '../'})}"
+
+    def quick_actions(self, obj):
+        links = []
+
+        if obj.status == models.Assignment.Status.PENDING and obj.interpreter_id:
+            links.append(f'<a class="button" href="{self._quick_action_url(obj, "confirm")}">Confirm</a>')
+        if obj.status == models.Assignment.Status.CONFIRMED:
+            links.append(f'<a class="button" href="{self._quick_action_url(obj, "start")}">Start</a>')
+        if obj.status in [models.Assignment.Status.CONFIRMED, models.Assignment.Status.IN_PROGRESS]:
+            links.append(f'<a class="button" href="{self._quick_action_url(obj, "complete")}">Complete</a>')
+        if obj.status not in [models.Assignment.Status.CANCELLED, models.Assignment.Status.COMPLETED]:
+            links.append(f'<a class="button" href="{self._quick_action_url(obj, "cancel")}">Cancel</a>')
+
+        if obj.is_paid is not True:
+            links.append(f'<a class="button" href="{self._quick_action_url(obj, "mark_paid")}">Mark Paid</a>')
+        else:
+            links.append(f'<a class="button" href="{self._quick_action_url(obj, "mark_unpaid")}">Mark Unpaid</a>')
+
+        return format_html(' '.join(links))
+
+    quick_actions.short_description = 'Quick Actions'
+
+    def quick_update_view(self, request, assignment_id, action):
+        assignment = self.get_object(request, assignment_id)
+        if assignment is None:
+            self.message_user(request, 'Assignment not found.', level=messages.ERROR)
+            return HttpResponseRedirect('../')
+
+        if not self.has_change_permission(request, assignment):
+            self.message_user(request, 'You do not have permission for this action.', level=messages.ERROR)
+            return HttpResponseRedirect('../')
+
+        if action == 'confirm':
+            assignment.status = models.Assignment.Status.CONFIRMED
+            assignment.save(update_fields=['status', 'updated_at'])
+            self.message_user(request, f'Assignment {assignment.id} confirmed.')
+        elif action == 'start':
+            assignment.status = models.Assignment.Status.IN_PROGRESS
+            assignment.save(update_fields=['status', 'updated_at'])
+            self.message_user(request, f'Assignment {assignment.id} marked as in progress.')
+        elif action == 'complete':
+            assignment.status = models.Assignment.Status.COMPLETED
+            assignment.completed_at = timezone.now()
+            assignment.save(update_fields=['status', 'completed_at', 'updated_at'])
+            self.message_user(request, f'Assignment {assignment.id} completed.')
+        elif action == 'cancel':
+            assignment.status = models.Assignment.Status.CANCELLED
+            assignment.save(update_fields=['status', 'updated_at'])
+            self.message_user(request, f'Assignment {assignment.id} cancelled.')
+        elif action == 'mark_paid':
+            if not self._can_manage_payments(request):
+                self.message_user(request, 'You do not have permission to update payment status.', level=messages.ERROR)
+            else:
+                assignment.is_paid = True
+                assignment.save(update_fields=['is_paid', 'updated_at'])
+                self.message_user(request, f'Assignment {assignment.id} marked as paid.')
+        elif action == 'mark_unpaid':
+            if not self._can_manage_payments(request):
+                self.message_user(request, 'You do not have permission to update payment status.', level=messages.ERROR)
+            else:
+                assignment.is_paid = False
+                assignment.save(update_fields=['is_paid', 'updated_at'])
+                self.message_user(request, f'Assignment {assignment.id} marked as unpaid.')
+        else:
+            self.message_user(request, 'Unknown action.', level=messages.ERROR)
+
+        next_url = request.GET.get('next') or '../'
+        return HttpResponseRedirect(next_url)
 
     def save_model(self, request, obj, form, change):
         """
