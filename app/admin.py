@@ -618,7 +618,11 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         self._quick_actions_request = request
         try:
-            return super().changelist_view(request, extra_context=extra_context)
+            response = super().changelist_view(request, extra_context=extra_context)
+            # Force render while request context is available for row action buttons.
+            if hasattr(response, 'render') and callable(response.render):
+                response.render()
+            return response
         finally:
             self._quick_actions_request = None
 
