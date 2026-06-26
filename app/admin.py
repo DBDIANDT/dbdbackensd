@@ -32,6 +32,7 @@ import socket
 from django.conf import settings
 import time
 from django.utils.safestring import mark_safe
+from django.db.models import Q
 # =======================================================
 # 1. UTILITAIRES POUR LE FUSEAU HORAIRE
 # =======================================================
@@ -177,6 +178,11 @@ class CustomAssignmentForm(forms.ModelForm):
         cleaned_data = super().clean()
         start_time = cleaned_data.get('start_time')
         end_time = cleaned_data.get('end_time')
+        status = cleaned_data.get('status')
+        interpreter = cleaned_data.get('interpreter')
+        service_type = cleaned_data.get('service_type')
+        source_language = cleaned_data.get('source_language')
+        target_language = cleaned_data.get('target_language')
         client_email = cleaned_data.get('client_email')
         client_phone = cleaned_data.get('client_phone')
 
@@ -184,6 +190,40 @@ class CustomAssignmentForm(forms.ModelForm):
         if start_time and end_time:
             if end_time <= start_time:
                 raise ValidationError({'end_time': 'End time must be after start time.'})
+
+        # Keep dispatch flow safe: non-pending assignments must have an interpreter.
+        if status and status != models.Assignment.Status.PENDING and not interpreter:
+            self.add_error('interpreter', 'Interpreter is required unless status is Pending.')
+
+        # Harden transitions for operational statuses.
+        strict_statuses = {
+            models.Assignment.Status.CONFIRMED,
+            models.Assignment.Status.IN_PROGRESS,
+            models.Assignment.Status.COMPLETED,
+        }
+        if status in strict_statuses:
+            if not service_type:
+                self.add_error('service_type', 'Service type is required for this status.')
+            if not source_language:
+                self.add_error('source_language', 'Source language is required for this status.')
+            if not target_language:
+                self.add_error('target_language', 'Target language is required for this status.')
+
+        # Avoid double-booking interpreters with overlapping time windows.
+        if interpreter and start_time and end_time:
+            overlaps = models.Assignment.objects.filter(
+                interpreter=interpreter,
+                start_time__lt=end_time,
+                end_time__gt=start_time,
+            )
+            if self.instance and self.instance.pk:
+                overlaps = overlaps.exclude(pk=self.instance.pk)
+
+            if overlaps.exists():
+                self.add_error(
+                    'interpreter',
+                    'Interpreter already has an overlapping assignment in this time range.',
+                )
         
         # Only validate format of email and phone if they are provided
         if client_email and not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', client_email):
@@ -239,6 +279,70 @@ class AssignmentInline(admin.TabularInline):
     extra = 0
     readonly_fields = ['created_at', 'updated_at']
     classes = ['collapse']
+
+
+class AssignmentQuickViewFilter(admin.SimpleListFilter):
+    title = 'Quick view'
+    parameter_name = 'quick_view'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('today', 'Today'),
+            ('tomorrow', 'Tomorrow'),
+            ('next_7_days', 'Next 7 days'),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        now_boston = timezone.localtime(timezone.now(), BOSTON_TZ)
+        today = now_boston.date()
+
+        if value == 'today':
+            return queryset.filter(start_time__date=today)
+        if value == 'tomorrow':
+            return queryset.filter(start_time__date=today + timezone.timedelta(days=1))
+        if value == 'next_7_days':
+            return queryset.filter(
+                start_time__date__gte=today,
+                start_time__date__lte=today + timezone.timedelta(days=7),
+            )
+        return queryset
+
+
+class AssignmentStaffingFilter(admin.SimpleListFilter):
+    title = 'Staffing'
+    parameter_name = 'staffing'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('unassigned', 'Unassigned'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'unassigned':
+            return queryset.filter(interpreter__isnull=True)
+        return queryset
+
+
+class AssignmentPaymentFocusFilter(admin.SimpleListFilter):
+    title = 'Payment Focus'
+    parameter_name = 'payment_focus'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('pending_payment', 'Pending payment'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'pending_payment':
+            return queryset.filter(
+                status__in=[
+                    models.Assignment.Status.CONFIRMED,
+                    models.Assignment.Status.IN_PROGRESS,
+                    models.Assignment.Status.COMPLETED,
+                ]
+            ).filter(Q(is_paid=False) | Q(is_paid__isnull=True))
+        return queryset
 
 # =======================================================
 # 6. ADMINISTRATION DES MODÈLES
@@ -433,6 +537,9 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
         'get_payment_status'
     )
     list_filter = (
+        AssignmentQuickViewFilter,
+        AssignmentStaffingFilter,
+        AssignmentPaymentFocusFilter,
         'status', 
         'service_type',
         'source_language',
@@ -441,12 +548,28 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
         'is_paid'
     )
     search_fields = (
+        'id',
         'client__company_name', 
         'client_name', 
         'client_email',
+        'client_phone',
+        'interpreter__user__email',
         'interpreter__user__first_name', 
         'interpreter__user__last_name'
     )
+    ordering = ('start_time', 'id')
+    list_per_page = 50
+    autocomplete_fields = ('quote', 'service_type', 'interpreter', 'client', 'source_language', 'target_language')
+    actions = [
+        'mark_status_pending',
+        'mark_status_confirmed',
+        'mark_status_in_progress',
+        'mark_status_completed',
+        'mark_status_cancelled',
+        'mark_status_no_show',
+        'mark_as_paid',
+        'mark_as_unpaid',
+    ]
     raw_id_fields = ('quote', 'interpreter', 'client')
     readonly_fields = (
         'created_at', 
@@ -616,6 +739,53 @@ class AssignmentAdmin(AssignmentAdminMixin, admin.ModelAdmin):
             )
         return "-"
     formatted_end_time_detail.short_description = "End Time (Boston)"
+
+    def _bulk_set_status(self, request, queryset, new_status, label):
+        updated = queryset.update(status=new_status)
+        self.message_user(request, f"{updated} assignment(s) marked as {label}.")
+
+    def mark_status_pending(self, request, queryset):
+        self._bulk_set_status(request, queryset, models.Assignment.Status.PENDING, 'Pending')
+
+    mark_status_pending.short_description = 'Mark selected assignments as Pending'
+
+    def mark_status_confirmed(self, request, queryset):
+        self._bulk_set_status(request, queryset, models.Assignment.Status.CONFIRMED, 'Confirmed')
+
+    mark_status_confirmed.short_description = 'Mark selected assignments as Confirmed'
+
+    def mark_status_in_progress(self, request, queryset):
+        self._bulk_set_status(request, queryset, models.Assignment.Status.IN_PROGRESS, 'In Progress')
+
+    mark_status_in_progress.short_description = 'Mark selected assignments as In Progress'
+
+    def mark_status_completed(self, request, queryset):
+        updated = queryset.update(status=models.Assignment.Status.COMPLETED, completed_at=timezone.now())
+        self.message_user(request, f"{updated} assignment(s) marked as Completed.")
+
+    mark_status_completed.short_description = 'Mark selected assignments as Completed'
+
+    def mark_status_cancelled(self, request, queryset):
+        self._bulk_set_status(request, queryset, models.Assignment.Status.CANCELLED, 'Cancelled')
+
+    mark_status_cancelled.short_description = 'Mark selected assignments as Cancelled'
+
+    def mark_status_no_show(self, request, queryset):
+        self._bulk_set_status(request, queryset, models.Assignment.Status.NO_SHOW, 'No Show')
+
+    mark_status_no_show.short_description = 'Mark selected assignments as No Show'
+
+    def mark_as_paid(self, request, queryset):
+        updated = queryset.update(is_paid=True)
+        self.message_user(request, f"{updated} assignment(s) marked as Paid.")
+
+    mark_as_paid.short_description = 'Mark selected assignments as Paid'
+
+    def mark_as_unpaid(self, request, queryset):
+        updated = queryset.update(is_paid=False)
+        self.message_user(request, f"{updated} assignment(s) marked as Unpaid.")
+
+    mark_as_unpaid.short_description = 'Mark selected assignments as Unpaid'
 
     def save_model(self, request, obj, form, change):
         """
