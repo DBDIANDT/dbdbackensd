@@ -277,6 +277,15 @@ class AssignmentAdminMixin:
         - Convertit les dates en America/New_York pour cohérence.
         """
         try:
+            interpreter_email = assignment.interpreter.user.email
+        except Exception:
+            interpreter_email = None
+
+        if not assignment.interpreter or not getattr(assignment.interpreter, 'user', None) or not assignment.interpreter.user.email:
+            logger.warning(f"No valid interpreter email for assignment {assignment.id}, skipping email.")
+            return False
+
+        try:
             # 1) Contexte et config du template
             context = self.get_email_context(request, assignment, email_type)
             template_config = self.get_email_template_config(email_type, assignment.id)
@@ -288,8 +297,7 @@ class AssignmentAdminMixin:
             # 3) Construction de l'email multi-part
             subject = template_config['subject']
             from_email = settings.DEFAULT_FROM_EMAIL
-            interpreter_user = getattr(assignment.interpreter, 'user', None) if assignment.interpreter else None
-            to_email = [interpreter_user.email] if interpreter_user else []
+            to_email = [interpreter_email]
 
             # Génération d'un message-id unique
             unique_msg_id = make_msgid(domain="cgdlogistics.com")
@@ -336,6 +344,7 @@ class AssignmentAdminMixin:
             logger.error(f"Error sending {email_type} email: {str(e)}", exc_info=True)
             return False
         
+
     def get_email_context(self, request, assignment, email_type):
         """
         Construit le contexte pour les templates d'email.
