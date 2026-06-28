@@ -270,6 +270,12 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 
+# Timeouts so a slow/unreachable broker or SMTP server can't hang requests
+EMAIL_TIMEOUT = int(os.getenv('EMAIL_TIMEOUT', '10'))
+CELERY_BROKER_CONNECTION_TIMEOUT = int(os.getenv('CELERY_BROKER_CONNECTION_TIMEOUT', '5'))
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BROKER_TRANSPORT_OPTIONS = {'socket_timeout': 5, 'socket_connect_timeout': 5}
+
 # Social Auth Configuration
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
