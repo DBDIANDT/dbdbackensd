@@ -277,7 +277,7 @@ class AssignmentAdminMixin:
         - Utilise un sujet unique pour chaque email.
         - Convertit les dates en America/New_York pour cohérence.
         """
-        if not assignment.interpreter or not assignment.interpreter.user.email:
+                if not assignment.interpreter or not getattr(assignment.interpreter, 'user', None) or not assignment.interpreter.user.email:
             return False
 
         try:
