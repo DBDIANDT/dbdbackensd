@@ -14,6 +14,14 @@ from .models import Quote, Assignment
 from .tasks import send_quote_status_email, send_assignment_status_email
 
 from .models import Assignment, AssignmentNotification
+import logging
+from django.db import transaction
+logger = logging.getLogger(__name__)
+def _safe_send_assignment_status_email(assignment_id):
+    try:
+        send_assignment_status_email.delay(assignment_id)
+    except Exception:
+        logger.exception("Failed to enqueue assignment status email for assignment %s", assignment_id)
 
 @receiver(post_save, sender=Assignment)
 def create_assignment_notification(sender, instance, created, **kwargs):
@@ -32,7 +40,7 @@ def handle_quote_status_change(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Assignment)
 def handle_assignment_status_change(sender, instance, created, **kwargs):
     if created or instance.status != instance._original_status:
-        send_assignment_status_email.delay(instance.id)
+        transaction.on_commit(lambda: _safe_send_assignment_status_email(instance.id))
 
 # Add these methods to your models
 class Quote(models.Model):
