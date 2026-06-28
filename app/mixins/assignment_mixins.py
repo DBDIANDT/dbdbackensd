@@ -101,8 +101,7 @@ class AssignmentAdminMixin:
 
         except Exception as e:
             logger.error(f"Error handling status change: {str(e)}", exc_info=True)
-            raise
-
+            
     def create_interpreter_payment(self, request, assignment, status):
         """
         Crée un nouveau paiement interprète avec sa transaction financière associée.
@@ -277,9 +276,12 @@ class AssignmentAdminMixin:
         - Utilise un sujet unique pour chaque email.
         - Convertit les dates en America/New_York pour cohérence.
         """
-                if not assignment.interpreter or not getattr(assignment.interpreter, 'user', None) or not assignment.interpreter.user.email:
-            return False
-
+                                try:
+                                                interpreter_email = assignment.interpreter.user.email if assignment.interpreter else None
+                                except Exception:
+                                                return False
+                                            if not interpreter_email:
+                                                            return False
         try:
             # 1) Contexte et config du template
             context = self.get_email_context(request, assignment, email_type)
