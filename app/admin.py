@@ -219,7 +219,8 @@ class CustomAssignmentForm(forms.ModelForm):
                 interpreter=interpreter,
                 start_time__lt=end_time,
                 end_time__gt=start_time,
-            )
+            ).exclude(status='CANCELLED')
+            
             if self.instance and self.instance.pk:
                 overlaps = overlaps.exclude(pk=self.instance.pk)
 
