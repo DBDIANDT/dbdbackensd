@@ -1,4 +1,8 @@
 # Core Django
+
+# Email (Resend API - HTTP, works on Railway where SMTP is blocked)
+resend
+
 Django
 djangorestframework
 mysqlclient

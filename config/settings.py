@@ -249,17 +249,21 @@ CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'True') == 'True'
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
 
 # Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Switched from Gmail SMTP to Resend HTTP API: Railway blocks outbound SMTP
+# (socket test to smtp.gmail.com:587 -> [Errno 101] Network is unreachable).
+# Resend sends over HTTPS (443), which works on Railway.
+EMAIL_BACKEND = 'app.utils.email_backend.ResendEmailBackend'
+RESEND_API_KEY = os.getenv('RESEND_API_KEY')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'dispatch@dbdiandt.co')
 
-# Configuration email directe
-
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+# --- Old SMTP config (disabled because Railway blocks SMTP egress) ---
+# EMAIL_HOST = os.getenv('EMAIL_HOST')
+# EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+# EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+# EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
+# ---------------------------------------------------------------
 
 QUOTE_NOTIFICATION_EMAIL = os.getenv('QUOTE_NOTIFICATION_EMAIL ')
 # Celery Configuration

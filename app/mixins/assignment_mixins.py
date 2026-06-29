@@ -276,6 +276,11 @@ class AssignmentAdminMixin:
         - Utilise un sujet unique pour chaque email.
         - Convertit les dates en America/New_York pour cohérence.
         """
+        # Guard: early exit if interpreter has no email
+        interpreter_user = getattr(assignment.interpreter, 'user', None) if assignment.interpreter else None
+        if not interpreter_user or not getattr(interpreter_user, 'email', None):
+            logger.warning(f"Assignment #{assignment.id}: interpreter has no email, skipping {email_type} notification.")
+            return False
         try:
             # 1) Contexte et config du template
             context = self.get_email_context(request, assignment, email_type)
@@ -288,8 +293,7 @@ class AssignmentAdminMixin:
             # 3) Construction de l'email multi-part
             subject = template_config['subject']
             from_email = settings.DEFAULT_FROM_EMAIL
-            interpreter_user = getattr(assignment.interpreter, 'user', None) if assignment.interpreter else None
-            to_email = [interpreter_user.email] if interpreter_user else []
+            to_email = [interpreter_user.email]  # interpreter_user validated above
 
             # Génération d'un message-id unique
             unique_msg_id = make_msgid(domain="cgdlogistics.com")
